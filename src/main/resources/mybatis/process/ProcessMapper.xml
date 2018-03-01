@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.process.ProcessDao">
+	<resultMap id="BaseResultMap" type="cn.damei.entity.process.ProcessEntity">
+		<id column="id" property="id" />
+		<result column="node_title" property="nodeTitle" />
+		<result column="wf_type" property="wfType" />
+		<result column="wf_nature" property="wfNature" />
+		<result column="approver" property="approver" />
+		<result column="approval_amount" property="approvalAmount" />
+		<result column="approval_day_num" property="approvalDayNum" />
+		<result column="approval_type" property="approvalType" />
+		<result column="apply_org" property="applyOrg" />
+		<result column="seq" property="seq" />
+		<result column="pid" property="pid" />
+		<result column="status" property="status" />
+		<result column="cc_user" property="ccUser" />
+		<result column="all_path" property="allPath" />
+	</resultMap>
+	<sql id="BaseColumn">
+		id, node_title, wf_type,
+		wf_nature,approval_type,approver,approval_amount,approval_day_num,apply_org,
+		seq, pid, status, cc_user,all_path
+	</sql>
+	<select id="findTemplateAllPath" resultMap="BaseResultMap">
+		SELECT
+			all_path
+		FROM
+		oa_wf_approval_template a
+		WHERE a.wf_type = #{wfType}
+		AND a.status = 1
+		AND a.wf_nature =#{wfNature}
+		AND (a.apply_org LIKE CONCAT('%,${applyOrg},%')
+			OR a.apply_org LIKE CONCAT('${applyOrg},%')
+			OR a.apply_org LIKE CONCAT('%,${applyOrg}')
+			)
+		ORDER BY id DESC
+	</select>
+	<select id="findTemplateByConditionByDayOrMoney" resultMap="BaseResultMap">
+		SELECT
+		a.id,
+		a.node_title,
+		a.wf_type,
+		a.wf_nature,
+		a.approval_type,
+		a.approver,
+		a.approval_amount,
+		a.approval_day_num,
+		a.apply_org,
+		a.seq,
+		a.pid,
+		a.status,
+		a.cc_user
+		FROM
+		oa_wf_approval_template a
+		WHERE a.wf_type = #{wfType}
+		AND a.status = 1
+		AND a.wf_nature =#{wfNature}
+		and a.id in (${ids})
+		ORDER BY id DESC
+	</select>
+	<select id="findTemplateByCondition" resultMap="BaseResultMap">
+		select a.* from (
+		select
+		<include refid="BaseColumn" />
+		from oa_wf_approval_template
+		where status = 1 and wf_nature is not null
+		and approval_type is not null
+		and wf_type=#{wfType} and
+		wf_nature='APPROVAL' and (apply_org like
+		CONCAT('%,',#{applyOrg},',%')
+		or 
+		<![CDATA[
+		id <= 
+		]]>
+		(select pid from oa_wf_approval_template where status = 1 and
+		wf_nature is not null and approval_type is not null and
+		wf_nature='APPROVAL'
+		and (wf_type=#{wfType}
+		<if test="wfId != null">
+			OR id=#{wfId}
+		</if>
+		) and apply_org like CONCAT('%,',#{applyOrg},',%')))
+		order by id desc
+		)
+		a
+		union all
+		select w.* from (select
+		<include refid="BaseColumn" />
+		from oa_wf_approval_template
+		where status = 1 and wf_nature is not null
+		and approval_type is not null
+		and wf_type=#{wfType} and
+		wf_nature='EXECUTE' AND (apply_org LIKE
+		CONCAT('%,' ,#{applyOrg}, ',%')
+		OR 
+		<![CDATA[
+		id <= 
+		]]>
+		(SELECT pid FROM oa_wf_approval_template WHERE STATUS = 1 AND
+		wf_nature IS NOT NULL AND approval_type IS NOT NULL AND wf_nature =
+		'EXECUTE'
+		and (wf_type=#{wfType}
+		<if test="wfId != null">
+			OR id=#{wfId}
+		</if>
+		) AND apply_org LIKE CONCAT('%,' ,#{applyOrg}, ',%')
+		))
+		order by id desc
+		) w
+	</select>
+
+	<select id="findExecuteTemplateByCondition" resultMap="BaseResultMap">
+		select
+		<include refid="BaseColumn" />
+		from oa_wf_approval_template
+		where status = 1 and wf_nature is not null
+		and approval_type is not null
+		and wf_type=#{wfType} and
+		wf_nature='EXECUTE' and (apply_org like
+		CONCAT('%,',#{applyOrg},',%')
+		or 
+		<![CDATA[
+		id <= 
+		]]>
+		(select pid from oa_wf_approval_template where status = 1 and
+		wf_nature is not null and approval_type is not null and
+		wf_nature='EXECUTE'
+		AND (wf_type=#{wfType}
+		<if test="wfId != null">
+			OR id=#{wfId}
+		</if>
+		) and apply_org like
+		CONCAT('%,',#{applyOrg},',%')))
+		order by id desc
+	</select>
+
+	<select id="checkOrgRepeat" resultType="int">
+		select count(0) from oa_wf_approval_template
+		where wf_type = #{type}
+		and wf_nature = #{nature} and status = 1
+		<if test="id != null and id != ''">
+			and id != #{id}
+		</if>
+		and apply_org like concat('%', #{org} ,'%')
+	</select>
+
+	<select id="getById" resultMap="BaseResultMap" parameterType="long">
+		select
+		<include refid="BaseColumn" />
+		from oa_wf_approval_template
+		where status = 1 and id = #{id}
+	</select>
+	<delete id="deleteById" parameterType="long">
+		delete from
+		oa_wf_approval_template where id = #{id}
+	</delete>
+	<delete id="updateAllPathById">
+		UPDATE `oa_wf_approval_template` SET all_path =#{allPath} WHERE id = #{id}
+	</delete>
+	<insert id="insert" parameterType="cn.damei.entity.process.ProcessEntity"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into oa_wf_approval_template
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="nodeTitle != null">
+				node_title,
+			</if>
+			<if test="wfType != null">
+				wf_type,
+			</if>
+			<if test="wfNature != null">
+				wf_nature,
+			</if>
+			<if test="approvalType != null">
+				approval_type,
+			</if>
+			<if test="approver != null">
+				approver,
+			</if>
+			<if test="approvalAmount != null">
+				approval_amount,
+			</if>
+			<if test="approvalDayNum != null">
+				approval_day_num,
+			</if>
+			<if test="applyOrg != null">
+				apply_org,
+			</if>
+			<if test="seq != null">
+				seq,
+			</if>
+			<if test="pid != null">
+				pid,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="ccUser != null">
+				cc_user,
+			</if>
+			<if test="allPath != null">
+				all_path
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="nodeTitle != null">
+				#{nodeTitle},
+			</if>
+			<if test="wfType != null">
+				#{wfType},
+			</if>
+			<if test="wfNature != null">
+				#{wfNature},
+			</if>
+			<if test="approvalType != null">
+				#{approvalType},
+			</if>
+			<if test="approver != null">
+				#{approver},
+			</if>
+			<if test="approvalAmount != null">
+				#{approvalAmount},
+			</if>
+			<if test="approvalDayNum != null">
+				#{approvalDayNum},
+			</if>
+			<if test="applyOrg != null">
+				#{applyOrg},
+			</if>
+			<if test="seq != null">
+				#{seq},
+			</if>
+			<if test="pid != null">
+				#{pid},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="ccUser != null">
+				#{ccUser}
+			</if>
+			<if test="allPath != null">
+				#{allPath}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="cn.damei.entity.process.ProcessEntity">
+		update oa_wf_approval_template
+		<set>
+			<if test="nodeTitle != null">
+				node_title = #{nodeTitle},
+			</if>
+			<if test="wfType != null">
+				wf_type = #{wfType},
+			</if>
+			<if test="wfNature != null">
+				wf_nature = #{wfNature},
+			</if>
+			<if test="approvalType != null">
+				approval_type = #{approvalType},
+			</if>
+			<if test="approver != null">
+				approver = #{approver},
+			</if>
+			<if test="approvalAmount != null">
+				approval_amount= #{approvalAmount},
+			</if>
+			<if test="approvalDayNum != null">
+				approval_day_num= #{approvalDayNum},
+			</if>
+			<if test="applyOrg != null">
+				apply_org = #{applyOrg},
+			</if>
+			<if test="seq != null">
+				seq = #{seq},
+			</if>
+			<if test="pid != null">
+				pid = #{pid},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="ccUser != null">
+				cc_user = #{ccUser},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumn" />
+		FROM oa_wf_approval_template WHERE status = 1
+	</select>
+
+	<select id="search" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumn" />
+		FROM oa_wf_approval_template
+		<include refid="searchWhere" />
+	</select>
+
+	<select id="findWfByTypeAndOrg" resultType="int">
+		SELECT count(0) from
+		oa_wf_approval_template
+		where status = 1 and wf_type = #{type} and
+		wf_nature=#{wfNature} and
+		apply_org LIKE CONCAT('%,', #{org}, ',%')
+	</select>
+
+	<sql id="searchWhere">
+		<where>
+			<if test="keyword">
+				AND node_title LIKE CONCAT('%',#{keyword},'%')
+			</if>
+		</where>
+	</sql>
+</mapper>

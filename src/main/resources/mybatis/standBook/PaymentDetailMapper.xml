@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.PaymentDetailDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.PaymentDetail">
+        <result property="imprestAmount" column="ImprestAmount"/>
+        <result property="firstAmount" column="FirstAmount"/>
+        <result property="mediumAmount" column="MediumAmount"/>
+        <result property="finalAmount" column="FinalAmount"/>
+        <result property="finishChangeAmount" column="FinishChangeAmount"/>
+        <result property="imprest" column="IsImprestAmount"/>
+        <result property="modifyCost" column="ModifyCost"/>
+        <result property="firstPayment" column="FirstPayment"/>
+        <result property="mediumPayment" column="MediumPayment"/>
+        <result property="endPayment" column="EndPayment"/>
+        <result property="imfirst" column="IsFirstAmount"/>
+        <result property="immedium" column="IsMediumAmount"/>
+        <result property="imfinal" column="IsFinalAmount"/>
+        <result property="totalImprestAmountDeductible" column="TotalImprestAmountDeductible"/>
+        <result property="status" column="AllotState"/>
+    </resultMap>
+
+    <select id="findPayment" resultMap="BaseResultMap">
+        SELECT op.IsImprestAmount,
+                op.ImprestAmount,op.FirstAmount,op.SecondAmount,op.MediumAmount,
+                op.FinalAmount,op.FinishChangeAmount,op.ModifyCost,
+                CONVERT (DECIMAL(18,2),(oc.TotalMoney-oc.ModifyCost)*0.65) AS FirstPayment,
+                CONVERT (DECIMAL(18,2),(oc.TotalMoney-oc.ModifyCost)*0.3) AS MediumPayment,
+                CONVERT (DECIMAL(18,2),(oc.TotalMoney-oc.ModifyCost)*0.05) AS EndPayment,
+                op.IsFinalAmount,op.IsMediumAmount,
+                op.IsFirstAmount,op.TotalImprestAmountDeductible,oo.AllotState
+      FROM Ord_Payment op
+      LEFT JOIN Ord_Order oo ON op.OrderId = oo.OrderId
+      LEFT JOIN Ord_Contract oc ON oo.OrderId = oc.OrderId
+      WHERE oo.OrderNo = #{orderno}
+    </select>
+       <delete id="deletePaymentId" parameterType="long">
+        delete from `oa_payment_details` where payment_id=#{paymentId}
+    </delete>
+</mapper>

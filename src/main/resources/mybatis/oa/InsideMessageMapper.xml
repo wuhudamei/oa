@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.InsideMessageDao" >
+  <resultMap id="BaseResultMap" type="cn.damei.entity.oa.InsideMessage" >
+    <id column="id" property="id" />
+    <result column="message_title" property="messageTitle" />
+    <result column="message_type" property="messageType" />
+    <result column="message_level" property="messageLevel" />
+    <result column="creater" property="creater" />
+    <result column="create_time" property="createTime" />
+    <result column="expiration_time" property="expirationTime" />
+    <result column="remind_mode" property="remindMode" />
+
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="cn.damei.entity.oa.InsideMessage" extends="BaseResultMap" >
+    <result column="message_content" property="messageContent" />
+  </resultMap>
+  <resultMap id="ResultMapWithStatus" type="cn.damei.entity.oa.InsideMessageWithStatus" extends="BaseResultMap" >
+    <result column="status" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, message_title,message_content, message_type, message_level,creater, create_time, expiration_time, remind_mode
+  </sql>
+  <sql id="Blob_Column_List" >
+    message_content
+  </sql>
+  <select id="getById" resultMap="ResultMapWithBLOBs" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from oa_inside_message
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long" >
+    delete from oa_inside_message
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.oa.InsideMessage" useGeneratedKeys="true" keyProperty="id" >
+    insert into oa_inside_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="messageTitle != null" >
+        message_title,
+      </if>
+      <if test="messageType != null" >
+        message_type,
+      </if>
+      <if test="messageLevel != null" >
+        message_level,
+      </if>
+      <if test="creater != null" >
+        creater,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="expirationTime != null" >
+        expiration_time,
+      </if>
+      <if test="remindMode != null" >
+        remind_mode,
+      </if>
+      <if test="messageContent != null" >
+        message_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="messageTitle != null" >
+        #{messageTitle},
+      </if>
+      <if test="messageType != null" >
+        #{messageType},
+      </if>
+      <if test="messageLevel != null" >
+        #{messageLevel},
+      </if>
+      <if test="creater != null" >
+        #{creater},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="expirationTime != null" >
+        #{expirationTime},
+      </if>
+      <if test="remindMode != null" >
+        #{remindMode},
+      </if>
+      <if test="messageContent != null" >
+        #{messageContent},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.oa.InsideMessage" >
+    update oa_inside_message
+    <set >
+      <if test="messageTitle != null" >
+        message_title = #{messageTitle},
+      </if>
+      <if test="messageType != null" >
+        message_type = #{messageType},
+      </if>
+      <if test="messageLevel != null" >
+        message_level = #{messageLevel},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="expirationTime != null" >
+        expiration_time = #{expirationTime},
+      </if>
+      <if test="remindMode != null" >
+        remind_mode = #{remindMode},
+      </if>
+      <if test="messageContent != null" >
+        message_content = #{messageContent},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="mineMesForIndex" resultMap="ResultMapWithBLOBs">
+    select a.*
+      from oa_inside_message a ,oa_inside_message_target b
+     where a.id = b.message_id and b.status = 0
+       and b.user_id = #{userId}
+    order by a.message_level ,a.create_time desc limit 0,5
+  </select>
+
+  <select id="searchTotal" parameterType="map" resultType="Long">
+    SELECT
+    COUNT(*)
+    <include refid="searchWhere"/>
+  </select>
+  <select id="searchForList" parameterType="map" resultMap="ResultMapWithStatus">
+    SELECT
+    a.*,b.status
+    <include refid="searchWhere"/>
+    <if test="sort != null">
+      ORDER BY
+      <foreach collection="sort" item="order" separator=",">
+        a.${order.property} ${order.direction}
+      </foreach>
+    </if>
+  </select>
+
+  <sql id="searchWhere">
+    from oa_inside_message a ,oa_inside_message_target b
+    where a.id = b.message_id
+    and b.user_id = #{userId}
+    <if test="keyword!=null">
+      AND a.message_title LIKE CONCAT('%', #{keyword}, '%')
+    </if>
+
+    <if test="status != null">
+      and b.status = #{status}
+    </if>
+
+    <if test="messageType != null">
+      and a.message_type = #{messageType}
+    </if>
+    <if test="remindMode != null">
+      and a.remind_mode = #{remindMode}
+    </if>
+    <if test="messageLevel != null">
+      and a.message_level = #{messageLevel}
+    </if>
+    <if test="beginTime != null">
+      and a.expiration_time &gt;= #{beginTime}
+    </if>
+
+    <if test="endTime != null">
+      and a.expiration_time &lt;= #{endTime}
+    </if>
+
+  </sql>
+</mapper>

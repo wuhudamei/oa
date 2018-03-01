@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.dict.MdniDictionaryDao">
+    <resultMap id="BaseResultMap" type="MdniDictionary">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="parent_name" property="parentName"/>
+        <result column="type" property="type"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
+    <sql id="SelectInfo">
+        md.id, md.name, md.parent_code, md.type, md.sort,md2.name parent_name
+    </sql>
+    <select id="getById" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="SelectInfo"/>
+        from oa_dictionary md LEFT JOIN oa_dictionary md2 ON md.parent_code=md2.id
+        where md.id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+        delete from oa_dictionary
+        where id = #{id}
+    </delete>
+    <insert id="insert" parameterType="MdniDictionary" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_dictionary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="parentCode != null">
+                parent_code,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="parentCode != null">
+                #{parentCode},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="sort != null">
+                #{sort},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="MdniDictionary">
+        update oa_dictionary
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="parentCode != null">
+                parent_code = #{parentCode},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        from oa_dictionary md
+        left join oa_dictionary md2 on md.parent_code=md2.id
+        where 1 = 1
+        <include refid="searchWhere"/>
+        <if test="sort != null">
+            ORDER BY
+            <foreach collection="sort" item="order" separator=",">
+                ${order.property} ${order.direction}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="searchTotal" parameterType="map" resultType="Long">
+        SELECT
+        COUNT(*)
+        FROM oa_dictionary md where 1=1
+        <include refid="searchWhere"/>
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        id, name
+        FROM oa_dictionary
+    </select>
+
+    <select id="getNode" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        oa_dictionary
+        WHERE
+        type=#{type}-1
+    </select>
+
+    <select id="getByType" resultMap="BaseResultMap">
+        select * from oa_dictionary md where 1=1
+        <if test="parentCode!=null">
+            AND md.parent_code=#{parentCode}
+        </if>
+        <if test="type!=null">
+            and type=#{type}
+        </if>
+
+    </select>
+
+    <sql id="searchWhere">
+        <if test="keyword!=null">
+            AND md.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType != null">
+            AND md.type=#{searchType}
+        </if>
+    </sql>
+
+    <select id="findChildNodeByParent" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+            od2.*
+        FROM
+            oa_dictionary od ,
+            oa_dictionary od2
+        WHERE
+            od.id = od2.parent_code
+        AND od.type = 1
+        AND od.id = #{parentCode}
+    </select>
+
+    <select id="findByTypeIfId" resultMap="BaseResultMap">
+        SELECT id,name FROM oa_dictionary WHERE type = #{type}
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+    </select>
+
+    <select id="findByParentIds" resultMap="BaseResultMap">
+        SELECT id,name,parent_code FROM oa_dictionary WHERE
+        <if test="parentIds != null">
+            parent_code IN
+            <foreach collection="parentIds" item="parentId" open="(" close=")" separator=",">
+                #{parentId}
+            </foreach>
+        </if>
+        <if test="parentIds == null">
+            1 = -1
+        </if>
+    </select>
+
+    <select id="findTree" resultMap="BaseResultMap">
+        SELECT id, name, parent_code, type, sort
+        from oa_dictionary where type in (1, 2, 3) order by type,parent_code, sort, id
+    </select>
+
+</mapper>

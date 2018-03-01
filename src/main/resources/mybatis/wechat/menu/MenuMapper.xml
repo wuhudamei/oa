@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.menu.MenuDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.menu.Menu">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="type" property="type"/>
+    <result column="level" property="level"/>
+    <result column="click_key" property="clickKey"/>
+    <result column="url" property="url"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="pid" property="pid"/>
+    <result column="sort" property="sort"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, name, type, level, click_key, url, media_id, pid, sort
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from wechat_menu
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_menu
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.wechat.menu.Menu" useGeneratedKeys="true" keyProperty="id">
+    insert into wechat_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="clickKey != null">
+        click_key,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="mediaId != null">
+        media_id,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="level != null">
+        #{level},
+      </if>
+      <if test="clickKey != null">
+        #{clickKey},
+      </if>
+      <if test="url != null">
+        #{url},
+      </if>
+      <if test="mediaId != null">
+        #{mediaId},
+      </if>
+      <if test="pid != null">
+        #{pid},
+      </if>
+      <if test="sort != null">
+        #{sort},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.wechat.menu.Menu">
+    update wechat_menu
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="level != null">
+        level = #{level},
+      </if>
+      <if test="clickKey != null">
+        click_key = #{clickKey},
+      </if>
+      <if test="url != null">
+        url = #{url},
+      </if>
+      <if test="mediaId != null">
+        media_id = #{mediaId},
+      </if>
+      <if test="pid != null">
+        pid = #{pid},
+      </if>
+      <if test="sort != null">
+        sort = #{sort},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_menu
+  </select>
+</mapper>

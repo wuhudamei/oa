@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.SelectListDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.SelectMaterialStandBook">
+        <result property="flagName" column="flag_name"/>
+        <result property="principalMaterialflagName" column="rd_pd_categoryflagname"/>
+        <result property="auxiliaryMaterialflagName" column="item_category_name"/>
+        <result property="pdBrandName" column="pd_brandName"/>
+        <result property="pdModel" column="pd_model"/>
+        <result property="pdSkuSalesattribute" column="pd_sku_salesattribute"/>
+        <result property="doMain" column="domain"/>
+        <result property="count" column="pd_count"/>
+        <result property="pdMeasureunit" column="pd_measureunit"/>
+        <result property="upgradeTotal" column="upgrade_total"/>
+        <result property="addTotal" column="add_total"/>
+        <result property="lessenTotal" column="lessen_total"/>
+        <result property="pdName" column="pd_name"/>
+        <result property="addCount" column="add_count"/>
+        <result property="addUnitprice" column="add_unitprice"/>
+        <result property="remarkContent" column="remark_content"/>
+        <result property="itemType" column="item_type"/>
+        <result property="tax" column="istax"/>
+        <result property="account" column="account"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="info" column="info"/>
+        <result property="pdCategoryName" column="pd_categoryname"/>
+        <result property="name" column="name"/>
+        <result property="pdPrice" column="pd_price"/>
+        <result property="lessenCount" column="lessen_count"/>
+        <result property="lessenUnitprice" column="lessen_unitprice"/>
+        <result property="upgradeUnitprice" column="upgrade_unitprice"/>
+        <result property="smStoreprice" column="sm_storeprice"/>
+        <result property="consumptiondosage" column="item_count"/>
+        <result property="quotaScale" column="quota_scale"/>
+        <result property="pdSkuname" column="pd_skuname"/>
+        <result property="pdSupplier" column="pd_supplier"/>
+        <result property="acceptanceTime" column="acceptance_time"/>
+        <result property="workerPrice" column="worker_price"/>
+        <result property="itemPrice" column="item_price"/>
+        <result property="itemTotal" column="item_total"/>
+        <result property="unitconversion" column="unitconversion"/>
+        <result property="squareCount" column="count"/>
+    </resultMap>
+
+    <!--根据订单号查询套餐标配-->
+    <select id="findAllComboStandardByorderNo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            cus.unitprice,
+            cus.measurehousearea,
+			idsb.unitconversion,
+			idsb.count,
+            sub.pd_price,
+            sub.pd_model,
+            sub.pd_brandname,
+            sub.pd_sku_salesattribute,
+            sub.item_count,
+            sub.pd_measureunit,
+            cate.flagname,
+            idsb.[domain],
+            sub.item_count,
+            sub.item_price
+        FROM ST_RD_Item_SubmitOrder sub
+        LEFT JOIN ST_RD_Category cate ON sub.item_categoryid = cate.pkid
+        LEFT JOIN ST_RD_ItemDetail_SubmitOrder idsb on idsb.item_pkid=sub.item_pkid
+        LEFT JOIN ST_RD_CustomerMaterial cus ON cus.pkid = sub.material_pkid
+        where cus.orderno = #{orderNo} and sub.isdelete=0 and idsb.isdelete=0 AND sub.item_type='item'
+        ORDER BY cate.flagname
+    </select>
+
+    <!--根据订单号查询升级项-->
+    <select id="findAllUpgradeItemByorderNo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            sub.pd_price,
+            sub.pd_model,
+            idsb.unitconversion,
+			idsb.count,
+            sub.pd_brandname,
+            sub.pd_sku_salesattribute,
+            sub.item_count,
+            sub.pd_measureunit,
+            cate.flagname,
+            idsb.[domain],
+            sub.item_count,
+            sub.item_price
+        FROM ST_RD_Item_SubmitOrder sub
+        LEFT JOIN ST_RD_Category cate ON sub.item_categoryid = cate.pkid
+        LEFT JOIN ST_RD_ItemDetail_SubmitOrder idsb on idsb.item_pkid=sub.item_pkid
+        LEFT JOIN ST_RD_CustomerMaterial cus ON cus.pkid = sub.material_pkid
+        where cus.orderno = #{orderNo} AND sub.isdelete=0 and idsb.isdelete=0 AND sub.item_type='upgrade'
+        ORDER BY cate.flagname
+    </select>
+
+    <!--根据订单号查询增项-->
+    <select id="findAllAddItemByorderNo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            sub.pd_price,
+            sub.pd_model,
+            idsb.unitconversion,
+			idsb.count,
+            sub.pd_brandname,
+            sub.pd_sku_salesattribute,
+            sub.item_count,
+            sub.pd_measureunit,
+            cate.flagname,
+            idsb.[domain],
+            sub.item_count,
+            sub.item_price
+        FROM ST_RD_Item_SubmitOrder sub
+        LEFT JOIN ST_RD_Category cate ON sub.item_categoryid = cate.pkid
+        LEFT JOIN ST_RD_ItemDetail_SubmitOrder idsb on idsb.item_pkid=sub.item_pkid
+        LEFT JOIN ST_RD_CustomerMaterial cus ON cus.pkid = sub.material_pkid
+        where cus.orderno = #{orderNo} AND sub.isdelete=0 and idsb.isdelete=0 AND sub.item_type='add'
+        ORDER BY cate.flagname
+    </select>
+
+    <!--根据订单号查询减项-->
+    <select id="findAllReduceItemByorderNo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            sub.pd_price,
+            sub.pd_model,
+            idsb.unitconversion,
+			idsb.count,
+            sub.pd_brandname,
+            sub.pd_sku_salesattribute,
+            sub.item_count,
+            sub.pd_measureunit,
+            cate.flagname,
+            idsb.[domain],
+            sub.item_count,
+            sub.item_price
+        FROM ST_RD_Item_SubmitOrder sub
+        LEFT JOIN ST_RD_Category cate ON sub.item_categoryid = cate.pkid
+        LEFT JOIN ST_RD_ItemDetail_SubmitOrder idsb on idsb.item_pkid=sub.item_pkid
+        LEFT JOIN ST_RD_CustomerMaterial cus ON cus.pkid = sub.material_pkid
+        where cus.orderno = #{orderNo} AND sub.isdelete=0 and idsb.isdelete=0 AND sub.item_type='lessen'
+        ORDER BY cate.flagname
+    </select>
+
+    <!--根据订单号查询增项基装定额-->
+    <select id="findAllbasicInstallPriceByorderNo" resultMap="BaseResultMap">
+        select sq.classnameflag as pd_categoryname,sub.pd_name,sub.item_count,sub.pd_measureunit,sub.item_price,sub.item_total,
+        (select remark_content from ST_RD_Remark where item_pkid=sub.item_pkid and ST_RD_Remark.isdelete=0 and remark_type = 1) as remark_content from
+        ST_RD_Item_SubmitOrder as sub
+        LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = sub.material_pkid
+        LEFT JOIN [dbo].[ST_Quota] as sq on sq.pkid=sub.pd_pkid
+        where cm.orderno = #{orderNo}  and sub.isdelete=0  and sub.item_type in ('addquota','addquotaservice')
+    </select>
+
+    <!--根据订单号查询减项基装定额-->
+    <select id="findAllreduceItemInstallPriceByorderNo" resultMap="BaseResultMap">
+        select sq.classnameflag as pd_categoryname,sub.pd_name,sub.item_count,sub.pd_measureunit,sub.item_price,sub.item_total,
+        (select remark_content from ST_RD_Remark where item_pkid=sub.item_pkid and ST_RD_Remark.isdelete=0 and remark_type = 1) as remark_content from
+        ST_RD_Item_SubmitOrder as sub
+        LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = sub.material_pkid
+        LEFT JOIN [dbo].[ST_Quota] as sq on sq.pkid=sub.pd_pkid
+        where cm.orderno = #{orderNo}  and sub.isdelete=0  and sub.item_type in ('lessenquota')
+    </select>
+
+    <!--根据订单号查询活动、优惠及其它金额增减-->
+    <select id="findAllotherPriceByorderNo" resultMap="BaseResultMap">
+        select sub.pd_name as name,sub.quota_way as itemtype,sub.istax,sub.item_total as account,sub.submitusername AS submit_user_name,sub.description as info
+        from
+        ST_RD_Item_SubmitOrder as sub
+        LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = sub.material_pkid
+        LEFT JOIN [dbo].[ST_Quota] as sq on sq.pkid=sub.pd_pkid
+        where cm.orderno = #{orderNo}  and sub.isdelete=0  and sub.item_type in ('activity')
+    </select>
+
+    <!--根据订单号查询其他综合费-->
+    <select id="findAllOtherSynthesizePriceByorderNo" resultMap="BaseResultMap">
+        select sq.classnameflag as pd_categoryname,sub.pd_name,sub.item_count,sub.pd_measureunit,sub.item_price,sub.item_total,
+        (select remark_content from ST_RD_Remark where item_pkid=sub.item_pkid and ST_RD_Remark.isdelete=0 and remark_type = 1) as remark_content from
+        ST_RD_Item_SubmitOrder as sub
+        LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = sub.material_pkid
+        LEFT JOIN [dbo].[ST_Quota] as sq on sq.pkid=sub.pd_pkid
+        where cm.orderno = #{orderNo}  and sub.isdelete=0  and sub.item_type in ('addotherquota')
+    </select>
+
+    <!--根据订单号查询主材-->
+    <select id="findAllPrincipalMaterialByorderNo" resultMap="BaseResultMap">
+
+        select  s.sm_storeprice,ai.rd_pd_categoryflagname,ai.pd_brandname,ai.pd_model,ai.pd_sku_salesattribute,consumptiondosage=Convert(decimal(18,2),ii.count*ii.consumptionfactor),ii.pd_measureunit
+            from ST_RD_AddItem as ai
+            LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = ai.material_pkid
+            LEFT JOIN ST_RD_Sku as s on s.pkid = ai.pd_skuid
+            LEFT JOIN ST_RD_ItemDetail as ii on ii.item_pkid = ai.pkid
+            where cm.orderno = #{orderNo} and ai.add_itemtype = 1 and ii.isdelete = 0
+            AND ai.rd_pd_categoryid NOT IN (select pkid from  st_rd_category where isdelete=0 and parentid in( select pkid from st_rd_category where alevel=1 and type='基、辅材' and isdelete=0))
+            UNION ALL
+        SELECT s.sm_storeprice, i.rd_pd_categoryflagname,i.pd_brandname,i.pd_model,i.pd_sku_salesattribute, consumptiondosage=Convert(decimal(18,2),ii.count*ii.consumptionfactor),i.pd_measureunit FROM
+                ST_RD_Item as i
+                LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = i.material_pkid
+                LEFT JOIN ST_RD_Sku as s on s.pkid = i.pd_skuid
+                LEFT JOIN ST_RD_ItemDetail as ii on ii.item_pkid = i.pkid
+                where cm.orderno = #{orderNo} and i.isdelete = 0 and ii.isdelete = 0
+                AND i.rd_pd_categoryid NOT IN (select pkid from  st_rd_category where isdelete=0 and parentid in( select pkid from st_rd_category where alevel=1 and type='基、辅材' and isdelete=0))
+                UNION ALL
+        select s.sm_storeprice,c.flagname as rd_pd_categoryflagname,ui.pd_brandname,ui.pd_model,ui.pd_sku_salesattribute,consumptiondosage=Convert(decimal(18,2),id.count*id.consumptionfactor),id.pd_measureunit
+                from
+                ST_RD_Category as c
+                LEFT JOIN ST_RD_UpgradeItem as ui on ui.item_categoryid = c.pkid
+                LEFT JOIN ST_RD_Sku as s on s.pkid = ui.pd_skuid
+                LEFT JOIN ST_RD_ItemDetail as id on id.item_pkid = ui.pkid
+                LEFT JOIN ST_RD_CustomerMaterial as cm on cm.pkid = ui.material_pkid
+                where cm.orderno = #{orderNo}  and ui.isdelete=0 and id.isdelete=0
+            AND ui.rd_pd_categoryid NOT IN (select pkid from  st_rd_category where isdelete=0 and parentid in( select pkid from st_rd_category where alevel=1 and type='基、辅材' and isdelete=0))
+</select>
+
+    <!--根据订单号查询辅材-->
+    <select id="findAllAuxiliaryMaterialByorderNo" resultMap="BaseResultMap">
+          select  bi.item_category_name,bi.pd_skuname,bi.pd_supplier,bi.pd_brandname,bi.pd_model,
+				bi.pd_sku_sales_attribute,bi.pd_count,bi.pd_measureunit,bi.pd_price,bi.material_type,bi.acceptance_time,bi.worker_price
+            from ST_RD_CustomerMaterial as cm
+            LEFT JOIN ST_RD_Bill_Material as bm on bm.order_no = cm.orderno
+            LEFT JOIN ST_RD_Bill_Item as bi on bm.id = bi.st_rd_bill_material_id
+            where cm.orderno = #{orderno}  and bi.isdelete = 0 and bi.data_from like '%产业工人%'
+    </select>
+</mapper>

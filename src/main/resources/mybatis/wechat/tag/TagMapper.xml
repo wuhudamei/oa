@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.tag.TagDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.tag.Tag">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="oid" property="oid"/>
+    <result column="fans_count" property="fansCount"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, oid, fans_count
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from wechat_tag
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_tag
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.wechat.tag.Tag" useGeneratedKeys="true" keyProperty="id">
+    insert into wechat_tag
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="oid != null">
+        oid,
+      </if>
+      <if test="fansCount != null">
+        fans_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="oid != null">
+        #{oid},
+      </if>
+      <if test="fansCount != null">
+        #{fansCount},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.wechat.tag.Tag">
+    update wechat_tag
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="oid != null">
+        oid = #{oid},
+      </if>
+      <if test="fansCount != null">
+        fans_count = #{fansCount},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_tag
+    <where>
+      <if test="keyword != null">
+        name LIKE CONCAT('%',#{keyword},'%')
+      </if>
+    </where>
+    ORDER BY id DESC
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_tag
+  </select>
+  
+  <!-- andy getTagByOid -->
+  <select id="getTagByOid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_tag where oid=#{oid}
+  </select>
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.MonthBillDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.stylist.MonthBill">
+    <id column="id" property="id"/>
+    <result column="title" property="title"/>
+    <result column="month" property="month"/>
+    <result column="total_money" property="totalMoney"/>
+    <result column="create_user" property="createUser"/>
+    <result column="create_user_name" property="createUserName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, month, total_money, create_user, create_user_name, create_time, status
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_monthbill
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_stylist_monthbill
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.stylist.MonthBill" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_stylist_monthbill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        title,
+      </if>
+      <if test="month != null">
+        month,
+      </if>
+      <if test="totalMoney != null">
+        total_money,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createUserName != null">
+        create_user_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        #{title},
+      </if>
+      <if test="month != null">
+        #{month},
+      </if>
+      <if test="totalMoney != null">
+        #{totalMoney},
+      </if>
+      <if test="createUser != null">
+        #{createUser},
+      </if>
+      <if test="createUserName != null">
+        #{createUserName},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.stylist.MonthBill">
+    update oa_stylist_monthbill
+    <set>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="month != null">
+        month = #{month},
+      </if>
+      <if test="totalMoney != null">
+        total_money = #{totalMoney},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser},
+      </if>
+      <if test="createUserName != null">
+        create_user_name = #{createUserName},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <update id="changeStatusByCondition">
+    UPDATE oa_stylist_monthbill SET status = #{status}
+    <where>
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="month != null">
+        AND month = #{month}
+      </if>
+    </where>
+  </update>
+
+  <select id="search" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM oa_stylist_monthbill
+    <include refid="searchWhere"/>
+  </select>
+  <sql id="searchWhere">
+    <where>
+      <if test="status != null">
+        AND status = #{status}
+      </if>
+      <if test="month != null">
+        AND month = #{month}
+      </if>
+      <if test="keyword != null">
+        AND (title LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+    </where>
+  </sql>
+</mapper>

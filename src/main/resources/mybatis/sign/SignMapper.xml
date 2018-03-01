@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.sign.SignDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.sign.Sign">
+        <id property="id" column="id"/>
+        <result property="empId" column="emp_id"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="signOutTime" column="signout_time"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="address" column="address"/>
+        <result property="signSiteId" column="signsite_id"/>
+        <result property="company" column="company"/>
+        <result property="companyName" column="companyname"/>
+        <result property="department" column="department"/>
+        <result property="empName" column="emp_name"/>
+        <result property="punchCardType" column="punch_card_type"/>
+        <result property="outAddress" column="out_address"/>
+        <result property="outLatitude" column="out_latitude"/>
+        <result property="outLongitude" column="out_longitude"/>
+        <result property="outPunchCardType" column="out_punch_card_type"/>
+        <result property="signType" column="sign_type"/>
+        <result property="creator" column="creator"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="insertSigntypeTime" column="insert_signtype_time"/>
+        <result property="depSignTime" column="dep_sign_time"/>
+        <result property="depSignOutTime" column="dep_signout_time"/>
+        <result property="workType" column="work_type"/>
+        <result property="outWorkType" column="out_work_type"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="cn.damei.entity.sign.Sign" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO oa_sign(emp_id,sign_time,signout_time,latitude,longitude,address,signsite_id,company,department,punch_card_type,out_address,out_latitude,out_longitude,out_punch_card_type,sign_type,creator,creat_time,insert_signtype_time)
+        VALUES (#{empId},#{signTime},#{signOutTime},#{latitude},#{longitude},#{address},#{signSiteId},#{company},#{department},#{punchCardType},#{outAddress},#{outLatitude},#{outLongitude},#{outPunchCardType},#{signType},#{creator},#{creatTime},#{insertSigntypeTime})
+    </insert>
+
+
+    <insert id="insertSignList" parameterType="list">
+      INSERT INTO oa_sign(emp_id,sign_time,signout_time,latitude,longitude,address,signsite_id,company,
+      department,punch_card_type,out_address,out_latitude,out_longitude,out_punch_card_type,sign_type,
+      creator,creat_time,insert_signtype_time)VALUES
+        <foreach item="item" collection="list"  index="index" separator=",">
+       (#{item.empId},#{item.signTime},#{item.signOutTime},#{item.latitude},#{item.longitude},#{item.address},
+        #{item.signSiteId},#{item.company},#{item.department},#{item.punchCardType},#{item.outAddress},#{item.outLatitude},
+        #{item.outLongitude},#{item.outPunchCardType},#{item.signType},#{item.creator},#{item.creatTime},#{item.insertSigntypeTime})
+        </foreach>
+    </insert>
+
+
+
+    <update id="update" parameterType="cn.damei.entity.sign.Sign">
+        UPDATE oa_sign
+        <set>
+            <if test="empId != null">
+                emp_id = #{empId},
+            </if>
+            <if test="signTime != null">
+                sign_time = #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                signout_time = #{signOutTime},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="signSiteId != null">
+                signsite_id = #{signSiteId},
+            </if>
+            <if test="company != null">
+                company = #{company},
+            </if>
+            <if test="department != null">
+                department = #{department},
+            </if>
+            <if test="punchCardType != null">
+                punch_card_type = #{punchCardType},
+            </if>
+            <if test="outAddress != null">
+                out_address = #{outAddress},
+            </if>
+            <if test="outLatitude != null">
+                out_latitude = #{outLatitude},
+            </if>
+            <if test="outLongitude != null">
+                out_longitude = #{outLongitude},
+            </if>
+            <if test="outPunchCardType != null">
+                out_punch_card_type = #{outPunchCardType},
+            </if>
+            <if test="signType != null">
+                sign_type = #{signType},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="insertSigntypeTime != null">
+                insert_signtype_time = #{insertSigntypeTime}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="updateTime" parameterType="cn.damei.entity.sign.Sign">
+        UPDATE oa_sign
+        <set>
+            <if test="empId != null">
+                emp_id = #{empId},
+            </if>
+            <if test="signTime != null">
+                sign_time = #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                signout_time = #{signOutTime},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="signSiteId != null">
+                signsite_id = #{signSiteId},
+            </if>
+            <if test="company != null">
+                company = #{company},
+            </if>
+            <if test="department != null">
+                department = #{department},
+            </if>
+            <if test="punchCardType != null">
+                punch_card_type = #{punchCardType},
+            </if>
+            <if test="outAddress != null">
+                out_address = #{outAddress},
+            </if>
+            <if test="outLatitude != null">
+                out_latitude = #{outLatitude},
+            </if>
+            <if test="outLongitude != null">
+                out_longitude = #{outLongitude},
+            </if>
+            <if test="outPunchCardType != null">
+                out_punch_card_type = #{outPunchCardType},
+            </if>
+            <if test="signType != null">
+                sign_type = #{signType},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="insertSigntypeTime != null">
+                insert_signtype_time = #{insertSigntypeTime}
+            </if>
+        </set>
+        WHERE  emp_id = #{empId}
+    </update>
+
+
+
+
+    <select id="getByEmpIdAndDate" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM  oa_sign  WHERE  emp_id=#{empId} AND sign_time LIKE CONCAT('%',#{date},'%')
+    </select>
+
+    <select id="getBySignOutTime" parameterType="date" resultType="integer">
+        SELECT * FROM oa_sign WHERE signout_time=#{signOutTime}
+    </select>
+
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM oa_sign WHERE emp_id=#{empId} AND TO_DAYS(creat_time) = TO_DAYS(NOW())
+    </select>
+
+    <update id="updateSignDateById">
+        update oa_sign set sign_time=#{date} where emp_id=#{empId}
+    </update>
+
+    <update id="updateSignOutDateById">
+        update oa_sign set signout_time=#{date} where emp_id=#{empId}
+    </update>
+
+    <update id="updateAddress" parameterType="cn.damei.entity.sign.Sign">
+        update oa_sign
+        <set>
+            <if test="signTime != null">
+                sign_time = #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                signout_time = #{signOutTime},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="signSiteId != null">
+                signsite_id = #{signSiteId},
+            </if>
+            <if test="company != null">
+                company = #{company},
+            </if>
+            <if test="department != null">
+                department = #{department},
+            </if>
+            <if test="punchCardType != null">
+                punch_card_type = #{punchCardType},
+            </if>
+            <if test="outAddress != null">
+                out_address = #{outAddress},
+            </if>
+            <if test="outLatitude != null">
+                out_latitude = #{outLatitude},
+            </if>
+            <if test="outLongitude != null">
+                out_longitude = #{outLongitude},
+            </if>
+            <if test="outPunchCardType != null">
+                out_punch_card_type = #{outPunchCardType},
+            </if>
+            <if test="signType != null">
+                sign_type = #{signType},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="insertSigntypeTime != null">
+                insert_signtype_time = #{insertSigntypeTime}
+            </if>
+        </set>
+        where emp_id = #{empId}
+    </update>
+
+    <select id="findByEmpId"  resultType="date">
+        select sign_time from oa_sign where emp_id=#{departmentId} and  sign_time LIKE CONCAT('%',#{date},'%')
+    </select>
+
+    <select id="getToDayData" resultMap="BaseResultMap">
+        select * from oa_sign where TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;= 1z;
+    </select>
+
+
+    <update id="updateSignTypeById">
+        update oa_sign set sign_type=#{signType} where emp_id=#{id}
+    </update>
+
+    <update id="updateSignTypeByEmpId">
+        update oa_sign set sign_type=#{signType} where emp_id=#{empId} and creat_time LIKE CONCAT('%',#{date},'%')
+    </update>
+
+    <update id="updateSignType">
+        update oa_sign set sign_type=#{signType} where id=#{id}
+    </update>
+
+    <select id="findBySignType" resultMap="BaseResultMap">
+        select * from oa_sign where TO_DAYS(insert_signtype_time) = TO_DAYS(NOW());
+    </select>
+
+    <select id="getNoSignEmployeeId" resultType="long">
+        SELECT oe.id from oa_employee as oe
+        LEFT JOIN oa_employee_org as oeo on oeo.emp_id = oe.id
+        where  oe.deleted != 1 and oe.account_type = 'EMPLOYEE'
+        and oe.employee_status = 'ON_JOB' and oeo.type='DIRECTLY' and oe.id not in
+        (select emp_id from oa_sign where TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;= 1)
+
+    </select>
+
+    <select id="getNoSignEmployeeCount" resultType="long">
+        select count(sign_type) from oa_sign as os
+LEFT JOIN oa_employee as oe on oe.id = os.emp_id
+LEFT JOIN oa_organization as oo on oo.id = os.company
+where sign_type = 'ABSENTEEISM' <include refid="searchEmployee"/>
+    </select>
+
+    <select id="findAttendance" resultType="long">
+        select count(*) from oa_sign where (sign_time is not NULL or signout_time is not NULL) and TO_DAYS(creat_time) = TO_DAYS(NOW())
+    </select>
+
+    <select id="findAllToDay" resultMap="BaseResultMap">
+        select * from oa_sign where TO_DAYS(creat_time) = TO_DAYS(NOW())
+    </select>
+
+    <select id="findOuter" resultType="long">
+        select count(*) from oa_sign as os
+LEFT JOIN oa_employee as oe on oe.id = os.emp_id
+LEFT JOIN oa_organization as oo on oo.id = os.company
+where (punch_card_type =2 or out_punch_card_type=2)
+        <if test="empName != null and empName != ''">
+            AND oe.name LIKE CONCAT('%',#{empName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND oo.org_name LIKE CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND os.creat_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND os.creat_time &lt;= #{endDate}
+        </if>
+        <if test="signType != null and signType != ''">
+            AND os.sign_type &lt;= #{signType}
+        </if>
+    </select>
+
+    <select id="findAllBeLate" resultType="long">
+        select count(sign_type) from oa_sign as os
+LEFT JOIN oa_employee as oe on oe.id = os.emp_id
+LEFT JOIN oa_organization as oo on oo.id = os.company
+where sign_type = 'BELATE' <include refid="searchEmployee"/>
+    </select>
+
+    <select id="findAllLeaveearly" resultType="long">
+        select count(sign_type) from oa_sign as os
+LEFT JOIN oa_employee as oe on oe.id = os.emp_id
+LEFT JOIN oa_organization as oo on oo.id = os.company
+where sign_type = 'LEAVEEARLY' <include refid="searchEmployee"/>
+    </select>
+
+    <select id="findbelateandleaveearly" resultType="long">
+        select count(sign_type) from oa_sign as os
+LEFT JOIN oa_employee as oe on oe.id = os.emp_id
+LEFT JOIN oa_organization as oo on oo.id = os.company
+where sign_type = 'BELATEANDLEAVEEARLY' <include refid="searchEmployee"/>
+    </select>
+
+
+    <select id="getSignOutTime" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM  oa_sign  WHERE  emp_id=#{empId} AND signout_time LIKE CONCAT('%',#{date},'%')
+    </select>
+
+    <select id="findSignTime" resultMap="BaseResultMap">
+        select * from oa_sign where emp_id = #{empId} and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </select>
+
+    <update id="updateToBELATE">
+        update oa_sign set sign_type = 'BELATE' where department = #{id} and (DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s') or  sign_time is NULL )
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&gt;= DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1;
+    </update>
+    <update id="updateToLEAVEEARLY">
+        update oa_sign set sign_type = 'LEAVEEARLY' where department = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&lt;= DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and (DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s') or signout_time is NULL )
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1;
+    </update>
+    <update id="updateToBELATEANDLEAVEEARLY">
+        update oa_sign set sign_type = 'BELATEANDLEAVEEARLY' where department = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and (DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s') or signout_time is NULL )
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+    <update id="updateToBELATEANDLEAVEEARLYDB">
+        update oa_sign set sign_type = 'BELATEANDLEAVEEARLY' where department = #{id} and (DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s') or sign_time is NULL )
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+    <update id="updateToNORMAL">
+        update oa_sign set sign_type = 'NORMAL' where department = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&lt;= DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&gt;= DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+
+
+    <update id="updateComToBELATE">
+        update oa_sign set sign_type = 'BELATE' where company = #{id} and (DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s') or  sign_time is NULL )
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&gt;= DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1;
+    </update>
+    <update id="updateComToLEAVEEARLY">
+        update oa_sign set sign_type = 'LEAVEEARLY' where company = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&lt;= DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and (DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s') or signout_time is NULL )
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1;
+    </update>
+    <update id="updateComToBELATEANDLEAVEEARLY">
+        update oa_sign set sign_type = 'BELATEANDLEAVEEARLY' where company = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and (DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s') or signout_time is NULL )
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+    <update id="updateComToBELATEANDLEAVEEARLYDB">
+        update oa_sign set sign_type = 'BELATEANDLEAVEEARLY' where company = #{id} and (DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&gt; DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s') or sign_time is NULL )
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&lt; DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+    <update id="updateComToNORMAL">
+        update oa_sign set sign_type = 'NORMAL' where company = #{id} and DATE_FORMAT(sign_time,'%Y-%m-%d %H-%i-%s')&lt;= DATE_FORMAT(#{signTime},'%Y-%m-%d %H-%i-%s')
+        and DATE_FORMAT(signout_time,'%Y-%m-%d %H-%i-%s')&gt;= DATE_FORMAT(#{signOutTime},'%Y-%m-%d %H-%i-%s')
+        and TO_DAYS(NOW())-TO_DAYS(creat_time) &lt;=1
+    </update>
+
+    <select id="findOldType"  resultMap="BaseResultMap">
+        select * from
+(SELECT sign_date as sign_time,employee_id,punch_card_type FROM  oa_sign_record  WHERE  employee_id=#{employeeId} AND sign_date LIKE CONCAT('%',#{formatDate},'%')
+and sign_type = '1' ORDER BY sign_date desc LIMIT 1) as a
+LEFT JOIN
+(SELECT sign_date as signout_time,employee_id,punch_card_type as out_punch_card_type FROM  oa_sign_record  WHERE  employee_id=#{employeeId} AND sign_date LIKE CONCAT('%',#{formatDate},'%')
+and sign_type = '2' ORDER BY sign_date desc LIMIT 1) as b
+on a.employee_id = b.employee_id
+    </select>
+
+    <update id="updateSignDate">
+        update oa_sign set sign_time = #{signDate}
+        where emp_id = #{empId} and   TO_DAYS(NOW()) - TO_DAYS(creat_time) &lt;= 1
+    </update>
+
+    <update id="updateSignOutDate">
+        update oa_sign set signout_time = #{signOutDate}
+        where emp_id = #{empId} and   TO_DAYS(NOW()) - TO_DAYS(creat_time) &lt;= 1
+    </update>
+
+    <select id="findSignByYesterdayAndEmpId" resultType="int">
+        SELECT count(id) FROM `oa_sign_zz` where   TO_DAYS(NOW()) - TO_DAYS(sign_time) &lt;= 1 and emp_id = #{empId};
+    </select>
+
+    <select id="findSign" resultMap="BaseResultMap">
+        select * from oa_sign where emp_id = #{empId} and creat_time BETWEEN #{yesterday} and #{today}
+    </select>
+
+
+
+    <select id="findWorkCoefficient" resultType="int">
+        select count(*) from oa_sign where emp_id = #{empId} and sign_time BETWEEN #{firstDay} AND #{lastDay}
+    </select>
+
+
+
+    <delete id="deleteTen">
+        delete  from oa_sign where  company = 194 and creat_time BETWEEN '2017-10-01 00:00:00' and '2017-11-01 00:00:00';
+    </delete>
+
+    <select id="getByEmpIdAndYesdate" resultMap="BaseResultMap">
+        select * from oa_sign
+        <where>
+            emp_id in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+               AND  creat_time BETWEEN #{yseterday} AND #{today}
+        </where>
+    </select>
+
+
+    <select id="findDepSignRecord"  resultMap="BaseResultMap">
+        select a.*,b.*,oe.id as emp_id,oe.name as creator,oo.signout_time as dep_signout_time,oo.sign_time as dep_sign_time,oo.id as department,oo2.id as company from oa_employee as oe LEFT JOIN(
+        SELECT employee_id as aemp_id,sign_type as work_type,MIN(sign_date) as sign_time,longitude,latitude,address,punch_card_type
+        FROM `oa_sign_record` where TO_DAYS(NOW())-TO_DAYS(sign_date) &lt;=1 and sign_type =  &apos;1&apos; GROUP BY employee_id) as a on oe.id=a.aemp_id
+        LEFT JOIN(
+        SELECT employee_id as bemp_id,sign_type as out_work_type,MAX(sign_date) as signout_time,longitude as out_longitude,
+        latitude as out_latitude,address as out_address,punch_card_type as out_punch_card_type
+        FROM `oa_sign_record` where TO_DAYS(NOW())-TO_DAYS(sign_date) &lt;=1 and sign_type =  &apos;2&apos; GROUP BY employee_id)as b on oe.id=b.bemp_id
+        LEFT JOIN oa_employee_org oeo on oeo.emp_id = oe.id
+        LEFT JOIN oa_organization as oo on oo.id = oeo.org_department_id
+        LEFT JOIN oa_organization as oo2 on oo2.id = oeo.org_company_id
+        where  oe.deleted != &apos;1&apos; and oe.account_type = 'EMPLOYEE'
+        and oe.employee_status = 'ON_JOB' and oeo.type='DIRECTLY'
+        and  oo.signout_time is not  null and oo.sign_time is not null
+    </select>
+    <select id="findComSignRecord"  resultMap="BaseResultMap">
+        select a.*,b.*,oe.id as emp_id,oe.name as creator,oo.signout_time as dep_signout_time,oo.sign_time as dep_sign_time,oo.id as company,oo2.id as department from oa_employee as oe LEFT JOIN(
+        SELECT employee_id as aemp_id,sign_type  as work_type,MIN(sign_date) as sign_time,longitude,latitude,address,punch_card_type
+        FROM `oa_sign_record` where TO_DAYS(NOW())-TO_DAYS(sign_date) &lt;=1 and sign_type =  &apos;1&apos; GROUP BY employee_id) as a on oe.id=a.aemp_id
+        LEFT JOIN(
+        SELECT employee_id as bemp_id,sign_type as out_work_type,MAX(sign_date) as signout_time,longitude as out_longitude,
+        latitude as out_latitude,address as out_address,punch_card_type as out_punch_card_type
+        FROM `oa_sign_record` where TO_DAYS(NOW())-TO_DAYS(sign_date) &lt;=1 and sign_type =  &apos;2&apos; GROUP BY employee_id)as b on oe.id=b.bemp_id
+        LEFT JOIN oa_employee_org oeo on oeo.emp_id = oe.id
+        LEFT JOIN oa_organization AS oo ON oo.id = oeo.org_company_id
+        LEFT JOIN oa_organization AS oo2 ON oo2.id = oeo.org_department_id
+        where  oe.deleted != &apos;1&apos; and oe.account_type = 'EMPLOYEE'
+        and oe.employee_status = 'ON_JOB' and oeo.type='DIRECTLY'
+        and  oo.signout_time is not  null and oo.sign_time is not null
+        and oeo.org_department_id is null
+
+    </select>
+
+
+    <delete id="deleteByCreateTime" parameterType="string">
+        delete from oa_sign where DATE(creat_time) = #{date}
+    </delete>
+
+
+    <sql id="searchEmployee">
+        <if test="empName != null and empName != ''">
+            AND oe.name LIKE CONCAT('%',#{empName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND oo.org_name LIKE CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND os.creat_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND os.creat_time &lt;= #{endDate}
+        </if>
+        <if test="punchCardType != null and punchCardType != ''">
+            AND os.punch_card_type = #{punchCardType}
+        </if>
+    </sql>
+</mapper>

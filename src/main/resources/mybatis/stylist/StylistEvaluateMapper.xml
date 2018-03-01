@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.EvaluateDao">
+	<resultMap id="BaseResultMap" type="cn.damei.entity.stylist.Evaluate">
+		<id column="id" property="id" />
+		<result column="job_no" property="jobNo" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="evaluate_month" property="evaluateMonth" />
+		<result column="score" property="score" />
+		<result column="create_user" property="createUser" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, job_no, mobile, evaluate_month, score, create_user
+	</sql>
+	<select id="getById" resultMap="BaseResultMap" parameterType="long">
+		select
+		<include refid="Base_Column_List" />
+		from oa_stylist_evaluate
+		where id = #{id}
+	</select>
+	<delete id="deleteById" parameterType="long">
+		delete from
+		oa_stylist_evaluate
+		where id = #{id}
+	</delete>
+	<insert id="insert" parameterType="cn.damei.entity.stylist.Evaluate"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into oa_stylist_evaluate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="jobNo != null">
+				job_no,
+			</if>
+			<if test="mobile != null">
+				mobile,
+			</if>
+			<if test="evaluateMonth != null">
+				evaluate_month,
+			</if>
+			<if test="score != null">
+				score,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="jobNo != null">
+				#{jobNo},
+			</if>
+			<if test="mobile != null">
+				#{mobile},
+			</if>
+			<if test="evaluateMonth != null">
+				#{evaluateMonth},
+			</if>
+			<if test="score != null">
+				#{score},
+			</if>
+			<if test="createUser != null">
+				#{createUser},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="cn.damei.entity.stylist.Evaluate">
+		update oa_stylist_evaluate
+		<set>
+			<if test="jobNo != null">
+				job_no = #{jobNo},
+			</if>
+			<if test="mobile != null">
+				mobile = #{mobile},
+			</if>
+			<if test="evaluateMonth != null">
+				evaluate_month = #{evaluateMonth},
+			</if>
+			<if test="score != null">
+				score = #{score},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!--批量插入 -->
+	<insert id="batchInsert">
+		INSERT INTO oa_stylist_evaluate(job_no, mobile, evaluate_month, score,create_user)
+		VALUES
+		<foreach collection="evaluateList" item="evaluate" separator=",">
+			(#{evaluate.jobNo},#{evaluate.mobile},#{evaluate.evaluateMonth},#{evaluate.score},#{evaluate.createUser})
+		</foreach>
+	</insert>
+
+	<select id="getEvaluateByCondition" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM oa_stylist_evaluate
+		<where>
+			<if test="jobNo != null">
+				AND job_no = #{jobNo}
+			</if>
+			<if test="evaluateMonth != null">
+				AND evaluate_month=#{evaluateMonth}
+			</if>
+		</where>
+	</select>
+
+	<select id="search" resultMap="BaseResultMap">
+		SELECT em.name ,ose.id, ose.job_no, ose.mobile,
+		ose.evaluate_month,
+		ose.score, ose.create_user FROM
+		oa_stylist_evaluate ose
+		LEFT JOIN
+		oa_employee em on
+		ose.job_no=em.job_num
+		<include refid="searchWhere" />
+	</select>
+
+	<sql id="searchWhere">
+		<where>
+			<if test="keyword != null">
+				AND (em.name LIKE CONCAT('%',#{keyword},'%') OR
+				ose.mobile LIKE
+				CONCAT('%',#{keyword},'%'))
+			</if>
+			<if test="evaluateMonth != null">
+				AND ose.evaluate_month = #{evaluateMonth}
+			</if>
+		</where>
+	</sql>
+</mapper>

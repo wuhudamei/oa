@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.sign.SignRecordDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.sign.SignRecord">
+        <id property="id" column="id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="signDate" column="sign_date"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="address" column="address"/>
+        <result property="punchCardType" column="punch_card_type"/>
+        <result property="signType" column="sign_type"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="cn.damei.entity.sign.SignRecord" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO oa_sign_record(employee_id,sign_date,longitude,latitude,address,punch_card_type,sign_type)
+        VALUES (#{employeeId},#{signDate},#{longitude},#{latitude},#{address},#{punchCardType},#{signType})
+    </insert>
+
+
+    <update id="update" parameterType="cn.damei.entity.sign.SignRecord">
+        UPDATE oa_sign_record
+        <set>
+            <if test="employeeId != null">
+                employee_id = #{employeeId},
+            </if>
+            <if test="signDate != null">
+                sign_date = #{signDate},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="punchCardType != null">
+                punch_card_type = #{punchCardType},
+            </if>
+            <if test="signType != null">
+                sign_type = #{signType},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getByEmpIdAndDate" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM  oa_sign_record  WHERE  employee_id=#{employeeId} AND sign_date LIKE CONCAT('%',#{date},'%') and sign_type = '1'  ORDER BY sign_date desc  LIMIT 1
+    </select>
+
+    <select id="getBySignOutTime" resultType="int">
+        SELECT count(*) FROM  oa_sign_record  WHERE  employee_id=#{employeeId} AND sign_date LIKE CONCAT('%',#{formatDate},'%') and sign_type = '2'
+    </select>
+
+    <select id="getSignOutTime"  resultMap="BaseResultMap">
+        SELECT * FROM  oa_sign_record  WHERE  employee_id=#{employeeId} AND sign_date LIKE CONCAT('%',#{formatDate},'%') and sign_type = '2'  ORDER BY sign_date desc  LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.damei.repository.account.RolePermissionDao">
+
+  <insert id="insert">
+		insert into oa_role_permission (role_id, permission_id) values (#{roleId}, #{permissionId})
+	</insert>
+
+  <insert id="insertList">
+    insert into oa_role_permission (role_id, permission_id)
+    values
+    <foreach collection="permIdList" index="idx" item="permissionId" separator=",">
+      (${roleId}, ${permissionId})
+    </foreach>
+  </insert>
+
+  <delete id="deleteByRoleId" parameterType="long">
+		delete from oa_role_permission where role_id = #{roleId}
+	</delete>
+
+  <select id="findRolePermission" parameterType="long" resultType="Permission">
+		SELECT DISTINCT
+		p.*,
+		CASE
+		WHEN rp.role_id IS NOT NULL THEN
+		'true'
+		ELSE
+		'false'
+		END AS checked
+		FROM
+		oa_permission p
+		LEFT JOIN oa_role_permission rp ON (p.id = rp.permission_id AND rp.role_id = #{roleId})
+		where p.module &lt;&gt; 'embed'
+		order by seq, p.id
+	</select>
+
+	<select id="findSubjectIdsByRoleId" resultType="long">
+		SELECT permission_id from oa_role_permission where role_id in
+		<foreach collection="permIdList" index="idx" item="role" separator="," open="(" close=")">
+			${role}
+		</foreach>
+	</select>
+</mapper>

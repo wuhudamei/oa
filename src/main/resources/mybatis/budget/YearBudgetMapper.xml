@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.budget.YearBudgetDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.budget.YearBudget">
+    <result column="id" property="id"/>
+    <result column="apply_code" property="applyCode"/>
+    <result column="apply_title" property="applyTitle"/>
+    <result column="apply_company" property="applyCompany.id"/>
+    <result column="apply_time" property="applyTime"/>
+    <result column="budget_year" property="budgetYear"/>
+    <result column="status" property="status"/>
+    <result column="attachment" property="attachment"/>
+    <result column="total_money" property="totalMoney"/>
+    <result column="create_time" property="createTime"/>
+    <result column="reason" property="reason"/>
+    <result column="type" property="type"/>
+    <result column="user_id" property="applyUser.id"/>
+    <result column="current_approver_name" property="currentApproverName"/>
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    id, apply_code, apply_title, apply_company, apply_time, budget_year, status, attachment,total_money,create_time,reason,type,user_id
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select * from oa_year_budget where id=#{id}
+  </select>
+  <select id="getByTypeAndYear" resultType="int">
+    select count(1) from oa_year_budget where type=#{type} and budget_year=#{budgetYear} and apply_company=#{applyCompany}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_year_budget
+    where id=#{id}
+  </delete>
+
+  <select id="search" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    BU.id ,
+    BU.apply_title ,
+    BU.type ,
+    BU.apply_code ,
+    BU.apply_company ,
+    BU.apply_time ,
+    BU. STATUS ,
+    BU.attachment,
+    BU.total_money,
+    BU.budget_year ,
+    BU.reason ,
+    BU.type,
+    BU.user_id ,
+    BU.create_time ,
+    EM. NAME create_user_name ,
+    ORG.org_name company_name ,
+    WF.current_approver_name
+    FROM
+    oa_year_budget BU
+    LEFT JOIN oa_employee EM ON BU.user_id = EM.id
+    LEFT JOIN oa_organization ORG ON BU.apply_company = ORG.id
+    LEFT JOIN(
+    SELECT
+    x.form_id ,
+    group_concat(y.NAME) AS current_approver_name FROM oa_wf_process x LEFT JOIN oa_employee y ON x.approver_id = y.id
+    WHERE x.type = 'YEARBUDGET' AND x.`status` = 'PENDING' GROUP BY apply_code
+    ) WF ON BU.id = WF.form_id
+    <include refid="searchWhere"/>
+    <if test="sort != null">
+      ORDER BY
+      <foreach collection="sort" item="order" separator=",">
+        BU.${order.property} ${order.direction}
+      </foreach>
+    </if>
+  </select>
+
+  <sql id="searchWhere">
+    <where>
+      <if test="userId != null">
+        AND BU.user_id = #{userId}
+      </if>
+      <if test="keyword != null">
+        AND (BU.apply_title LIKE CONCAT('%',#{keyword},'%') OR BU.apply_code LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+      <if test="status!=null">
+        AND BU.status=#{status}
+      </if>
+    </where>
+  </sql>
+
+  <insert id="insert" keyProperty="id" parameterType="YearBudget" useGeneratedKeys="true">
+    insert into oa_year_budget
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applyCode != null">
+        apply_code,
+      </if>
+      <if test="applyTitle != null">
+        apply_title,
+      </if>
+      <if test="applyCompany.id != null">
+        apply_company,
+      </if>
+      <if test="applyTime != null">
+        apply_time,
+      </if>
+      <if test="budgetYear != null">
+        budget_year,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="attachment != null">
+        attachment,
+      </if>
+      <if test="totalMoney != null">
+        total_money,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="applyUser.id != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applyCode != null">
+        #{applyCode},
+      </if>
+      <if test="applyTitle != null">
+        #{applyTitle},
+      </if>
+      <if test="applyCompany.id != null">
+        #{applyCompany.id},
+      </if>
+      <if test="applyTime != null">
+        #{applyTime},
+      </if>
+      <if test="budgetYear != null">
+        #{budgetYear},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="attachment != null">
+        #{attachment},
+      </if>
+      <if test="totalMoney != null">
+        #{totalMoney},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+      <if test="reason != null">
+        #{reason},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="applyUser.id != null">
+        #{applyUser.id}
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="YearBudget">
+    update oa_year_budget
+    <set>
+      <if test="applyTime != null">
+        apply_time=#{applyTime},
+      </if>
+      <if test="budgetYear != null">
+        budget_year=#{budgetYear},
+      </if>
+      <if test="status != null">
+        status=#{status},
+      </if>
+      <if test="attachment != null">
+        attachment = #{attachment},
+      </if>
+      <if test="reason != null">
+        reason=#{reason},
+      </if>
+    </set>
+    where id=#{id}
+  </update>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.budget.PaymentDetailsDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.budget.PaymentDetails">
+    <id column="id" property="id"/>
+    <result column="payment_id" property="paymentId"/>
+    <result column="cost_date" property="costDate"/>
+    <result column="cost_item_id" property="costItemId"/>
+    <result column="cost_item_name" property="costItemName"/>
+    <result column="cost_detail_id" property="costDetailId"/>
+    <result column="cost_detail_name" property="costDetailName"/>
+    <result column="money" property="money"/>
+    <result column="invoice_num" property="invoiceNum"/>
+    <result column="remark" property="remark"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cost_date,payment_id, cost_item_id,cost_detail_id, money,invoice_num, remark
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_payment_details
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_payment_details
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="PaymentDetails" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into oa_payment_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="paymentId != null">
+        payment_id,
+      </if>
+      <if test="cost_date != null">
+        cost_date,
+      </if>
+      <if test="costItemId != null">
+        cost_item_id,
+      </if>
+      <if test="costDetailId != null">
+        cost_detail_id,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="invoiceNum != null">
+        invoice_num,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="paymentId != null">
+        #{paymentId},
+      </if>
+      <if test="costDate">
+        #{costDate},
+      </if>
+      <if test="costItemId != null">
+        #{costItemId},
+      </if>
+      <if test="costDetailId != null">
+        #{costDetailId},
+      </if>
+      <if test="money != null">
+        #{money},
+      </if>
+      <if test="invoiceNum != null">
+        #{invoiceNum},
+      </if>
+      <if test="remark != null">
+        #{remark},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="PaymentDetails">
+    update oa_payment_details
+    <set>
+      <if test="paymentId != null">
+        payment_id = #{paymentId},
+      </if>
+      <if test="costDate != null">
+        cost_date = #{costDate},
+      </if>
+      <if test="costItemId != null">
+        cost_item_id = #{costItemId},
+      </if>
+      <if test="costDetailId != null">
+        cost_detail_id = #{costDetailId},
+      </if>
+      <if test="money != null">
+        money = #{money},
+      </if>
+      <if test="invoiceNum != null">
+        invoice_num = #{invoiceNum},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="batchInsert">
+    INSERT INTO oa_payment_details(payment_id, cost_date, cost_item_id, cost_detail_id, money, invoice_num, remark)
+    VALUES
+    <foreach collection="paymentDetails" item="payment" separator=",">
+      (#{payment.paymentId},#{payment.costDate},
+      #{payment.costItemId},#{payment.costDetailId},#{payment.money},#{payment.invoiceNum},#{payment.remark})
+    </foreach>
+  </insert>
+
+  <delete id="deleteByPaymentId">
+    DELETE FROM oa_payment_details where payment_id = #{paymentId}
+  </delete>
+
+  <select id="getByPaymentId" resultMap="BaseResultMap">
+    SELECT
+    A.id, A.payment_id,A.cost_date, A.cost_item_id, B.name AS cost_item_name, A.cost_detail_id, D.name AS cost_detail_name, A.money,A.invoice_num, A.remark
+    FROM oa_payment_details A
+    LEFT JOIN oa_dictionary B ON A.cost_item_id = B.id
+    LEFT JOIN oa_dictionary D ON A.cost_detail_id = D.id
+    WHERE A.payment_id=#{paymentId}
+  </select>
+
+  <select id="findByConditions" resultMap="BaseResultMap">
+    SELECT D.id, D.payment_id,D.cost_date, D.cost_item_id, D.cost_detail_id, D.money, D.invoice_num, D.remark
+    FROM oa_payment P JOIN oa_payment_details D ON P.id = D.payment_id
+    WHERE P.company_id = #{companyId} AND P.payment_date = #{month} AND type = #{type}
+    <if test="statuses != null">
+      AND
+      <foreach collection="statuses" item="status" open="(" close=")" separator="OR">
+        status = #{status}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="getDetailsBySignatureId" resultMap="BaseResultMap">
+    SELECT D.id, D.payment_id,D.cost_date, D.cost_item_id, D.cost_detail_id, D.money, D.invoice_num, D.remark
+    FROM oa_payment P JOIN oa_payment_details D ON P.id = D.payment_id
+    WHERE P.signature_id = #{signatureId}
+    <if test="statuses != null">
+      AND
+      <foreach collection="statuses" item="status" open="(" close=")" separator="OR">
+        status = #{status}
+      </foreach>
+    </if>
+  </select>
+</mapper>

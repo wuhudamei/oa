@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StRdBillBatchDao">
+
+    <resultMap id="BaseResultMap" type="StRdBillBatch">
+     	<result property="billBatchId" column="billBatchId"/>
+     	<result property="supplier" column="supplier"/>
+     	<result property="billAmountMoney" column="bill_amount_money"/>
+        <result property="billBatch" column="bill_batch"/>
+        <result property="batchExplain" column="batch_explain"/>
+        <result property="settlementPeriod" column="settlement_period"/>
+        <result property="operator" column="operator"/>
+        <result property="operateTime" column="operate_time"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT supplier,bill_batch,settlement_time,operate_time,bill_amount_money,batch_explain
+        FROM ST_RD_Bill_Batch
+        <where>
+            <if test="supplier != null and supplier != ''">
+                supplier = #{supplier}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND operate_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND operate_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY operate_time DESC
+    </select>
+    <select id="selectByDate" resultType="java.lang.String">
+        SELECT MAX(bill_batch) AS billBatch
+        FROM ST_RD_Bill_Batch
+        where bill_batch LIKE concat(#{currentDate},'%')
+    </select>
+    <insert id="insert">
+        INSERT INTO ST_RD_Bill_Batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billBatchId != null">
+                  id,
+            </if>
+            <if test="supplier != null">
+                supplier,
+            </if>
+            <if test="billAmountMoney != null">
+                bill_amount_money,
+            </if>
+            <if test="billBatch != null">
+                bill_batch,
+            </if>
+            <if test="batchExplain != null">
+                batch_explain,
+            </if>
+            <if test="settlementPeriod != null">
+                settlement_period,
+            </if>
+            <if test="operator != null">
+                operator,
+            </if>
+            <if test="operateTime != null">
+                operate_time,
+            </if>
+            <if test="updateName != null">
+                update_name,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remarks != null">
+                remarks
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billBatchId != null">
+                #{billBatchId},
+            </if>
+            <if test="supplier != null">
+                #{supplier},
+            </if>
+            <if test="billAmountMoney != null">
+                #{billAmountMoney},
+            </if>
+            <if test="billBatch != null">
+                #{billBatch},
+            </if>
+            <if test="batchExplain != null">
+                #{batchExplain},
+            </if>
+            <if test="settlementPeriod != null">
+                #{settlementPeriod},
+            </if>
+            <if test="operator != null">
+                #{operator},
+            </if>
+            <if test="operateTime != null">
+                #{operateTime},
+            </if>
+            <if test="updateName != null">
+                #{updateName},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remarks != null">
+                #{remarks}
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

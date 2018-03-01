@@ -1,0 +1,112 @@
+
+/* WIDGETS */
+
+.widget {
+    border-radius: 5px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.widget.style1 h2 {
+    font-size: 30px;
+}
+
+.widget h2,
+.widget h3 {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.widget-text-box {
+    padding: 20px;
+    border: 1px solid #e7eaec;
+    background: #ffffff;
+}
+
+.widget-head-color-box {
+    border-radius: 5px 5px 0px 0px;
+    margin-top: 10px;
+}
+
+.widget .flot-chart {
+    height: 100px;
+}
+
+.vertical-align div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.vertical-align h2,
+.vertical-align h3 {
+    margin: 0;
+}
+
+.todo-list {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+.todo-list.small-list {
+    font-size: 12px;
+}
+
+.todo-list.small-list > li {
+    background: #f3f3f4;
+    border-left: none;
+    border-right: none;
+    border-radius: 4px;
+    color: inherit;
+    margin-bottom: 2px;
+    padding: 6px 6px 6px 12px;
+}
+
+.todo-list.small-list .btn-xs,
+.todo-list.small-list .btn-group-xs > .btn {
+    border-radius: 5px;
+    font-size: 10px;
+    line-height: 1.5;
+    padding: 1px 2px 1px 5px;
+}
+
+.todo-list > li {
+    background: #f3f3f4;
+    border-left: 6px solid #e7eaec;
+    border-right: 6px solid #e7eaec;
+    border-radius: 4px;
+    color: inherit;
+    margin-bottom: 2px;
+    padding: 10px;
+}
+
+.todo-list .handle {
+    cursor: move;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0 5px;
+}
+
+.todo-list > li .label {
+    font-size: 9px;
+    margin-left: 10px;
+}
+
+.check-link {
+    font-size: 16px;
+}
+
+.todo-completed {
+    text-decoration: line-through;
+}
+
+.geo-statistic h1 {
+    font-size: 36px;
+    margin-bottom: 0;
+}
+
+.glyphicon.fa {
+    font-family: "FontAwesome";
+}

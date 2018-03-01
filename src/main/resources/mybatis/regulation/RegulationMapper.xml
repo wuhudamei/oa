@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.regulation.RegulationDao">
+    <resultMap id="BaseResultMap" type="Regulation">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="type" property="type"/>
+        <result column="type_name" property="typeName"/>
+        <result column="status" property="status"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="file_name" property="fileName"/>
+        <result column="sort" property="sort"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="org_id" property="orgId"/>
+        <result column="org_familyCode" property="orgFamilyCode"/>
+        <result column="org_name" property="orgName"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="Regulation" extends="BaseResultMap">
+        <result column="content" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, type, status, file_url,file_name,sort,create_user, create_time,org_familyCode,org_id
+  </sql>
+    <sql id="Blob_Column_List">
+    content
+  </sql>
+    <select id="getById" resultMap="ResultMapWithBLOBs" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from oa_regulation
+        where id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+    delete from oa_regulation
+    where id = #{id}
+  </delete>
+    <insert id="insert" parameterType="Regulation" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_regulation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                title,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="fileUrl != null">
+                file_url,
+            </if>
+            <if test="fileName != null">
+                file_name,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="orgFamilyCode != null">
+                org_familyCode,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="fileUrl != null">
+                #{fileUrl},
+            </if>
+            <if test="fileName != null">
+                #{fileName},
+            </if>
+            <if test="sort != null">
+                #{sort},
+            </if>
+            <if test="createUser != null">
+                #{createUser},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="orgId != null">
+                #{orgId},
+            </if>
+            <if test="orgFamilyCode != null">
+                #{orgFamilyCode},
+            </if>
+
+        </trim>
+    </insert>
+    <update id="update" parameterType="Regulation">
+        update oa_regulation
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="fileUrl != null">
+                file_url = #{fileUrl},
+            </if>
+            <if test="fileName != null">
+                file_name = #{fileName},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="orgFamilyCode != null">
+                org_familyCode = #{orgFamilyCode},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="search" resultMap="BaseResultMap">
+        SELECT
+            reg.id,
+            reg.title,
+            reg.type,
+            od. NAME AS type_name,
+            reg.STATUS,
+            reg.file_url,
+            reg.file_name,
+            reg.sort,
+            reg.create_user,
+            reg.create_time,
+            oo.org_name,
+            reg.org_familyCode,
+            reg.org_id
+        FROM oa_regulation reg
+        LEFT JOIN oa_dictionary od ON reg.type = od.id
+        LEFT JOIN oa_employee_org oeo ON oeo.emp_id = reg.create_user
+        left join oa_organization oo on oo.id=oeo.org_id
+        <include refid="searchWhere"/>
+        ORDER BY
+        reg.sort ASC
+    </select>
+
+    <sql id="searchWhere">
+        <where>
+            <if test="keyword != null">
+                AND reg.title LIKE CONCAT('%',#{keyword},'%')
+            </if>
+            <if test="type != null">
+                AND reg.type = #{type}
+            </if>
+            <if test="userId != null">
+                AND reg.org_id LIKE CONCAT('%',(select org_id from oa_employee_org where emp_id = #{userId}),'%') OR reg.create_user = #{userId}
+            </if>
+        </where>
+    </sql>
+
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.damei.repository.upload.SequenceDao">
+
+    <select id="getCurVal" resultType="Integer">
+        select cur_val from sequence where tab = #{seqTab}
+    </select>
+
+    <update id="next">
+        update sequence set cur_val = cur_val + incr_by where tab = #{seqTab}
+    </update>
+</mapper>

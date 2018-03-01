@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.employee.EmployeeEduDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.employee.EmployeeEdu">
+    <id column="id" property="id"/>
+    <result column="emp_id" property="empId"/>
+    <result column="start_date" property="startDate"/>
+    <result column="end_date" property="endDate"/>
+    <result column="school_name" property="schoolName"/>
+    <result column="subject" property="subject"/>
+    <result column="degree" property="degree"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id, emp_id, start_date, end_date, school_name, subject, degree
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee_edu
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from oa_employee_edu
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.employee.EmployeeEdu" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_employee_edu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="startDate != null">
+        start_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+      <if test="schoolName != null">
+        school_name,
+      </if>
+      <if test="subject != null">
+        subject,
+      </if>
+      <if test="degree != null">
+        degree,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        #{empId},
+      </if>
+      <if test="startDate != null">
+        #{startDate},
+      </if>
+      <if test="endDate != null">
+        #{endDate},
+      </if>
+      <if test="schoolName != null">
+        #{schoolName},
+      </if>
+      <if test="subject != null">
+        #{subject},
+      </if>
+      <if test="degree != null">
+        #{degree},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.employee.EmployeeEdu">
+    update oa_employee_edu
+    <set>
+      <if test="empId != null">
+        emp_id = #{empId},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate},
+      </if>
+      <if test="schoolName != null">
+        school_name = #{schoolName},
+      </if>
+      <if test="subject != null">
+        subject = #{subject},
+      </if>
+      <if test="degree != null">
+        degree = #{degree},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO oa_employee_edu(emp_id, start_date, end_date, school_name, subject, degree)
+    VALUES
+    <foreach collection="edus" item="edu" separator=",">
+      (#{edu.empId},#{edu.startDate},#{edu.endDate},#{edu.schoolName},#{edu.subject},#{edu.degree})
+    </foreach>
+  </insert>
+
+  <select id="findByEmpId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee_edu WHERE emp_id = #{empId}
+  </select>
+
+  <delete id="deleteByEmpId">
+    DELETE FROM oa_employee_edu WHERE emp_id = #{empId}
+  </delete>
+</mapper>

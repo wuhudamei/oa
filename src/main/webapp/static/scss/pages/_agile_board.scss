@@ -1,0 +1,45 @@
+
+/* AGILE BOARD */
+
+.sortable-list {
+    padding: 10px 0;
+}
+
+.agile-list {
+    list-style: none;
+    margin: 0;
+}
+
+.agile-list li {
+    background: #FAFAFB;
+    border: 1px solid #e7eaec;
+    margin: 0px 0 10px 0;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.agile-list li:hover {
+    cursor: pointer;
+    background: #fff;
+}
+
+.agile-list li.warning-element {
+    border-left: 3px solid #f8ac59;
+}
+
+.agile-list li.danger-element {
+    border-left: 3px solid #ed5565;
+}
+
+.agile-list li.info-element {
+    border-left: 3px solid #1c84c6;
+}
+
+.agile-list li.success-element {
+    border-left: 3px solid #1ab394;
+}
+
+.agile-detail {
+    margin-top: 5px;
+    font-size: 12px;
+}

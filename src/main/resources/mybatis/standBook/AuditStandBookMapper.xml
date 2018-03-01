@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.AuditStandBookDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.AuditStandBook">
+        <result property="orderNo" column="orderno"/>
+        <result property="submitAuditTime" column="submitaudit_time"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="assignAuditTime" column="assign_audit_time"/>
+        <result property="submitOrderTime" column="submitorder_time"/>
+        <result property="submitMaterialTime" column="submitMaterialTime"/>
+        <result property="materialAuditTime" column="materialAuditTime"/>
+        <result property="changeNo" column="changeno"/>
+        <result property="auditorRealname" column="auditor_realname"/>
+        <result property="changeSubmitAuditTime" column="change_submitaudit_time"/>
+        <result property="changeAuditTime" column="change_audit_time"/>
+    </resultMap>
+
+    <select id="findContractAudit" resultMap="BaseResultMap">
+        SELECT scs.orderno,scs.submitaudit_time,scs.audit_time,scs.assign_audit_time,sc.submitorder_time,scs.auditor_realname
+        FROM ST_RD_CustomerMaterial_SubmitOrder scs
+        LEFT JOIN ST_RD_CustomerMaterial sc ON scs.material_pkid = sc.pkid
+        WHERE scs.orderno = #{orderNo}
+    </select>
+
+</mapper>

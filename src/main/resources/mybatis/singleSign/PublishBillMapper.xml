@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.damei.repository.signbill.PublishBillDao">
+
+    <resultMap id="BaseResultMap" type="cn.damei.entity.singleSign.SignAndPublish">
+        <id property="id" column="pid"/>
+        <result property="punishCode" column="punish_code"/>
+        <result property="punishDepartment" column="punish_department"/>
+        <result property="punishMan" column="punish_man"/>
+        <result property="punishView" column="punish_view"/>
+        <result property="punishReason" column="punish_reason"/>
+        <result property="punishMoney" column="punish_money"/>
+        <result property="signCode" column="sign_code"/>
+        <result property="subCompany" column="sub_company"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerPhone" column="customer_phone"/>
+        <result property="orderAddress" column="order_address"/>
+        <result property="procedureDescribe" column="procedure_describe"/>
+        <result property="managerView" column="manager_view"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    
+    <sql id="my_where">
+			<if test="company != null and company != ''">
+				and os.sub_company = #{company}
+			</if>
+			<if test="beginDate != null and beginDate != '' ">
+				and os.create_time &gt;= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != '' ">
+				and os.create_time &lt;= #{endDate}
+			</if>
+			<if test="statue != null and statue != '' ">
+				and op.status = #{statue}
+			</if>
+			<if test="department != null and department != '' ">
+				and op.punish_department = #{department}
+			</if>
+			<if test="search != null and search != '' ">
+				and os.customer_name like '%${search}%'
+			</if>
+			<if test="search != null and search != '' ">
+				or os.customer_phone like '%${search}%'
+			</if>
+	</sql>
+
+    <select id="search" parameterType="Map" resultMap="BaseResultMap">
+		SELECT DISTINCT op.pid,ooc.`org_name` AS sub_company,os.`order_num`,os.`customer_name`,os.`customer_phone`,os.`order_address`,
+		os.`procedure_describe`,os.`manager_view`,os.`sign_code`,
+		op.`punish_code`,op.`punish_money`,op.`punish_reason`,op.`status`,op.`create_time`,
+		oo.`org_name` AS punish_department,oe.`name` AS punish_man FROM oa_signbill os 
+		LEFT JOIN oa_publishbill op ON os.`sign_code`=op.`sign_code`
+		LEFT JOIN oa_organization ooc ON os.`sub_company`=ooc.`id`
+		LEFT JOIN oa_organization oo ON op.`punish_department`=oo.`id`
+		LEFT JOIN oa_employee oe ON op.`punish_man`=oe.`id`
+		<where>
+		 	<include refid="my_where"/>
+		</where>
+		order by os.create_time desc
+    </select>
+    
+    
+   	<insert id="insertPublishBill" parameterType="cn.damei.entity.singleSign.PublishBill">
+   		INSERT INTO oa_publishbill(punish_code,punish_department,punish_man,punish_reason,punish_money,sign_code,status,create_user,create_time)
+        VALUES (#{punishCode},#{punishDepartment},#{punishMan},#{punishReason},#{punishMoney},#{signCode},#{status},#{createUser},#{createTime})
+   	</insert>
+   	
+   	<select id="getCurrentOrderNum" parameterType="map" resultType="string">
+    	<![CDATA[
+			select case when max(punish_code) is not null then max(punish_code) + 1 else CONCAT(${currentDate},'001') 
+			end curOrderNum from oa_publishbill where punish_code like '%${currentDate}%'
+        ]]>
+    </select>
+    
+    <update id="updateStatus" parameterType="String">
+    	update oa_publishbill set status=1 where pid=#{id}
+    </update>
+    
+    <delete id="deleteById" parameterType="Long">
+    	delete from oa_publishbill where pid=#{id}
+    </delete>
+    
+    <select id="findTotalNumBySignCode" parameterType="String" resultType="Integer">
+    	SELECT COUNT(*)
+		FROM oa_publishbill
+		WHERE sign_code = #{signCode}
+    </select>
+</mapper>

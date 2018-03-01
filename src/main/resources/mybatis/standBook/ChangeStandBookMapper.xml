@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.ChangeStandBookDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.ChangeStandBook">
+        <result column="createtime" property="createTime"/>
+        <result column="realname" property="realName"/>
+        <result column="now_pd_count" property="nowPdCount"/>
+        <result column="pd_price" property="pdPrice"/>
+        <result column="flagname" property="flagname"/>
+        <result column="pd_skuname" property="pdSkuname"/>
+        <result column="pd_name" property="pdName"/>
+        <result column="pd_model" property="pdModel"/>
+        <result column="pd_brandname" property="pdBrandname"/>
+        <result column="pd_sku_salesattribute" property="pdSkuSalesattribute"/>
+        <result column="pd_measureunit" property="pdMeasureunit"/>
+        <result column="pd_count" property="pdCount"/>
+        <result column="pd_total" property="pdTotal"/>
+        <result column="now_pd_total" property="nowPdTotal"/>
+        <result column="item_type" property="itemType"/>
+        <result column="changeno" property="changeNo"/>
+        <result column="increment_item" property="incrementItem"/>
+        <result column="quota_way" property="quotaWay"/>
+    </resultMap>
+
+    <select id="findChange" resultMap="BaseResultMap">
+       SELECT  ch.createtime,su.realname,si.now_pd_count,si.pd_count,si.now_pd_count-si.pd_count as increment_item,si.pd_price,
+                si.pd_total,si.now_pd_total,si.item_type,src.flagname,
+                si.pd_skuname,si.pd_name,si.pd_model,si.pd_brandname,si.pd_sku_salesattribute,si.pd_measureunit,ch.changeno,si.quota_way
+       FROM ST_RD_Item_History si
+       LEFT JOIN ST_RD_CustomerMaterial sc ON si.material_pkid = sc.pkid
+       LEFT JOIN ST_RD_Category src ON si.item_categoryid = src.pkid
+       LEFT JOIN ST_UserRelationRole su ON si.createuser = su.userid
+	   LEFT JOIN ST_RD_CustomerMaterial_History ch ON ch.changeno = si.changeno
+       WHERE sc.orderno = #{orderno} AND (si.pd_count != si.now_pd_count) order by si.createtime,su.realname,ch.changeno
+    </select>
+    <select id="findInstallBaseChange" parameterType="String" resultType="Map">
+        select a.OrderNo,b.* from
+        Ord_ConstructionChange a
+        left join Ord_ConstructionChange_child b
+        on a.ConstructionChangeNo=b.ConstructionChangeNo where OrderNo = #{orderno} AND b.pkid is not null
+    </select>
+
+</mapper>

@@ -1,0 +1,275 @@
+
+/*
+ *
+ *   SKIN 3 - H+ - 后台主题UI框架
+ *   NAME - Yellow/purple
+ *
+*/
+
+.skin-3 .minimalize-styl-2 {
+    margin: 14px 5px 5px 30px;
+}
+
+.skin-3 .navbar-top-links li:last-child {
+    margin-right: 30px;
+}
+
+.skin-3.fixed-nav .minimalize-styl-2 {
+    margin: 14px 5px 5px 15px;
+}
+
+.skin-3 .spin-icon {
+    background: #ecba52 !important;
+}
+
+body.boxed-layout.skin-3 #wrapper {
+    background: #3e2c42;
+}
+
+.skin-3 .nav-header {
+    background: #ecba52;
+    background: url('patterns/header-profile-skin-3.png');
+}
+
+.skin-3.mini-navbar .nav-second-level {
+    background: #3e2c42;
+}
+
+.skin-3 .breadcrumb {
+    background: transparent;
+}
+
+.skin-3 .page-heading {
+    border: none;
+}
+
+.skin-3 .nav > li.active {
+    background: #38283c;
+}
+
+.fixed-nav.skin-3 .navbar-fixed-top {
+    background: #fff;
+}
+
+.skin-3 .nav > li > a {
+    color: #948b96;
+}
+
+.skin-3 .nav > li.active > a {
+    color: #fff;
+}
+
+.skin-3 .navbar-minimalize {
+    background: #ecba52;
+    border-color: #ecba52;
+}
+
+body.skin-3 {
+    background: #3e2c42;
+}
+
+.skin-3 .navbar-static-top {
+    background: #ffffff;
+}
+
+.skin-3 .dashboard-header {
+    background: transparent;
+    border-bottom: none !important;
+    border-top: none;
+    padding: 20px 30px 10px 30px;
+}
+
+.skin-3 .wrapper-content {
+    padding: 30px 15px;
+}
+
+.skin-3 #page-wrapper {
+    background: #f4f6fa;
+}
+
+.skin-3 .ibox-title,
+.skin-3 .ibox-content {
+    border-width: 1px;
+}
+
+.skin-3 .ibox-content:last-child {
+    border-style: solid solid solid solid;
+}
+
+.skin-3 .nav > li.active {
+    border: none;
+}
+
+.skin-3 .nav-header {
+    padding: 35px 25px 25px 25px;
+}
+
+.skin-3 .nav-header a.dropdown-toggle {
+    color: #fff;
+    margin-top: 10px;
+}
+
+.skin-3 .nav-header a.dropdown-toggle .text-muted {
+    color: #fff;
+    opacity: 0.8;
+}
+
+.skin-3 .profile-element {
+    text-align: center;
+}
+
+.skin-3 .img-circle {
+    border-radius: 5px;
+}
+
+.skin-3 .navbar-default .nav > li > a:hover,
+.skin-3 .navbar-default .nav > li > a:focus {
+    background: #38283c;
+    color: #fff;
+}
+
+.skin-3 .nav.nav-tabs > li.active > a {
+    color: #555;
+}
+
+.skin-3 .nav.nav-tabs > li.active {
+    background: transparent;
+}
+
+.skin-3 .content-tabs {
+    border-bottom: solid 2px #3e2c42;
+}
+
+.skin-3 .nav.nav-tabs > li.active {
+    background: transparent;
+}
+
+.skin-3 .page-tabs a.active {
+    background: #3e2c42;
+    color: #fff;
+}
+
+.skin-3 .page-tabs a.active:hover,
+.skin-3 .page-tabs a.active i:hover {
+    background: #38283c;
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .navbar-top-links .dropdown-messages,
+    .navbar-top-links .dropdown-tasks,
+    .navbar-top-links .dropdown-alerts {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    body.fixed-sidebar .navbar-static-side {
+        display: none;
+    }
+    body.fixed-sidebar.mini-navbar .navbar-static-side {
+        width: 70px;
+    }
+    .lock-word {
+        display: none;
+    }
+    .navbar-form-custom {
+        display: none;
+    }
+    .navbar-header {
+        display: inline;
+        float: left;
+    }
+    .sidebard-panel {
+        z-index: 2;
+        position: relative;
+        width: auto;
+        min-height: 100% !important;
+    }
+    .sidebar-content .wrapper {
+        padding-right: 0px;
+        z-index: 1;
+    }
+    .fixed-sidebar.body-small .navbar-static-side {
+        display: none;
+        z-index: 2001;
+        position: fixed;
+        width: 220px;
+    }
+    .fixed-sidebar.body-small.mini-navbar .navbar-static-side {
+        display: block;
+    }
+    .ibox-tools {
+        float: none;
+        text-align: right;
+        display: block;
+    }
+    .content-tabs {
+        display: none;
+    }
+    #content-main {
+        height: calc(100% - 100px);
+    }
+    .fixed-nav #content-main {
+        height: calc(100% - 38px);
+    }
+}
+
+.navbar-static-side {
+    background: #2f4050;
+}
+
+.nav-close {
+    padding: 10px;
+    display: block;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 1.4em;
+    cursor: pointer;
+    z-index: 10;
+    display: none;
+    color: rgba(255, 255, 255, .3);
+}
+
+@media (max-width: 350px) {
+    body.fixed-sidebar.mini-navbar .navbar-static-side {
+        width: 0;
+    }
+    .nav-close {
+        display: block;
+    }
+    #page-wrapper {
+        margin-left: 0!important;
+    }
+    .timeline-item .date {
+        text-align: left;
+        width: 110px;
+        position: relative;
+        padding-top: 30px;
+    }
+    .timeline-item .date i {
+        position: absolute;
+        top: 0;
+        left: 15px;
+        padding: 5px;
+        width: 30px;
+        text-align: center;
+        border: 1px solid #e7eaec;
+        background: #f8f8f8;
+    }
+    .timeline-item .content {
+        border-left: none;
+        border-top: 1px solid #e7eaec;
+        padding-top: 10px;
+        min-height: 100px;
+    }
+    .nav.navbar-top-links li.dropdown {
+        display: none;
+    }
+    .ibox-tools {
+        float: none;
+        text-align: left;
+        display: inline-block;
+    }
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.DismantleStandBookDao">
+
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.DismantleStandBook">
+        <result property="orderNo" column="orderno"/>
+        <result property="pdCategoryName" column="pd_categoryname"/>
+        <result property="pdName" column="pd_name"/>
+        <result property="pdMeasureunit" column="pd_measureunit"/>
+        <result property="addCount" column="add_count"/>
+        <result property="quotaWay" column="quota_way"/>
+        <result property="quotaTotal" column="quota_total"/>
+        <result property="quotaScale" column="quota_scale"/>
+        <result property="addTotal" column="add_total"/>
+        <result property="description" column="description"/>
+        <result property="addItemtype" column="add_itemtype"/>
+        <result property="addUnitprice" column="add_unitprice"/>
+    </resultMap>
+    <sql id="getTableFieldInfo">
+        orderno,
+        pd_categoryname,
+        pd_name,
+        pd_measureunit,
+        add_count,
+        quota_way,
+        quota_total,
+        quota_scale,
+        add_total,
+        description,
+        add_itemtype,
+        add_unitprice
+    </sql>
+    <select id="findDismantle" resultMap="BaseResultMap" parameterType="String">
+        SELECT
+            <include refid="getTableFieldInfo"/>
+        FROM
+            st_rd_additem a
+        LEFT JOIN st_rd_customermaterial b ON a.material_pkid = b.pkid
+        WHERE
+            add_itemtype IN (5, 6, 7)
+        AND orderno = #{orderNo}
+    </select>
+</mapper>

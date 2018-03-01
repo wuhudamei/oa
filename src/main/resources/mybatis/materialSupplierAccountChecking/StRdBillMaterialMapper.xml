@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StRdBillMaterialDao">
+
+    <resultMap id="BaseResultMap" type="StRdBillMaterial">
+     	<result property="billMaterialId" column="billMaterialId"/>
+     	<result property="orderId" column="order_id"/>
+     	<result property="orderNo" column="order_no"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerMobile" column="customer_mobile"/>
+        <result property="projectManagerName" column="project_manager_name"/>
+        <result property="projectManagerMobile" column="project_manager_mobile"/>
+        <result property="materialPkId" column="material_pk_id"/>
+        <result property="houseAddress" column="house_address"/>
+        <result property="wholeBill" column="is_whole_bill"/>
+        <result property="finalAillAmount" column="final_bill_amount"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO ST_RD_Bill_Batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billMaterialId != null">
+                id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="customerName != null">
+                customer_name,
+            </if>
+            <if test="customerMobile != null">
+                customer_mobile,
+            </if>
+            <if test="projectManagerName != null">
+                project_manager_name,
+            </if>
+            <if test="projectManagerMobile != null">
+                project_manager_mobile,
+            </if>
+            <if test="materialPkId != null">
+                material_pk_id,
+            </if>
+            <if test="houseAddress != null">
+                house_address,
+            </if>
+            <if test="wholeBill != null">
+                is_whole_bill,
+            </if>
+            <if test="finalAillAmount != null">
+                final_bill_amount,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="remarks != null">
+                remarks
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billMaterialId != null">
+                #{billMaterialId},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo},
+            </if>
+            <if test="customerName != null">
+                #{customerName},
+            </if>
+            <if test="customerMobile != null">
+                #{customerMobile},
+            </if>
+            <if test="projectManagerName != null">
+                #{projectManagerName},
+            </if>
+            <if test="projectManagerMobile != null">
+                #{projectManagerMobile},
+            </if>
+            <if test="materialPkId != null">
+                #{materialPkId},
+            </if>
+            <if test="houseAddress != null">
+                #{houseAddress},
+            </if>
+            <if test="wholeBill != null">
+                #{wholeBill},
+            </if>
+            <if test="finalAillAmount != null">
+                #{finalAillAmount},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="remarks != null">
+                #{remarks}
+            </if>
+        </trim>
+    </insert>
+</mapper>

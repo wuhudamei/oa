@@ -1,0 +1,81 @@
+/* WRAPPERS */
+
+body {
+  overflow: hidden;
+}
+#page-wrapper{
+  padding:72px 0 42px 0;
+}
+#container {
+  // 上边header 61px footer 36px
+  // height: calc(100% - 97px);
+  // overflow-y: scroll;
+  // height: 100%;
+  margin: 0 15px;
+}
+
+// 移动设备为ios加入touch
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  #page-wrapper{
+    -webkit-overflow-scrolling: touch;
+  }
+  // #container {
+  //   -webkit-overflow-scrolling: touch;
+  // }
+}
+
+#wrapper {
+  width: 100%;
+  // overflow-x: hidden;
+  // background-color: #2f4050;
+}
+
+.wrapper {
+  // padding: 0 20px;
+}
+
+.wrapper-content {
+  // padding: 10px 0;
+  // height: 85%;
+}
+
+#page-wrapper {
+  // padding: 0 15px;
+  position: inherit;
+  margin: 0 0 0 220px;
+}
+
+@media (max-width: 768px) {
+    #page-wrapper {
+      margin: 0;
+    }
+}
+
+.title-action {
+  text-align: right;
+  padding-top: 30px;
+}
+
+.ibox-content h1,
+.ibox-content h2,
+.ibox-content h3,
+.ibox-content h4,
+.ibox-content h5,
+.ibox-title h1,
+.ibox-title h2,
+.ibox-title h3,
+.ibox-title h4,
+.ibox-title h5 {
+  margin-top: 5px;
+}
+
+ul.unstyled,
+ol.unstyled {
+  list-style: none outside none;
+  margin-left: 0;
+}
+
+.big-icon {
+  font-size: 160px;
+  color: #e5e6e7;
+}

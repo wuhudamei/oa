@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.WechatUserDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.WechatUser">
+    <id column="id" property="id"/>
+    <result column="subscribe" property="subscribe"/>
+    <result column="nickname" property="nickname"/>
+    <result column="openid" property="openid"/>
+    <result column="sex" property="sex"/>
+    <result column="city" property="city"/>
+    <result column="country" property="country"/>
+    <result column="province" property="province"/>
+    <result column="language" property="language"/>
+    <result column="headimgurl" property="headimgurl"/>
+    <result column="subscribe_time" property="subscribeTime"/>
+    <result column="unionid" property="unionid"/>
+    <result column="remark" property="remark"/>
+    <result column="groupid" property="groupid"/>
+    <result column="type" property="type"/>
+    <result column="user_id" property="userId"/>
+    <result column="job_num" property="jobNum"/>
+    <result column="tags" property="tags"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id,subscribe, nickname, openid, sex, city, country, province, language, headimgurl, subscribe_time, unionid,
+    remark, groupid, type, user_id, job_num, tags
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from wechat_user
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_user
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteByUserId">
+    delete from wechat_user
+    where user_id = #{userId}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.wechat.WechatUser" useGeneratedKeys="true" keyProperty="id">
+    insert into wechat_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="openid != null">
+        openid,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="language != null">
+        language,
+      </if>
+      <if test="headimgurl != null">
+        headimgurl,
+      </if>
+      <if test="subscribeTime != null">
+        subscribe_time,
+      </if>
+      <if test="unionid != null">
+        unionid,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="groupid != null">
+        groupid,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="jobNum != null">
+        job_num,
+      </if>
+      <if test="tags != null">
+        tags,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="subscribe != null">
+        subscribe,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="openid != null">
+        #{openid},
+      </if>
+      <if test="sex != null">
+        #{sex},
+      </if>
+      <if test="city != null">
+        #{city},
+      </if>
+      <if test="country != null">
+        #{country},
+      </if>
+      <if test="province != null">
+        #{province},
+      </if>
+      <if test="language != null">
+        #{language},
+      </if>
+      <if test="headimgurl != null">
+        #{headimgurl},
+      </if>
+      <if test="subscribeTime != null">
+        #{subscribeTime},
+      </if>
+      <if test="unionid != null">
+        #{unionid},
+      </if>
+      <if test="remark != null">
+        #{remark},
+      </if>
+      <if test="groupid != null">
+        #{groupid},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="userId != null">
+        #{userId},
+      </if>
+      <if test="jobNum != null">
+        #{jobNum},
+      </if>
+      <if test="tags != null">
+        #{tags},
+      </if>
+      <if test="nickname != null">
+        #{nickname},
+      </if>
+      <if test="subscribe != null">
+        #{subscribe},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.wechat.WechatUser">
+    update wechat_user
+    <set>
+      <if test="openid != null">
+        openid = #{openid},
+      </if>
+      <if test="sex != null">
+        sex = #{sex},
+      </if>
+      <if test="city != null">
+        city = #{city},
+      </if>
+      <if test="country != null">
+        country = #{country},
+      </if>
+      <if test="province != null">
+        province = #{province},
+      </if>
+      <if test="language != null">
+        language = #{language},
+      </if>
+      <if test="headimgurl != null">
+        headimgurl = #{headimgurl},
+      </if>
+      <if test="subscribeTime != null">
+        subscribe_time = #{subscribeTime},
+      </if>
+      <if test="unionid != null">
+        unionid = #{unionid},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+      <if test="groupid != null">
+        groupid = #{groupid},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId},
+      </if>
+      <if test="jobNum != null">
+        job_num = #{jobNum},
+      </if>
+      <if test="tags != null">
+        tags = #{tags},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname},
+      </if>
+      <if test="subscribe != null">
+        subscribe = #{subscribe},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <update id="updateByOpenId">
+    update wechat_user
+    <set>
+      <if test="sex != null">
+        sex = #{sex},
+      </if>
+      <if test="city != null">
+        city = #{city},
+      </if>
+      <if test="country != null">
+        country = #{country},
+      </if>
+      <if test="province != null">
+        province = #{province},
+      </if>
+      <if test="language != null">
+        language = #{language},
+      </if>
+      <if test="headimgurl != null">
+        headimgurl = #{headimgurl},
+      </if>
+      <if test="subscribeTime != null">
+        subscribe_time = #{subscribeTime},
+      </if>
+      <if test="unionid != null">
+        unionid = #{unionid},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+      <if test="groupid != null">
+        groupid = #{groupid},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId},
+      </if>
+      <if test="jobNum != null">
+        job_num = #{jobNum},
+      </if>      
+      <if test="tags != null">
+        tags = #{tags},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname},
+      </if>
+      <if test="subscribe != null">
+        subscribe = #{subscribe},
+      </if>
+    </set>
+    where openid = #{openid}
+  </update>
+
+  <select id="getByOpenid" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_user
+    WHERE openid = #{openid}
+  </select>
+
+  <select id="getByNickname" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_user
+    WHERE nickname LIKE CONCAT('%',#{nickname},'%')
+  </select>
+
+  <select id="getByUserIds" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_user WHERE user_id IN
+    <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+      #{userId}
+    </foreach>
+  </select>
+
+  <select id="getByUserId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from wechat_user
+    where user_id = #{userId}
+  </select>
+  
+  <select id="getByUserJobNum" resultMap="BaseResultMap">
+    select
+    <include refid="SelectInfo"/>
+    from wechat_user where job_num IN 
+    <foreach collection="jobNums" item="jobNum" open="(" close=")" separator=",">
+      #{jobNum}
+    </foreach>
+  </select>
+
+  <!-- 根据组织架构OrgIds查询机构下的员工绑定的微信openId,如果不传参数,则查询所有人员绑定的openId-->
+  <select id="getByParentOrgIds" resultType="String">
+    SELECT DISTINCT WE.openid FROM wechat_user WE JOIN oa_employee_org EMP ON WE.user_id = EMP.emp_id
+    <where>
+      <if test="orgIds != null">
+        <foreach collection="orgIds" item="orgId" separator="OR">
+          EMP.org_id = #{orgId}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="findWechatUser" resultMap="BaseResultMap" parameterType="string">
+    select * from wechat_user where job_num = #{jobNum}
+  </select>
+
+  <delete id="deleteWechatUser">
+    DELETE from wechat_user where openid = #{openid} and user_id = #{userId} and job_num = #{jobNum}
+  </delete>
+
+</mapper>

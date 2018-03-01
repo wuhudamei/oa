@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.BillDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.stylist.Bill">
+    <id column="id" property="id"/>
+    <result column="month_bill_id" property="monthBillId"/>
+    <result column="name" property="name"/>
+    <result column="job_no" property="jobNo"/>
+    <result column="mobile" property="mobile"/>
+    <result column="bill_month" property="billMonth"/>
+    <result column="total_money" property="totalMoney"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, month_bill_id, name, job_no, mobile, bill_month, total_money,status
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_bill
+    where id = #{id}
+  </select>
+
+  <select id="getByMonthBillId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_bill
+    where month_bill_id = #{monthBillId}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from oa_stylist_bill
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.stylist.Bill" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_stylist_bill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="monthBillId != null">
+        month_bill_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="jobNo != null">
+        job_no,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="billMonth != null">
+        bill_month,
+      </if>
+      <if test="totalMoney != null">
+        total_money,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="monthBillId != null">
+        #{monthBillId},
+      </if>
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="jobNo != null">
+        #{jobNo},
+      </if>
+      <if test="mobile != null">
+        #{mobile},
+      </if>
+      <if test="billMonth != null">
+        #{billMonth},
+      </if>
+      <if test="totalMoney != null">
+        #{totalMoney},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.stylist.Bill">
+    update oa_stylist_bill
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="jobNo != null">
+        job_no = #{jobNo},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile},
+      </if>
+      <if test="billMonth != null">
+        bill_month = #{billMonth},
+      </if>
+      <if test="totalMoney != null">
+        total_money = #{totalMoney},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="search" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM oa_stylist_bill
+    <include refid="searchWhere"/>
+  </select>
+
+  <sql id="searchWhere">
+    <where>
+      <if test="keyword != null">
+        AND (
+        name LIKE CONCAT('%',#{keyword},'%')
+        OR job_no LIKE CONCAT('%',#{keyword},'%')
+        OR mobile LIKE CONCAT('%',#{keyword},'%')
+        )
+      </if>
+      <if test="searchMonth != null">
+        AND bill_month = #{searchMonth}
+      </if>
+    </where>
+  </sql>
+
+  <insert id="batchInsert">
+    INSERT INTO oa_stylist_bill(month_bill_id,name, job_no, mobile, bill_month, total_money,status) VALUES
+    <foreach collection="bills" item="bill" separator=",">
+      (#{monthBillId},#{bill.name}, #{bill.jobNo}, #{bill.mobile}, #{bill.billMonth}, #{bill.totalMoney},#{bill.status})
+    </foreach>
+  </insert>
+
+  <update id="changeStatusByMonth">
+    UPDATE oa_stylist_bill SET status = #{status} WHERE bill_month = #{month}
+  </update>
+
+  <update id="changeStatusByIds">
+    UPDATE oa_stylist_bill SET status = #{status} WHERE
+    <foreach collection="ids" item="id" separator="OR">
+      (id = #{id})
+    </foreach>
+  </update>
+
+  <delete id="deleteByIds">
+    DELETE FROM oa_stylist_bill WHERE
+    <foreach collection="ids" item="id" separator="OR">
+      (id = #{id})
+    </foreach>
+  </delete>
+</mapper>

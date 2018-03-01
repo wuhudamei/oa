@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.menu.ConditionalMenuDetailDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.menu.ConditionalMenuDetail">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="type" property="type"/>
+    <result column="level" property="level"/>
+    <result column="click_key" property="clickKey"/>
+    <result column="url" property="url"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="pid" property="pid"/>
+    <result column="sort" property="sort"/>
+    <result column="c_id" property="cid"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, name, type, level, click_key, url, media_id, pid, sort, c_id
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from wechat_conditional_menu_detail
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_conditional_menu_detail
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.wechat.menu.ConditionalMenuDetail" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into wechat_conditional_menu_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="clickKey != null">
+        click_key,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="mediaId != null">
+        media_id,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="cid != null">
+        c_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="level != null">
+        #{level},
+      </if>
+      <if test="clickKey != null">
+        #{clickKey},
+      </if>
+      <if test="url != null">
+        #{url},
+      </if>
+      <if test="mediaId != null">
+        #{mediaId},
+      </if>
+      <if test="pid != null">
+        #{pid},
+      </if>
+      <if test="sort != null">
+        #{sort},
+      </if>
+      <if test="cid != null">
+        #{cid},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.wechat.menu.ConditionalMenuDetail">
+    update wechat_conditional_menu_detail
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="level != null">
+        level = #{level},
+      </if>
+      <if test="clickKey != null">
+        click_key = #{clickKey},
+      </if>
+      <if test="url != null">
+        url = #{url},
+      </if>
+      <if test="mediaId != null">
+        media_id = #{mediaId},
+      </if>
+      <if test="pid != null">
+        pid = #{pid},
+      </if>
+      <if test="sort != null">
+        sort = #{sort},
+      </if>
+      <if test="cid != null">
+        c_id = #{cid},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="findByCid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_conditional_menu_detail WHERE c_id = #{cid}
+  </select>
+</mapper>

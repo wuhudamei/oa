@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.employee.EmployeeOrgDao">
+  <resultMap id="BaseResultMap" type="EmployeeOrg">
+    <id column="id" property="id"/>
+    <result column="emp_id" property="employee.id"/>
+    <result column="org_department_id" property="department.id"/>
+    <result column="org_department_name" property="department.orgName"/>
+    <result column="org_department_code" property="department.orgCode"/>
+    <result column="org_department_family_code" property="department.familyCode"/>
+    <result column="org_company_id" property="company.id"/>
+    <result column="org_company_name" property="company.orgName"/>
+    <result column="org_company_code" property="company.orgCode"/>
+    <result column="org_company_family_code" property="department.familyCode"/>
+    <result column="org_id" property="org.id"/>
+    <result column="org_name" property="org.orgName"/>
+    <result column="org_code" property="org.orgCode"/>
+    <result column="org_family_code" property="org.familyCode"/>
+    <result column="type" property="type"/>
+    <result column="department_principal" property="departmentPrincipal"/>
+    <result column="company_principal" property="companyPrincipal"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id, emp_id, org_department_id, org_company_id, org_id, type, department_principal, company_principal
+  </sql>
+
+  <insert id="insert" parameterType="EmployeeOrg" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO oa_employee_org(emp_id, org_department_id, org_company_id, org_id, type, department_principal, company_principal)
+    VALUES (#{employee.id},#{department.id},#{company.id},#{org.id},#{type},#{departmentPrincipal},#{companyPrincipal})
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO oa_employee_org(emp_id, org_department_id, org_company_id, org_id, type, department_principal, company_principal)
+    VALUES
+    <foreach collection="employeeOrgs" item="item" separator=",">
+      (#{item.employee.id},#{item.department.id},#{item.company.id},#{item.org.id},#{item.type},#{item.departmentPrincipal},#{item.companyPrincipal})
+    </foreach>
+  </insert>
+
+  <select id="getDirectByEmpId" resultMap="BaseResultMap">
+    SELECT eo.*,
+    o.org_name AS org_name,
+    o.org_code AS org_code,
+    o.family_code AS org_family_code,
+    o1.org_name AS org_department_name,
+    o1.org_code AS org_department_code,
+    o1.family_code AS org_department_family_code,
+    o2.org_name AS org_company_name,
+    o2.org_code AS org_company_code,
+    o2.family_code AS org_company_family_code
+    FROM oa_employee_org eo
+    LEFT JOIN oa_organization o ON eo.org_id = o.id
+    LEFT JOIN oa_organization o1 ON eo.org_department_id = o1.id
+    LEFT JOIN oa_organization o2 ON eo.org_company_id = o2.id
+    WHERE eo.emp_id = #{empId} AND eo.type = 'DIRECTLY'
+  </select>
+
+  <delete id="deleteDirectByEmpId">
+    DELETE FROM oa_employee_org
+    WHERE emp_id = #{empId} AND type = 'DIRECTLY'
+  </delete>
+
+  <select id="findPartTimeByEmpId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee_org eo
+    WHERE emp_id = #{empId} AND type = 'PART_TIME'
+  </select>
+
+  <delete id="deletePartTimeByEmpId">
+    DELETE FROM oa_employee_org
+    WHERE emp_id = #{empId} AND type = 'PART_TIME'
+  </delete>
+
+  <update id="removeDepartmentPrincipal">
+    UPDATE oa_employee_org SET department_principal = 0
+    WHERE org_department_id = #{orgId}
+  </update>
+
+  <update id="setDepartmentPrincipal">
+    UPDATE oa_employee_org SET department_principal = 1
+    WHERE emp_id = #{empId} AND org_department_id = #{orgId}
+  </update>
+
+  <update id="removeCompanyPrincipal">
+    UPDATE oa_employee_org SET company_principal = 0
+    WHERE org_company_id = #{orgId}
+  </update>
+
+  <update id="setCompanyPrincipal">
+    UPDATE oa_employee_org SET company_principal = 1
+    WHERE emp_id = #{empId} AND org_company_id = #{orgId}
+  </update>
+
+  <select id="getByCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee_org
+    <where>
+      <if test="employee != null">
+        AND emp_id = #{employee.id}
+      </if>
+      <if test="department != null">
+        AND org_department_id = #{department.id}
+      </if>
+      <if test="company != null">
+        AND org_company_id = #{company.id}
+      </if>
+      <if test="type != null">
+        AND type = #{type}
+      </if>
+      <if test="departmentPrincipal != null">
+        AND department_principal = #{departmentPrincipal}
+      </if>
+      <if test="companyPrincipal != null">
+        AND company_principal = #{companyPrincipal}
+      </if>
+    </where>
+  </select>
+
+  <select id="getPrincipalByOrgId" parameterType="map" resultType="map">
+    select case when sum(t.deparment_emp_id) is null then 0 else sum(t.deparment_emp_id) end deparment_emp_id,
+     	   case when sum(t.company_emp_id) is null then 0 else sum(t.company_emp_id) end company_emp_id from (
+		select emp_id as deparment_emp_id,'' as company_emp_id from oa_employee_org where org_department_id=#{departmentId} and org_company_id=#{companyId} and department_principal=1
+		union ALL
+		select '' as deparment_emp_id,emp_id as company_emp_id from oa_employee_org where org_company_id=#{companyId} and company_principal=1
+	) t
+  </select>
+
+  <select id="findDepartmentId" resultMap="BaseResultMap">
+    select * from oa_employee_org where emp_id = #{employeeId}  and type = 'DIRECTLY'
+  </select>
+
+  <select id="getAllCount" resultType="long">
+    select count(*) from oa_employee_org where org_department_id is not NULL LIMIT 1
+  </select>
+
+  <select id="findIdAndSIgnTime" resultMap="BaseResultMap">
+    select oo.* from oa_employee_org as oeo
+    LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+    LEFT JOIN oa_organization as oo on oo.id = oeo.org_department_id
+    where oeo.org_department_id in(select id from oa_organization)
+    GROUP BY oeo.org_department_id
+  </select>
+
+  <select id="findComIdAndSignTime" resultMap="BaseResultMap">
+      select oo.* from oa_employee_org  as oeo
+      LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+      LEFT JOIN oa_organization as oo on oo.id = oeo.org_company_id
+      where oeo.org_company_id  in(select id from oa_organization) and oeo.org_department_id is NULL
+      GROUP BY oeo.org_company_id
+  </select>
+
+  <select id="findEmpIdByDepId" resultType="long">
+    SELECT emp_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+ where oeo.org_department_id = #{depId} and oeo.org_department_id is not null
+and oe.deleted = 0 and oe.account_type = 'EMPLOYEE'
+  </select>
+
+  <select id="findEmpIdByComId" resultType="long">
+    SELECT emp_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+ where org_company_id = #{depId}
+and oe.deleted = 0 and oe.account_type = 'EMPLOYEE'
+  </select>
+
+  <select id="findAllZZEmp" resultMap="BaseResultMap">
+    select oeo.emp_id,oeo.org_department_id,oeo.org_company_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+where oeo.org_company_id = '194' and oeo.type = 'DIRECTLY' and (employee_status = 'ON_JOB' or oe.dimission_date between #{lastMonth} and #{thisMonth})
+  </select>
+
+  <select id="findEmpZZCP" resultMap="BaseResultMap">
+    select oeo.emp_id,oeo.org_department_id,oeo.org_company_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+where oeo.org_company_id = '194' and org_department_id = '208'  and oeo.type = 'DIRECTLY' and employee_status = 'ON_JOB'
+  </select>
+  <select id="findEmpZZ" resultMap="BaseResultMap">
+    select oeo.emp_id,oeo.org_department_id,oeo.org_company_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+where oeo.org_company_id = '194'  and oeo.type = 'DIRECTLY' and employee_status = 'ON_JOB'
+  </select>
+
+  <select id="findProductDep" resultMap="BaseResultMap">
+    select oeo.emp_id,oeo.org_department_id,oeo.org_company_id from oa_employee_org as oeo
+LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+where oeo.org_department_id = '208' and oeo.type = 'DIRECTLY' and (employee_status = 'ON_JOB' or oe.dimission_date between '2017-10-01' and '2017-11-01')
+  </select>
+
+  <select id="findNoSignEmp"  resultMap="BaseResultMap">
+        SELECT oeo.* from oa_employee as oe
+        LEFT JOIN oa_employee_org as oeo on oeo.emp_id = oe.id
+        where  oe.deleted != 1 and oe.account_type = 'EMPLOYEE'
+        and oe.employee_status = 'ON_JOB' and oeo.type='DIRECTLY' and oe.id not in
+        (select employee_id from oa_sign_record where TO_DAYS(NOW())-TO_DAYS(sign_date) &lt;= 1)
+  </select>
+
+</mapper>

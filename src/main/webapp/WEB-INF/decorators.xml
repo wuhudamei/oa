@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/views/admin/layouts/">
+  <excludes>
+    <pattern>/ueditor/config</pattern>
+    <pattern>/ueditor/*</pattern>
+    <pattern>/static/*</pattern>
+    <pattern>/login</pattern>
+    <pattern>/login*</pattern>
+    <pattern>/wx/login</pattern>
+    <pattern>/wx/*</pattern>
+    <pattern>/oldCrm/*</pattern>
+    <pattern>/logout*</pattern>
+    <!--报表不走sitemesh -->
+    <pattern>/api/reports*</pattern>
+  </excludes>
+
+  <decorator name="admin" page="signin.jsp">
+    <pattern>/</pattern>
+    <pattern>/index</pattern>
+    <pattern>/admin/*</pattern>
+  </decorator>
+</decorators>

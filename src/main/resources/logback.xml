@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 在IDE中运行, 控制台输出全部日志, 打包时level被portable-config-maven-plugin插件改为OFF, 控制台不输出日志 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>%date{MM:dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 在IDE中运行, 不输出日志文件, 打包时level被portable-config-maven-plugin插件改为DEBUG, 输出日志文件 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <File>logs/mdni-oa.log</File>
+        <!-- 按每小时滚动文件，如果一个小时内达到10M也会滚动文件, 滚动文件将会压缩成zip格式, 最多保留672个滚动文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/mdni-oa-%d{yyyy-MM-dd_HH}.%i.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>672</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{MM:dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="flume" class="com.rocoinfo.appender.FlumeAppender">
+        <hosts>http://47.94.196.205:44444</hosts>
+        <batchSize>100</batchSize>
+        <maxIdleTime>2000</maxIdleTime>
+        <eventQueueSize>100000</eventQueueSize>
+        <additionHeaders>webapp=oauth</additionHeaders>
+        <additionProps>connect-timeout=2000</additionProps>
+        <maxThreadPoolSize>4</maxThreadPoolSize>
+        <workQueueSize>100</workQueueSize>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%message</pattern>
+        </layout>
+    </appender>
+
+    <!-- project default level -->
+    <logger name="cn.damei" level="DEBUG"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+
+    <logger name="cn.damei.api" level="INFO" additivity="false">
+        <appender-ref ref="flume"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="RollingFile"/>
+    </root>
+</configuration>

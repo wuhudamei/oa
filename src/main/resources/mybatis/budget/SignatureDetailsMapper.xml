@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.budget.SignatureDetailsDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.budget.SignatureDetails">
+    <id column="id" property="id"/>
+    <result column="signature_id" property="signatureId"/>
+    <result column="cost_item_id" property="costItemId"/>
+    <result column="cost_item_name" property="costItemName"/>
+    <result column="cost_detail_id" property="costDetailId"/>
+    <result column="cost_detail_name" property="costDetailName"/>
+    <result column="money" property="money"/>
+    <result column="remark" property="remark"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, signature_id, cost_item_id, cost_detail_id, money, remark
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_payment_signature_details
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_payment_signature_details
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="SignatureDetails" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into oa_payment_signature_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="signatureId != null">
+        signature_id,
+      </if>
+      <if test="costItemId != null">
+        cost_item_id,
+      </if>
+      <if test="costDetailId != null">
+        cost_detail_id,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="signatureId != null">
+        #{signatureId},
+      </if>
+      <if test="costItemId != null">
+        #{costItemId},
+      </if>
+      <if test="costDetailId != null">
+        #{costDetailId},
+      </if>
+      <if test="money != null">
+        #{money},
+      </if>
+      <if test="remark != null">
+        #{remark},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="SignatureDetails">
+    update oa_payment_signature_details
+    <set>
+      <if test="signatureId != null">
+        signature_id = #{signatureId},
+      </if>
+      <if test="costItemId != null">
+        cost_item_id = #{costItemId},
+      </if>
+      <if test="costDetailId != null">
+        cost_detail_id = #{costDetailId},
+      </if>
+      <if test="money != null">
+        money = #{money},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="batchInsert">
+    INSERT INTO oa_payment_signature_details(signature_id, cost_item_id, cost_detail_id, money, remark) VALUES
+    <foreach collection="signatureDetails" item="signature" separator=",">
+      (#{signature.signatureId},
+      #{signature.costItemId},#{signature.costDetailId},#{signature.money},#{signature.remark})
+    </foreach>
+  </insert>
+
+  <delete id="deleteBySignatureId">
+    DELETE FROM oa_payment_signature_details where signature_id = #{signatureId}
+  </delete>
+
+  <select id="getBySignatureId" resultMap="BaseResultMap">
+    SELECT
+    A.id, A.signature_id, A.cost_item_id, B.name AS cost_item_name, A.cost_detail_id, D.name AS cost_detail_name, A.money, A.remark
+    FROM oa_payment_signature_details A
+    LEFT JOIN oa_dictionary B ON A.cost_item_id = B.id
+    LEFT JOIN oa_dictionary D ON A.cost_detail_id = D.id
+    WHERE A.signature_id=#{signatureId}
+  </select>
+
+  <select id="findSignatureDetails" resultMap="BaseResultMap">
+    SELECT D.id, D.signature_id, D.cost_item_id, D.cost_detail_id, D.money, D.remark
+    FROM oa_payment_signature S JOIN oa_payment_signature_details D ON S.id = D.signature_id
+    WHERE S.company_id = #{companyId} AND type = #{type} AND signature_date = #{signatureMonth}
+    <if test="statuses != null">
+      AND
+      <foreach collection="statuses" item="status" open="(" close=")" separator="OR">
+        S.status = #{status}
+      </foreach>
+    </if>
+  </select>
+
+</mapper>

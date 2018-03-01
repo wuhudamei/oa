@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+       default-lazy-init="true">
+
+  <!-- 导入properties文件 -->
+  <!-- 	<context:property-placeholder location="classpath*:/application.properties" /> -->
+
+  <!-- 	自动扫描package的位置 -->
+  <context:component-scan base-package="cn.damei.repository"/>
+
+
+  <!-- 扫描basePackage下所有以@Repository标识的 接口 -->
+  <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+    <!--<property name="basePackage" value="cn.damei.repository"/>-->
+    <!--<property name="annotationClass" value="org.springframework.stereotype.Repository"/>-->
+  <!--</bean>-->
+
+  <!-- 事务管理器, Jdbc单数据源事务 -->
+  <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dynamicDataSource"/>
+  </bean>
+  <!-- 使用annotation定义事务 -->
+  <tx:annotation-driven transaction-manager="transactionManager"
+                        proxy-target-class="true"/>
+
+  <!-- 配置数据源 -->
+  <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="${jdbc.driver}"/>
+    <property name="url" value="${jdbc.url}"/>
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
+
+    <!-- Connection Pooling Info -->
+    <property name="maxActive" value="150"/>
+    <property name="minIdle" value="0"/>
+    <property name="defaultAutoCommit" value="true"/>
+    <property name="testOnBorrow" value="true"/>
+
+    <property name="testWhileIdle" value="false"/>
+    <property name="testOnReturn" value="false"/>
+    <property name="validationQuery" value="select 1"/>
+    <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+    <property name="initialSize" value="10"/>
+    <property name="maxWait" value="3000"/>
+    <!-- 180秒，也就是3分钟 -->
+    <property name="removeAbandonedTimeout" value="180"/>
+    <property name="minEvictableIdleTimeMillis" value="30000"/>
+    <property name="removeAbandoned" value="true"/>
+  </bean>
+
+  <!-- mdni-读取合同信息数据源 -->
+  <bean name="dataSourceMdni" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="${jdbc.driver.mdni}"/>
+    <property name="url" value="${jdbc.url.mdni}"/>
+    <property name="username" value="${jdbc.username.mdni}"/>
+    <property name="password" value="${jdbc.password.mdni}"/>
+    <!-- Connection Pooling Info -->
+    <property name="maxActive" value="150"/>
+    <property name="minIdle" value="0"/>
+    <property name="defaultAutoCommit" value="false"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testWhileIdle" value="false"/>
+    <property name="testOnReturn" value="false"/>
+    <property name="validationQuery" value="select 1"/>
+    <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+    <property name="initialSize" value="10"/>
+    <property name="maxWait" value="3000"/>
+    <!-- 180秒，也就是3分钟 -->
+    <property name="removeAbandonedTimeout" value="180"/>
+    <property name="minEvictableIdleTimeMillis" value="30000"/>
+    <property name="removeAbandoned" value="true"/>
+  </bean>
+  <bean id="namedParameterJdbcTemplate"
+        class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+    <constructor-arg ref="dataSourceMdni"></constructor-arg>
+  </bean>
+  <bean id="namedParameterJdbcTemplateOa"
+        class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+    <constructor-arg ref="dataSource"></constructor-arg>
+  </bean>
+ <!--配置Spring的JdbcTemplate-->  
+    <bean id="jdbcTemplateOa" class="org.springframework.jdbc.core.JdbcTemplate">  
+        <property name="dataSource" ref="dataSource"></property>  
+    </bean>  
+
+  <!-- mdni-读取选材信息数据源 -->
+  <bean name="dataSourceMdniXC" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="${jdbc.driver.mdni_xc}"/>
+    <property name="url" value="${jdbc.url.mdni_xc}"/>
+    <property name="username" value="${jdbc.username.mdni_xc}"/>
+    <property name="password" value="${jdbc.password.mdni_xc}"/>
+    <!-- Connection Pooling Info -->
+    <property name="maxActive" value="150"/>
+    <property name="minIdle" value="0"/>
+    <property name="defaultAutoCommit" value="false"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testWhileIdle" value="false"/>
+    <property name="testOnReturn" value="false"/>
+    <property name="validationQuery" value="select 1"/>
+    <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+    <property name="initialSize" value="10"/>
+    <property name="maxWait" value="3000"/>
+    <!-- 180秒，也就是3分钟 -->
+    <property name="removeAbandonedTimeout" value="180"/>
+    <property name="minEvictableIdleTimeMillis" value="30000"/>
+    <property name="removeAbandoned" value="true"/>
+  </bean>
+
+  <bean id="dynamicDataSource" class="cn.damei.datasource.DynamicDataSource">
+    <!-- 通过key-value的形式来关联数据源 -->
+    <property name="targetDataSources">
+      <map>
+        <entry value-ref="dataSource" key="dataSource"></entry>
+        <entry value-ref="dataSourceMdni" key="dataSourceMdni"></entry>
+        <entry value-ref="dataSourceMdniXC" key="dataSourceMdniXC"></entry>
+      </map>
+    </property>
+    <property name="defaultTargetDataSource" ref="dataSource"/>
+  </bean>
+
+  <!-- 配置mybaties的sessionFactory -->
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource">
+      <ref bean="dynamicDataSource"/>
+    </property>
+    <!-- 自动扫描entity目录, 省掉Configuration.xml里的手工配置 -->
+    <property name="typeAliasesPackage" value="cn.damei.entity"/>
+    <!-- 扫描存放Mapping配置文件的目录 -->
+    <property name="mapperLocations" value="classpath*:mybatis/**/*Mapper.xml"></property>
+    <!-- 使用分页插件 PageHelper -->
+    <property name="plugins">
+      <array>
+        <bean class="com.github.pagehelper.PageInterceptor">
+          <property name="properties">
+            <!--使用下面的方式配置参数，一行配置一个 -->
+            <!-- helperDialect=mysql：配置数据库方言为mysql -->
+            <!-- offsetAsPageNum=true：使用offset和limit进行分页 -->
+            <!-- rowBoundsWithCount=true：分页时进行count查询 -->
+            <value>
+              helperDialect=mysql
+              offsetAsPageNum=true
+              rowBoundsWithCount=true
+            </value>
+          </property>
+        </bean>
+      </array>
+    </property>
+  </bean>
+</beans>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.ContractDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.stylist.Contract">
+    <id column="id" property="id"/>
+    <result column="orderId" property="orderId"/>
+    <result column="orderNo" property="orderNo"/>
+    <result column="emp_id" property="empId"/>
+    <result column="customer_name" property="customerName"/>
+    <result column="name" property="name"/>
+    <result column="contract_no" property="contractNo"/>
+    <result column="money" property="money"/>
+    <result column="taxes_money" property="taxesMoney"/>
+    <result column="manager_money" property="managerMoney"/>
+    <result column="design_money" property="designMoney"/>
+    <result column="remote_money" property="remoteMoney"/>
+    <result column="others_money" property="othersMoney"/>
+    <result column="privilege_money" property="privilegeMoney"/>
+    <result column="modify_money" property="modifyMoney"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id,order_no,emp_id, customer_name, name, contract_no, money, taxes_money, manager_money, design_money,
+    remote_money, others_money, privilege_money, modify_money
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_contract
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_stylist_contract
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.stylist.Contract" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_stylist_contract
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="customerName != null">
+        customer_name,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="contractNo != null">
+        contract_no,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="taxesMoney != null">
+        taxes_money,
+      </if>
+      <if test="managerMoney != null">
+        manager_money,
+      </if>
+      <if test="designMoney != null">
+        design_money,
+      </if>
+      <if test="remoteMoney != null">
+        remote_money,
+      </if>
+      <if test="othersMoney != null">
+        others_money,
+      </if>
+      <if test="privilegeMoney != null">
+        privilege_money,
+      </if>
+      <if test="modifyMoney != null">
+        modify_money,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        #{empId},
+      </if>
+      <if test="orderId != null">
+        #{orderId},
+      </if>
+      <if test="orderNo != null"></if>
+      #{orderNo},
+      <if test="customerName != null">
+        #{customerName},
+      </if>
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="contractNo != null">
+        #{contractNo},
+      </if>
+      <if test="money != null">
+        #{money},
+      </if>
+      <if test="taxesMoney != null">
+        #{taxesMoney},
+      </if>
+      <if test="managerMoney != null">
+        #{managerMoney},
+      </if>
+      <if test="designMoney != null">
+        #{designMoney},
+      </if>
+      <if test="remoteMoney != null">
+        #{remoteMoney},
+      </if>
+      <if test="othersMoney != null">
+        #{othersMoney},
+      </if>
+      <if test="privilegeMoney != null">
+        #{privilegeMoney},
+      </if>
+      <if test="modifyMoney != null">
+        #{modifyMoney},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.stylist.Contract">
+    update oa_stylist_contract
+    <set>
+      <if test="empId != null">
+        emp_id = #{empId},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId},
+      </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo},
+      </if>
+      <if test="customerName != null">
+        customer_name = #{customerName},
+      </if>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo},
+      </if>
+      <if test="money != null">
+        money = #{money},
+      </if>
+      <if test="taxesMoney != null">
+        taxes_money = #{taxesMoney},
+      </if>
+      <if test="managerMoney != null">
+        manager_money = #{managerMoney},
+      </if>
+      <if test="designMoney != null">
+        design_money = #{designMoney},
+      </if>
+      <if test="remoteMoney != null">
+        remote_money = #{remoteMoney},
+      </if>
+      <if test="othersMoney != null">
+        others_money = #{othersMoney},
+      </if>
+      <if test="privilegeMoney != null">
+        privilege_money = #{privilegeMoney},
+      </if>
+      <if test="modifyMoney != null">
+        modify_money = #{modifyMoney},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <resultMap id="StatusResultMap" extends="BaseResultMap" type="cn.damei.entity.stylist.Contract">
+    <result column="status" property="status.status"/>
+    <result column="status_time" property="status.statusTime"/>
+  </resultMap>
+
+  <select id="search" resultMap="StatusResultMap">
+    SELECT A.id, A.order_id,A.order_no,A.emp_id,A.customer_name, A.name, A.contract_no, A.money, A.taxes_money,
+    A.manager_money,
+    A.design_money,A.remote_money, A.others_money, A.privilege_money, A.modify_money,
+    B.status, B.status_time
+    FROM oa_stylist_contract A JOIN oa_stylist_contract_status B ON A.id = B.contract_id
+    <include refid="searchWhere"/>
+  </select>
+
+  <sql id="searchWhere">
+    <where>
+      <if test="userId != null">
+        AND A.emp_id = #{userId}
+      </if>
+      <if test="searchMonth != null">
+        AND DATE_FORMAT( B.status_time, '%Y-%m') = #{searchMonth}
+      </if>
+      <if test="status != null">
+        AND B.status = #{status}
+      </if>
+      <if test="keyword != null">
+        AND (
+        A.customer_name LIKE CONCAT('%',#{keyword},'%')
+        OR A.name LIKE CONCAT('%',#{keyword},'%')
+        OR A.contract_no LIKE CONCAT('%',#{keyword},'%')
+        )
+      </if>
+    </where>
+  </sql>
+
+</mapper>

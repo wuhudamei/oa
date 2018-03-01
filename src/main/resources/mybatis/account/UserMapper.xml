@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.account.UserDao">
+  <resultMap id="BaseResultMap" type="User">
+    <id property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="jobNum" column="job_num"/>
+    <result property="username" column="org_code"/>
+    <result property="password" column="password"/>
+    <result property="salt" column="salt"/>
+    <result property="position" column="position"/>
+    <result property="accountType" column="account_type"/>
+    <result property="accountStatus" column="account_status"/>
+    <result property="employeeStatus" column="employee_status"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id,name,job_num,org_code,password,salt,account_status,account_type,employee_status,position
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee WHERE id = #{id}
+  </select>
+
+  <update id="update">
+    UPDATE oa_employee
+    <set>
+      <if test="username != null">
+        org_code = #{username},
+      </if>
+      <if test="password != null">
+        password = #{password},
+      </if>
+      <if test="salt != null">
+        salt = #{salt},
+      </if>
+      <if test="accountStatus != null">
+        account_status = #{accountStatus},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <select id="getByUsername" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee WHERE org_code = #{username}
+  </select>
+
+  <select id="getByUsernameOrMobile" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee WHERE org_code = #{username} OR mobile = #{username}
+  </select>
+
+  <!-- 包含用户角色、权限信息-->
+  <resultMap type="User" id="MultiUserInfoMap" extends="BaseResultMap">
+    <collection property="roles" ofType="Role">
+      <result property="name" column="role_name"/>
+      <collection property="permission" ofType="Permission">
+        <result property="permission" column="permission"/>
+      </collection>
+    </collection>
+  </resultMap>
+
+  <select id="getAllInfoById" parameterType="long" resultMap="MultiUserInfoMap">
+    SELECT
+			u.*, r.name role_name,
+			p.permission
+		FROM
+			oa_employee u
+		LEFT JOIN oa_user_role ur ON u.id = ur.user_id
+		LEFT JOIN oa_role r ON r.id = ur.role_id
+		LEFT JOIN oa_role_permission rp ON r.id = rp.role_id
+		LEFT JOIN oa_permission p ON p.id = rp.permission_id
+		WHERE u.id = ${id}
+  </select>
+
+  <select id="getAllInfoByUsername" parameterType="String" resultMap="MultiUserInfoMap">
+    SELECT
+    u.*, r.name role_name,
+    p.permission
+    FROM
+    oa_employee u
+    LEFT JOIN oa_user_role ur ON u.id = ur.user_id
+    LEFT JOIN oa_role r ON r.id = ur.role_id
+    LEFT JOIN oa_role_permission rp ON r.id = rp.role_id
+    LEFT JOIN oa_permission p ON p.id = rp.permission_id
+    WHERE u.org_code = #{username}
+  </select>
+</mapper>

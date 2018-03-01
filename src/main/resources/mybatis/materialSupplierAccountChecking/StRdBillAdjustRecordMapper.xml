@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StRdBillAdjustRecordDao">
+
+    <resultMap id="BaseResultMap" type="StRdBillAdjustRecord">
+     	<result property="billAdjustRecordId" column="billAdjustRecordId"/>
+     	<result property="billItemId" column="st_rd_bill_item_id"/>
+     	<result property="pdChangeCountBefore" column="pd_change_count_before"/>
+        <result property="pdChangeCountEnd" column="pd_change_count_end"/>
+        <result property="changeAdjust" column="change_adjust"/>
+        <result property="changeTime" column="change_time"/>
+        <result property="operator" column="operator"/>
+        <result property="operateType" column="operate_type"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT id AS billAdjustRecordId,st_rd_bill_item_id,pd_change_count_before,pd_change_count_end,change_adjust,change_time,operator,operate_type
+        FROM ST_RD_Bill_Adjust_Record
+        WHERE  st_rd_bill_item_id = #{billItemId}
+        order by change_time DESC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO ST_RD_Bill_Adjust_Record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billAdjustRecordId != null">
+                id,
+            </if>
+            <if test="billItemId != null">
+                st_rd_bill_item_id,
+            </if>
+            <if test="pdChangeCountBefore != null">
+                pd_change_count_before,
+            </if>
+            <if test="pdChangeCountEnd != null">
+                pd_change_count_end,
+            </if>
+            <if test="changeAdjust != null">
+                change_adjust,
+            </if>
+            <if test="changeTime != null">
+                change_time,
+            </if>
+            <if test="operator != null">
+                operator,
+            </if>
+            <if test="operateType != null">
+                operate_type
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billAdjustRecordId != null">
+                #{billAdjustRecordId},
+            </if>
+            <if test="billItemId != null">
+                #{billItemId},
+            </if>
+            <if test="pdChangeCountBefore != null">
+                #{pdChangeCountBefore},
+            </if>
+            <if test="pdChangeCountEnd != null">
+                #{pdChangeCountEnd},
+            </if>
+            <if test="changeAdjust != null">
+                #{changeAdjust},
+            </if>
+            <if test="changeTime != null">
+                #{changeTime},
+            </if>
+            <if test="operator != null">
+                #{operator},
+            </if>
+            <if test="operateType != null">
+                #{operateType}
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>

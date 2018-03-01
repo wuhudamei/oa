@@ -1,0 +1,62 @@
+
+/* MAILBOX */
+
+.mail-box {
+    background-color: #ffffff;
+    border: 1px solid #e7eaec;
+    border-top: 0;
+    padding: 0px;
+    margin-bottom: 20px;
+}
+
+.mail-box-header {
+    background-color: #ffffff;
+    border: 1px solid #e7eaec;
+    border-bottom: 0;
+    padding: 30px 20px 20px 20px;
+}
+
+.mail-box-header h2 {
+    margin-top: 0px;
+}
+
+.mailbox-content .tag-list li a {
+    background: #ffffff;
+}
+
+.mail-body {
+    border-top: 1px solid #e7eaec;
+    padding: 20px;
+}
+
+.mail-text {
+    border-top: 1px solid #e7eaec;
+}
+
+.mail-text .note-toolbar {
+    padding: 10px 15px;
+}
+
+.mail-body .form-group {
+    margin-bottom: 5px;
+}
+
+.mail-text .note-editor .note-toolbar {
+    background-color: #F9F8F8;
+}
+
+.mail-attachment {
+    border-top: 1px solid #e7eaec;
+    padding: 20px;
+    font-size: 12px;
+}
+
+.mailbox-content {
+    background: none;
+    border: none;
+    padding: 10px;
+}
+
+.mail-ontact {
+    width: 23%;
+}

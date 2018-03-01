@@ -1,0 +1,94 @@
+{ 
+    "code": 1,
+    "data": {
+        "userInfo" : [
+            {
+                "id": 1,
+                "name": "少侠",
+                "Package": "999元套餐",
+                "bulidArea": "90.00m²",
+                "tel": "15652323235",
+                "address": "北京市通州区",
+                "houseLayout": "三室两厅一卫",
+                "withElevator": "有",
+                "houseStatus": "新房",
+                "priceArea": "90.00m²",
+                "secondName": "李静文",
+                "secondTel": "15978859999",
+                "houseType": "楼房平层",
+                "startUpTime": "2016/12/23",
+                "completionTime": "2019/10/23",
+                "orderStatus": "施工中",
+                "orderAmount": "10,1000"
+            }
+        ],
+        "tabPlanList":{
+            "person": [
+                {
+                    "service": "张三",
+                    "designer": "李四",
+                    "manager": "王五"
+                }
+            ],
+            "list": [
+                {
+                    "id": 1,
+                    "title": "二期款",
+                    "startUpTime": "2016/12/23",
+                    "completionTime": "2019/10/23",
+                    "overdue": 2
+                },
+                {
+                    "id": 2,
+                    "title": "一期款",
+                    "startUpTime": "2016/12/23",
+                    "completionTime": "2019/10/23",
+                    "overdue": 21
+                }
+            ]
+        },
+        "payList":[
+            {
+                "periods": "大订",
+                "paid": 20000,
+                "unpaid":0
+            },
+            {
+                "periods": "尾款",
+                "paid": 0,
+                "unpaid": 3000
+            },
+            {
+                "periods": "二期",
+                "paid": 20000,
+                "unpaid": 0
+            },
+            {
+                "periods": "二期",
+                "paid": 23000.82,
+                "unpaid": 22838.33
+            }
+
+        ],
+        "payDetails":[
+            {
+                "title": "一期款",
+                "receiptNum":"201706182930",
+                "name": "张三",
+                "tel": "18928823748",
+                "payTime": "2017-06-27 12:29:31",
+                "payType": "支付宝",
+                "payAmount": "20000"
+            },
+            {
+                "title": "三期款",
+                "receiptNum":"201706181345  ",
+                "name": "王五",
+                "tel": "15634092788",
+                "payTime": "2017-06-29 00:29:31",
+                "payType": "现金",
+                "payAmount": "6000"
+            }
+        ]
+    }
+}

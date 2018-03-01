@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.AuditChangeStandBookDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.AuditChangeStandBook">
+        <result property="orderNo" column="orderno"/>
+        <result property="submitAuditTime" column="submitaudit_time"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="assignAuditTime" column="assign_audit_time"/>
+        <result property="submitOrderTime" column="submitorder_time"/>
+        <result property="submitMaterialTime" column="submitMaterialTime"/>
+        <result property="materialAuditTime" column="materialAuditTime"/>
+        <result property="changeNo" column="changeno"/>
+        <result property="auditorRealname" column="auditor_realname"/>
+        <result property="changeSubmitAuditTime" column="change_submitaudit_time"/>
+        <result property="changeAuditTime" column="change_audit_time"/>
+    </resultMap>
+
+    <select id="findChangeAudit" resultMap="BaseResultMap">
+        SELECT submitaudit_time AS  change_submitaudit_time,audit_time AS change_audit_time,
+        submitMaterialTime,changeno,auditor_realname
+        FROM ST_RD_CustomerMaterial_History WHERE orderno = #{orderNo} AND isAuditOk = 1 order by changeno
+    </select>
+
+</mapper>

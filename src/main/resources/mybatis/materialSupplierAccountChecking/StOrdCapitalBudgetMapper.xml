@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StOrdCapitalBudgetDao">
+
+	<resultMap id="BaseResultMap" type="StOrdCapitalBudget">
+		<result property="orderNo" column="order_no"/>
+		<result property="customerName" column="customer_name"/>
+		<result property="customerMoble" column="customer_moble"/>
+		<result property="houseSpace" column="house_space"/>
+		<result property="houseAddress" column="house_address"/>
+		<result property="predictStartTime" column="predict_startTime"/>
+		<result property="predictEndTime" column="predict_endTime"/>
+		<result property="contractTotalMoney" column="contract_totalMoney"/>
+		<result property="dismantleAlterMoney" column="dismantle_alter_money"/>
+		<result property="downPaymentMoney" column="downPayment_money"/>
+		<result property="theSecondPhaseMoney" column="theSecondPhase_money"/>
+		<result property="threeStagesMoney" column="threeStages_money"/>
+		<result property="finalPaymentMoney" column="finalPayment_money"/>
+		<result property="predictReceiptMoney" column="predictReceipt_money"/>
+		<result property="predictTheHighestCost" column="predictTheHighest_cost"/>
+		<result property="dismantleAlterCost" column="dismantle_alter_cost"/>
+		<result property="materialsExpenses" column="materialsExpenses"/>
+		<result property="constructionFee" column="constructionFee"/>
+		<result property="indirectCharges" column="indirectCharges"/>
+		<result property="predictMinGrossProfitRate" column="predict_min_grossProfitRate"/>
+	</resultMap>
+
+    <select id="findStOrdCapitalBudgetByNoAndMobileAndName" resultMap="BaseResultMap">
+        SELECT order_no,customer_name,customer_moble,house_space,house_address,predict_startTime,predict_endTime,
+			 contract_totalMoney,dismantle_alter_money,downPayment_money,theSecondPhase_money,threeStages_money,
+			 finalPayment_money,predictReceipt_money,predictTheHighest_cost,dismantle_alter_cost,materialsExpenses,
+			 constructionFee,indirectCharges,predict_min_grossProfitRate
+		FROM [dbo].[ST_Ord_Capital_Budget]
+		<where>
+			<if test="keyword != null and keyword != ''">
+				customer_name = #{keyword} OR customer_moble = #{keyword} OR order_no = #{keyword}
+			</if>
+			<if test="predictStartTime != null and predictStartTime != ''">
+				AND predict_startTime &gt;= #{predictStartTime}
+			</if>
+			<if test="predictEndTime != null and predictEndTime != ''">
+				AND predict_startTime &lt;= #{predictEndTime}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND predict_endTime &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND predict_endTime &lt;= #{endTime}
+			</if>
+		</where>
+    </select>
+
+</mapper>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StRdBillItemDao">
+
+    <resultMap id="BaseResultMap" type="StRdBillItem">
+        <result property="billItemId" column="billItemId"/>
+        <result property="stRdBillMaterialId" column="st_rd_bill_material_id"/>
+        <result property="pdPkid" column="pd_pkid"/>
+        <result property="pdSkuid" column="pd_skuid"/>
+        <result property="pdSkuname" column="pd_skuname"/>
+        <result property="pdSkuSalesAttribute" column="pd_sku_sales_attribute"/>
+        <result property="pdBrandname" column="pd_brandname"/>
+        <result property="pdSupplier" column="pd_supplier"/>
+        <result property="pdModel" column="pd_model"/>
+        <result property="pdMeasureunit" column="pd_measureunit"/>
+        <result property="pdPrice" column="pd_price"/>
+        <result property="pdCount" column="pd_count"/>
+        <result property="pdChangeCount" column="pd_change_count"/>
+        <result property="accumulateSettlementCount" column="accumulate_settlement_count"/>
+        <result property="accumulateSettlementMoney" column="accumulate_settlement_money"/>
+        <result property="materialType" column="material_type"/>
+        <result property="dataType" column="data_type"/>
+        <result property="dataFrom" column="data_from"/>
+        <result property="acceptanceTime" column="acceptance_time"/>
+        <result property="acceptanceName" column="acceptance_name"/>
+        <result property="itemCategoryId" column="item_category_id"/>
+        <result property="itemCategoryName" column="item_category_name"/>
+        <result property="reconciliationStatus" column="reconciliation_status"/>
+        <result property="change" column="is_change"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="billNumber" column="bill_number"/>
+        <result property="billAmountMoney" column="bill_amount_money"/>
+        <result property="wallfloorTiles" column="is_wallfloor_tiles"/>
+        <result property="itemPkid" column="item_pkid"/>
+        <result property="delete" column="isdelete"/>
+        <result property="pdSupplierId" column="pd_supplier_id"/>
+        <result property="materialCreateTime" column="material_create_time"/>
+        <result property="rdMaterialId" column="rd_material_id"/>
+        <result property="materialUpdateTime" column="material_update_time"/>
+        <result property="pdCurrentCount" column="pd_current_count"/>
+        <result property="workerAcceptanceCount" column="worker_acceptance_count"/>
+        <result property="acceptance" column="is_acceptance"/>
+        <result property="billBatch" column="bill_batch"/>
+        <result property="customerMobile" column="customer_mobile"/>
+        <result property="houseAddress" column="house_address"/>
+        <result property="operateTime" column="operate_time"/>
+    </resultMap>
+
+    <!--未对账页面下拉框搜索-->
+    <select id="findSupplyAndGood" resultType="java.util.Map">
+        select pd_supplier,stuff( (select ','+convert(varchar(25), pd_brandname)
+        from ( select pd_supplier,pd_brandname from ST_RD_Bill_Item where pd_supplier != '' AND pd_brandname !=''
+        <if test="status == 0">
+            AND  reconciliation_status = '未对账'
+        </if>
+        <if test="status == 1">
+            AND  reconciliation_status = '已对账'
+        </if>
+        <if test="accep == 0">
+            AND is_acceptance = 0
+        </if>
+        <if test="accep == 1">
+            AND is_acceptance = 1
+        </if>
+        AND pd_price &gt; 0
+        group by pd_supplier,pd_brandname) as t2
+        where t2.pd_supplier = t1.pd_supplier FOR XML PATH('')), 1, 1, '') as brandname
+        from ( select pd_supplier,pd_brandname from ST_RD_Bill_Item where pd_supplier != '' AND pd_brandname !=''
+        <if test="status == 0">
+            AND  reconciliation_status = '未对账'
+        </if>
+        <if test="status == 1">
+            AND  reconciliation_status = '已对账'
+        </if>
+        <if test="accep == 0">
+            AND is_acceptance = 0
+        </if>
+        <if test="accep == 1">
+            AND is_acceptance = 1
+        </if>
+        AND pd_price &gt; 0
+        group by pd_supplier,pd_brandname) as t1
+        group by pd_supplier
+    </select>
+
+    <select id="getByBillItemId" resultMap="BaseResultMap">
+        SELECT bi.id AS billItemId,bi.pd_supplier,
+        bm.order_no,bm.customer_name,bi.pd_skuname,
+        bi.pd_model,bi.pd_count,bi.pd_price,reconciliation_status,
+        is_change,bi.accumulate_settlement_count,bi.pd_current_count
+        FROM ST_RD_Bill_Item bi LEFT JOIN ST_RD_Bill_Material bm
+        ON bi.st_rd_bill_material_id = bm.id
+        WHERE bi.id = #{billItemId}
+    </select>
+
+    <select id="findItemBySupplyAndSkuName" resultMap="BaseResultMap">
+        SELECT bi.id AS billItemId,bi.pd_supplier,
+        bm.order_no,bm.customer_name,bi.pd_skuname,bi.pd_brandname,bi.pd_sku_sales_attribute,
+        bi.pd_model,bi.pd_count,bi.pd_price,reconciliation_status,
+        is_change,bi.accumulate_settlement_count,bi.pd_current_count
+        FROM ST_RD_Bill_Item bi LEFT JOIN ST_RD_Bill_Material bm
+        ON bi.st_rd_bill_material_id = bm.id
+        <where>
+            <if test="pdSupplier!= null and pdSupplier != ''">
+                bi.pd_supplier = #{pdSupplier}
+            </if>
+            <if test="brandname!= null and brandname != ''">
+                AND bi.pd_brandname = #{brandname}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND bi.acceptance_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND bi.acceptance_time &lt;= #{endTime}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND bm.order_no = #{orderNo}
+            </if>
+                AND bi.pd_price &gt; 0
+                AND bi.reconciliation_status LIKE '%未对账%'
+                AND bi.is_acceptance = 1
+        </where>
+    </select>
+
+    <!--根据验收时间查询   可以删除这个方法-->
+    <select id="findItemByAcceptance" resultMap="BaseResultMap">
+        SELECT bi.id AS billItemId,
+        bm.order_no,bm.customer_name,bm.customer_mobile,bi.pd_skuname,
+        bi.pd_model,bi.pd_count,bi.pd_price,reconciliation_status,
+        is_change,bi.accumulate_settlement_count,bi.pd_current_count
+        FROM ST_RD_Bill_Item bi LEFT JOIN ST_RD_Bill_Material bm
+        ON bi.st_rd_bill_material_id = bm.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                bm.customer_name LIKE concat('%',#{keyword},'%') OR bm.order_no LIKE concat('%',#{keyword},'%') OR bm.customer_mobile LIKE concat('%',#{keyword},'%')
+            </if>
+            <if test="pdSupplier!= null and pdSupplier != ''">
+                AND bi.pd_supplier = #{pdSupplier}
+            </if>
+            <if test="pdSkuname!= null and pdSkuname != ''">
+                AND bi.pd_skuname = #{pdSkuname}
+            </if>
+            AND bi.reconciliation_status LIKE '%未对账%'
+            AND bi.is_acceptance = 0
+        </where>
+    </select>
+
+    <!--查询订单详情-->
+    <select id="findBillBatchDetail" resultMap="BaseResultMap">
+            SELECT pa.order_no,pa.customer_name,pa.pd_supplier,pa.pd_brandname,pa.pd_skuname,pa.pd_model,pa.bill_number,
+                    pa.pd_price,pa.bill_amount_money,pa.operate_time
+            FROM (SELECT bi.pd_price,bm.customer_name,bm.order_no,bi.pd_skuname,bi.pd_model,
+						  bd.bill_number,bd.bill_amount_money,bb.bill_batch,bi.pd_brandname,bi.pd_supplier,
+                          bb.operate_time
+                        FROM ST_RD_Bill_Batch_Detail bd
+                        LEFT JOIN ST_RD_Bill_Batch bb ON bd.st_rd_bill_batch_id = bb.id
+                        LEFT JOIN ST_RD_Bill_Item bi ON bd.st_rd_bill_item_id = bi.id
+                        LEFT JOIN ST_RD_Bill_Material bm ON bi.st_rd_bill_material_id = bm.id
+            ) AS pa WHERE 1=1
+                <if test="orderNo != null and orderNo !=''">
+                    AND pa.order_no = #{orderNo}
+                </if>
+                <if test="pdSupplier != null and pdSupplier !=''">
+                    AND pa.pd_supplier = #{pdSupplier}
+                </if>
+                <if test="brandname != null and brandname !=''">
+                    AND pa.pd_brandname = #{brandname}
+                </if>
+                <if test="startTime != null and startTime !=''">
+                    AND pa.operate_time &gt;= #{startTime}
+                </if>
+                <if test="endTime != null and endTime !=''">
+                    AND pa.operate_time &lt; #{endTime}
+                </if>
+    </select>
+
+    <!--批量修改-->
+    <update id="updateBatch">
+        UPDATE ST_RD_Bill_Item
+        <set>
+            <if test="accumulateSettlementCount != null and accumulateSettlementCount != ''">
+                accumulate_settlement_count = #{accumulateSettlementCount},
+            </if>
+            <if test="accumulateSettlementMoney != null and accumulateSettlementMoney != ''">
+                accumulate_settlement_money = #{accumulateSettlementMoney},
+            </if>
+            <if test="pdCurrentCount != null and pdCurrentCount != ''">
+                pd_current_count = #{pdCurrentCount},
+            </if>
+            <if test="reconciliationStatus != null and reconciliationStatus != null">
+                reconciliation_status = #{reconciliationStatus},
+            </if>
+            <if test="change!= null and change!=''">
+                is_change = #{change}
+            </if>
+        </set>
+        WHERE id = #{billItemId}
+    </update>
+
+    <!--调整对账数量-->
+    <update id="updateCount">
+        UPDATE ST_RD_Bill_Item
+        <set>
+            <if test="pdCurrentCount != null and pdCurrentCount != ''">
+                pd_current_count = #{pdCurrentCount},
+            </if>
+                is_change = 1
+        </set>
+        WHERE id = #{billItemId}
+    </update>
+
+    <select id="findCheckOnWork"  resultMap="BaseResultMap">
+        SELECT bm.order_no,bi.id as billItemId ,bm.customer_name,bi.pd_skuname,bi.pd_model,
+        bi.pd_count,bi.pd_price,bi.reconciliation_status,bi.is_change,bi.accumulate_settlement_count,bi.pd_current_count
+        FROM ST_RD_Bill_Item bi,ST_RD_Bill_Material bm
+        WHERE bi.st_rd_bill_material_id = bm.id
+        AND bi.id IN
+        <foreach item="billItemId" collection="list" open="(" separator="," close=")">
+            #{billItemId}
+        </foreach>
+    </select>
+
+    <update id="checkAndAccept" >
+        UPDATE ST_RD_Bill_Item
+        SET acceptance_time=#{date},is_acceptance= 1,acceptance_type=2
+        WHERE id = #{billItemId}
+    </update>
+    <!--信息补全-->
+    <select id="findPrice" resultMap="BaseResultMap">
+        SELECT bi.id AS billItemId,bi.pd_supplier,bi.pd_skuname,
+        bi.pd_model,bi.pd_price
+        FROM ST_RD_Bill_Item bi LEFT JOIN ST_RD_Bill_Material bm
+        ON bi.st_rd_bill_material_id = bm.id
+        WHERE bi.pd_price = 0 AND bi.reconciliation_status LIKE '%未对账%'
+    </select>
+    <update id="updatePrice">
+        UPDATE ST_RD_Bill_Item SET pd_price = #{price} WHERE id = #{billItemId}
+    </update>
+
+    <!--查询未对账订单-->
+    <select id="findOrderByNoAccountCHecking" resultMap="BaseResultMap">
+        SELECT
+        bm.order_no,bm.customer_name,bm.customer_mobile,bm.house_address
+        FROM ST_RD_Bill_Item bi LEFT JOIN ST_RD_Bill_Material bm
+        ON bi.st_rd_bill_material_id = bm.id
+        <where>
+            <if test="pdSupplier!= null and pdSupplier != ''">
+                bi.pd_supplier = #{pdSupplier}
+            </if>
+            <if test="brandname!= null and brandname != ''">
+                AND bi.pd_brandname = #{brandname}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND bi.acceptance_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND bi.acceptance_time &lt;= #{endTime}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND bm.order_no = #{orderNo}
+            </if>
+            AND bi.pd_price &gt; 0
+            AND bi.reconciliation_status LIKE '%未对账%'
+            AND bi.is_acceptance = 1
+        </where>
+        GROUP BY bm.order_no,bm.customer_name,bm.customer_mobile,bm.house_address
+    </select>
+</mapper>

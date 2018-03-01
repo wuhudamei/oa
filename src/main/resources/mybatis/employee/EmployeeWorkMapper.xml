@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.employee.EmployeeWorkDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.employee.EmployeeWork">
+    <id column="id" property="id"/>
+    <result column="emp_id" property="empId"/>
+    <result column="start_date" property="startDate"/>
+    <result column="end_date" property="endDate"/>
+    <result column="company_name" property="companyName"/>
+    <result column="position" property="position"/>
+    <result column="duty" property="duty"/>
+    <result column="certifier_name" property="certifierName"/>
+    <result column="certifier_phone" property="certifierPhone"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id, emp_id, start_date, end_date, company_name, position, duty, certifier_name, certifier_phone
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee_work
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from oa_employee_work
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.employee.EmployeeWork" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_employee_work
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="startDate != null">
+        start_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="duty != null">
+        duty,
+      </if>
+      <if test="certifierName != null">
+        certifier_name,
+      </if>
+      <if test="certifierPhone != null">
+        certifier_phone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        #{empId},
+      </if>
+      <if test="startDate != null">
+        #{startDate},
+      </if>
+      <if test="endDate != null">
+        #{endDate},
+      </if>
+      <if test="companyName != null">
+        #{companyName},
+      </if>
+      <if test="position != null">
+        #{position},
+      </if>
+      <if test="duty != null">
+        #{duty},
+      </if>
+      <if test="certifierName != null">
+        #{certifierName},
+      </if>
+      <if test="certifierPhone != null">
+        #{certifierPhone},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.employee.EmployeeWork">
+    update oa_employee_work
+    <set>
+      <if test="empId != null">
+        emp_id = #{empId},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName},
+      </if>
+      <if test="position != null">
+        position = #{position},
+      </if>
+      <if test="duty != null">
+        duty = #{duty},
+      </if>
+      <if test="certifierName != null">
+        certifier_name = #{certifierName},
+      </if>
+      <if test="certifierPhone != null">
+        certifier_phone = #{certifierPhone},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO oa_employee_work(emp_id, start_date, end_date, company_name, position, duty, certifier_name, certifier_phone)
+    VALUES
+    <foreach collection="works" item="work" separator=",">
+      (#{work.empId},#{work.startDate},#{work.endDate},#{work.companyName},#{work.position},#{work.duty},#{work.certifierName},#{work.certifierPhone})
+    </foreach>
+  </insert>
+
+  <select id="findByEmpId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee_work WHERE emp_id = #{empId}
+  </select>
+
+  <delete id="deleteByEmpId">
+    DELETE FROM oa_employee_work WHERE emp_id = #{empId}
+  </delete>
+</mapper>

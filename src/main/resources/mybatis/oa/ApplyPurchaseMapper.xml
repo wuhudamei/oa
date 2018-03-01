@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.ApplyPurchaseDao">
+    <resultMap id="BaseResultMap" type="ApplyPurchase">
+        <result column="id" property="id"/>
+        <result column="apply_title" property="applyTitle"/>
+        <result column="apply_code" property="applyCode"/>
+        <result column="apply_company" property="applyCompany"/>
+        <result column="first_type_id" property="firstTypeId"/>
+        <result column="second_type_id" property="secondTypeId"/>
+        <result column="purchase_month" property="purchaseMonth"/>
+        <result column="good_name" property="goodName"/>
+        <result column="good_num" property="goodNum"/>
+        <result column="good_price" property="goodPrice"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="description" property="description"/>
+        <result column="apply_user" property="applyUser"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="current_approver_name" property="currentApproverName" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    id,apply_title,apply_code, apply_company,first_type_id,second_type_id,purchase_month, good_name, good_num, good_price,total_price, description, apply_user, status, create_time
+  </sql>
+    <select id="getById" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from oa_apply_purchase
+        where id = #{id}
+    </select>
+    <insert id="insert" parameterType="ApplyPurchase" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_apply_purchase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applyTitle != null">
+                apply_title,
+            </if>
+            <if test="applyCode != null">
+                apply_code,
+            </if>
+            <if test="applyCompany != null">
+                apply_company,
+            </if>
+            <if test="firstTypeId != null">
+                first_type_id,
+            </if>
+            <if test="secondTypeId != null">
+                second_type_id,
+            </if>
+            <if test="purchaseMonth != null">
+                purchase_month,
+            </if>
+            <if test="goodName != null">
+                good_name,
+            </if>
+            <if test="goodNum != null">
+                good_num,
+            </if>
+            <if test="goodPrice != null">
+                good_price,
+            </if>
+            <if test="totalPrice != null">
+                total_price,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="applyUser != null">
+                apply_user,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applyTitle != null">
+                #{applyTitle},
+            </if>
+            <if test="applyCode != null">
+                #{applyCode},
+            </if>
+            <if test="applyCompany != null">
+                #{applyCompany},
+            </if>
+            <if test="firstTypeId != null">
+                #{firstTypeId},
+            </if>
+            <if test="secondTypeId != null">
+                #{secondTypeId},
+            </if>
+            <if test="purchaseMonth != null">
+                #{purchaseMonth},
+            </if>
+            <if test="goodName != null">
+                #{goodName},
+            </if>
+            <if test="goodNum != null">
+                #{goodNum},
+            </if>
+            <if test="goodPrice != null">
+                #{goodPrice},
+            </if>
+            <if test="totalPrice != null">
+                #{totalPrice},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="applyUser != null">
+                #{applyUser},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+    <delete id="deleteById" parameterType="long">
+        delete from oa_apply_purchase
+        where id = #{id}
+    </delete>
+    <update id="update" parameterType="ApplyPurchase">
+        UPDATE oa_apply_purchase
+        <set>
+            <if test="applyTitle != null">
+                apply_title= #{applyTitle},
+            </if>
+            <if test="applyCode != null">
+                apply_code=#{applyCode},
+            </if>
+            <if test="firstTypeId != null">
+                first_type_id=#{firstTypeId},
+            </if>
+            <if test="secondTypeId != null">
+                second_type_id=#{secondTypeId},
+            </if>
+            <if test="purchaseMonth != null">
+                purchase_month=#{purchaseMonth},
+            </if>
+            <if test="goodName != null">
+                good_name= #{goodName},
+            </if>
+            <if test="goodNum != null">
+                good_num=#{goodNum},
+            </if>
+            <if test="goodPrice != null">
+                good_price= #{goodPrice},
+            </if>
+            <if test="totalPrice != null">
+                total_price=#{totalPrice},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+            <if test="status != null">
+                status= #{status}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="searchTotal" parameterType="map" resultType="Long">
+        SELECT
+        COUNT(*)
+        <include refid="searchWhere"/>
+    </select>
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        a.*,b.current_approver_name
+        <include refid="searchWhere"/>
+        <if test="sort != null">
+            ORDER BY
+            <foreach collection="sort" item="order" separator=",">
+                a.${order.property} ${order.direction}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="sumPurchaseByCompany" parameterType="long" resultType="double">
+        SELECT
+            IFNULL(sum(total_price),0)
+        FROM
+            oa_apply_purchase oap
+        WHERE
+            oap.apply_company = #{companyId}
+        AND oap. STATUS = 'ADOPT'
+        AND LEFT(purchase_month , 4) IN(SELECT YEAR(curdate()));
+    </select>
+
+    <sql id="searchWhere">
+        from oa_apply_purchase a
+        left join (
+        select x.form_id,group_concat(y.name) as current_approver_name
+        from oa_wf_process x left join oa_employee y on x.approver_id = y.id where x.type = 'PURCHASE' and x.`status` = 'PENDING' group by apply_code
+        ) b on a.id = b.form_id
+        where 1=1
+        <if test="keyword!=null">
+            AND (
+            a.good_name LIKE CONCAT('%', #{keyword}, '%')
+            OR a.description LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        <if test="userId != null">
+            and a.apply_user = #{userId}
+        </if>
+    </sql>
+</mapper>

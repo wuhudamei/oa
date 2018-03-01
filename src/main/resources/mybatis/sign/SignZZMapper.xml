@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.sign.SignZZDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.sign.Sign">
+        <id property="id" column="id"/>
+        <result property="empId" column="emp_id"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="signOutTime" column="signout_time"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="address" column="address"/>
+        <result property="signSiteId" column="signsite_id"/>
+        <result property="company" column="company"/>
+        <result property="companyName" column="companyname"/>
+        <result property="department" column="department"/>
+        <result property="empName" column="emp_name"/>
+        <result property="punchCardType" column="punch_card_type"/>
+        <result property="outAddress" column="out_address"/>
+        <result property="outLatitude" column="out_latitude"/>
+        <result property="outLongitude" column="out_longitude"/>
+        <result property="outPunchCardType" column="out_punch_card_type"/>
+        <result property="signType" column="sign_type"/>
+        <result property="creator" column="creator"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="insertSigntypeTime" column="insert_signtype_time"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="cn.damei.entity.sign.Sign" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO oa_sign_zz(emp_id,sign_time,signout_time,latitude,longitude,address,signsite_id,company,department,punch_card_type,out_address,out_latitude,out_longitude,out_punch_card_type,sign_type,creator,creat_time,insert_signtype_time)
+        VALUES (#{empId},#{signTime},#{signOutTime},#{latitude},#{longitude},#{address},#{signSiteId},#{company},#{department},#{punchCardType},#{outAddress},#{outLatitude},#{outLongitude},#{outPunchCardType},#{signType},#{creator},#{creatTime},#{insertSigntypeTime})
+    </insert>
+
+
+
+    <update id="update" parameterType="cn.damei.entity.sign.Sign">
+        UPDATE oa_sign_zz
+        <set>
+            <if test="empId != null">
+                emp_id = #{empId},
+            </if>
+            <if test="signTime != null">
+                sign_time = #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                signout_time = #{signOutTime},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="signSiteId != null">
+                signsite_id = #{signSiteId},
+            </if>
+            <if test="company != null">
+                company = #{company},
+            </if>
+            <if test="department != null">
+                department = #{department},
+            </if>
+            <if test="punchCardType != null">
+                punch_card_type = #{punchCardType},
+            </if>
+            <if test="outAddress != null">
+                out_address = #{outAddress},
+            </if>
+            <if test="outLatitude != null">
+                out_latitude = #{outLatitude},
+            </if>
+            <if test="outLongitude != null">
+                out_longitude = #{outLongitude},
+            </if>
+            <if test="outPunchCardType != null">
+                out_punch_card_type = #{outPunchCardType},
+            </if>
+            <if test="signType != null">
+                sign_type = #{signType},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="insertSigntypeTime != null">
+                insert_signtype_time = #{insertSigntypeTime}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM oa_sign_zz WHERE emp_id=#{empId} AND TO_DAYS(creat_time) = TO_DAYS(NOW())
+    </select>
+
+    <select id="findWorkCoefficient" resultType="int">
+       select count(id) from oa_sign_zz where emp_id = #{empId} and sign_time BETWEEN #{firstDay} AND #{lastDay}
+    </select>
+
+</mapper>

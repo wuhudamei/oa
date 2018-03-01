@@ -1,0 +1,34 @@
+
+/* EASY PIE CHART*/
+
+.easypiechart {
+    position: relative;
+    text-align: center;
+}
+
+.easypiechart .h2 {
+    margin-left: 10px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.easypiechart canvas {
+    top: 0;
+    left: 0;
+}
+
+.easypiechart .easypie-text {
+    line-height: 1;
+    position: absolute;
+    top: 33px;
+    width: 100%;
+    z-index: 1;
+}
+
+.easypiechart img {
+    margin-top: -4px;
+}
+
+.jqstooltip {
+    box-sizing: content-box;
+}

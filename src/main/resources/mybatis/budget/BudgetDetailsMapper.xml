@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.budget.BudgetDetailsDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.budget.BudgetDetails">
+        <id column="id" property="id"/>
+        <result column="budget_id" property="budgetId"/>
+        <result column="cost_item_id" property="costItemId"/>
+        <result column="cost_item_name" property="costItemName"/>
+        <result column="cost_detail_names" property="costDetailNames"/>
+        <result column="money" property="money"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, budget_id, cost_item_id, money, remark
+  </sql>
+    <select id="getById" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from oa_budget_details
+        where id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+    delete from oa_budget_details
+    where id = #{id}
+  </delete>
+    <insert id="insert" parameterType="cn.damei.entity.budget.BudgetDetails" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into oa_budget_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="budgetId != null">
+                budget_id,
+            </if>
+            <if test="costItemId != null">
+                cost_item_id,
+            </if>
+            <if test="money != null">
+                money,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="budgetId != null">
+                #{budgetId},
+            </if>
+            <if test="costItemId != null">
+                #{costItemId},
+            </if>
+            <if test="money != null">
+                #{money},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="cn.damei.entity.budget.BudgetDetails">
+        update oa_budget_details
+        <set>
+            <if test="budgetId != null">
+                budget_id = #{budgetId},
+            </if>
+            <if test="costItemId != null">
+                cost_item_id = #{costItemId},
+            </if>
+            <if test="money != null">
+                money = #{money},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="batchInsert">
+        INSERT INTO oa_budget_details(budget_id, cost_item_id, money, remark) VALUE
+        <foreach collection="budgetDetails" item="budget" separator=",">
+            (#{budget.budgetId},#{budget.costItemId},#{budget.money},#{budget.remark})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByBudgetId">
+        DELETE FROM oa_budget_details where budget_id = #{budgetId}
+    </delete>
+
+    <select id="getByBudgetId" resultMap="BaseResultMap">
+        SELECT
+         DE.id, DE.budget_id, DE.cost_item_id, DE.money, DE.remark,
+         DI.name AS cost_item_name, DT.cost_detail_names
+        FROM oa_budget_details DE
+        LEFT JOIN oa_dictionary DI ON DE.cost_item_id = DI.id
+        LEFT JOIN(
+        SELECT parent_code,group_concat(name) AS cost_detail_names
+        FROM oa_dictionary group by parent_code
+        ) DT ON DE.cost_item_id = DT.parent_code
+        WHERE DE.budget_id=#{budgetId}
+    </select>
+</mapper>

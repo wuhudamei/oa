@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.OrderDetailsByOrderNoDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.OrderDetails">
+        <result property="secondLinkman" column="secondLinkman"/>
+        <result property="secondLinkmanMobile" column="secondLinkmanMobile"/>
+        <result property="measurehousearea" column="measurehousearea"/>
+        <result property="orderNo" column="orderno"/>
+        <result property="unitprice" column="unitprice"/>
+    </resultMap>
+
+    <select id="findOrderDetailByOrderNo" resultMap="BaseResultMap">
+        select secondLinkman,
+                REPLACE(secondLinkmanMobile, substring(secondLinkmanMobile,4,4), '****') AS secondLinkmanMobile,measurehousearea,unitprice
+                FROM ST_RD_CustomerMaterial
+        where orderno=#{orderno}
+    </select>
+
+</mapper>

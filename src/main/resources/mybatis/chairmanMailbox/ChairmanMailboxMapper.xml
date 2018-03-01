@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.chairmanMailbox.ChairmanMailboxDao">
+
+    <resultMap id="BaseResultMap" type="ChairmanMailbox">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="read_status" property="readStatus"/>
+        <result column="important_degree" property="importantDegree"/>
+        <result column="comment" property="comment"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="department_name" property="departmentName"/>
+        <result column="org_id" property="companyId"/>
+        <result column="org_name" property="companyName"/>
+        <!--微信端语音-->
+        <result column="voice_url" property="voiceUrl"/>
+        <!--微信端图片集合-->
+        <result column="picture_urls" property="pictureUrls"/>
+    </resultMap>
+
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT mail.id, mail.title, mail.content, mail.read_status, mail.anonymous,
+               mail.important_degree, mail.create_time, emp.name create_user_name,
+               org.org_name companyName, dep.org_name departmentName
+        FROM oa_chairman_mailbox mail
+        LEFT JOIN oa_employee emp
+          ON mail.create_user = emp.id
+        LEFT JOIN oa_organization org
+          ON mail.org_id = org.id
+        LEFT JOIN oa_organization dep
+          ON mail.department_id = dep.id
+        <where>
+            <if test="title != null">
+                AND mail.title LIKE CONCAT('%',#{title},'%')
+            </if>
+            <if test="readStatus != null">
+                AND mail.read_status = #{readStatus}
+            </if>
+            <if test="importantDegree != null">
+                AND mail.important_degree = #{importantDegree}
+            </if>
+        </where>
+        <choose>
+            <when test="readStatus">
+                ORDER BY mail.important_degree DESC
+            </when>
+            <otherwise>
+                ORDER BY mail.id DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert" parameterType="ChairmanMailbox">
+
+        insert into oa_chairman_mailbox
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="readStatus != null">
+                read_status,
+            </if>
+            <if test="anonymous != null">
+                anonymous,
+            </if>
+            <if test="importantDegree != null">
+                important_degree,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="companyId != null">
+                org_Id,
+            </if>
+            <if test="departmentId != null">
+                department_id,
+            </if>
+            <if test="comment != null">
+                comment,
+            </if>
+            <if test="pictureUrls != null">
+                picture_urls,
+            </if>
+            <if test="voiceUrl != null">
+                voice_url
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="readStatus != null">
+                #{readStatus},
+            </if>
+            <if test="anonymous != null">
+                #{anonymous},
+            </if>
+            <if test="importantDegree != null">
+                #{importantDegree},
+            </if>
+            <if test="createUser != null">
+                #{createUser},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="companyId != null">
+                #{companyId},
+            </if>
+            <if test="departmentId != null">
+                #{departmentId},
+            </if>
+            <if test="comment != null">
+                #{comment},
+            </if>
+            <if test="pictureUrls != null">
+                #{pictureUrls},
+            </if>
+            <if test="voiceUrl != null">
+                #{voiceUrl}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteById" parameterType="long">
+
+        DELETE FROM oa_chairman_mailbox WHERE id=#{id}
+
+    </delete>
+
+
+    <select id="getById" parameterType="long" resultMap="BaseResultMap">
+      select * from oa_chairman_mailbox where id=#{id}
+    </select>
+
+
+    <update id="update" parameterType="ChairmanMailbox">
+
+        UPDATE oa_chairman_mailbox
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="readStatus != null">
+                read_status = #{readStatus},
+            </if>
+            <!--<if test="anonymous != null">
+                anonymous = #{anonymous},
+            </if>-->
+            <if test="importantDegree != null">
+                important_degree = #{importantDegree},
+            </if>
+            <if test="comment != null">
+                comment = #{comment},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

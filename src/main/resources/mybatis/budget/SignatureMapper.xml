@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.budget.SignatureDao">
+    <resultMap id="BaseResultMap" type="Signature">
+        <id column="id" property="id"/>
+        <result column="apply_title" property="applyTitle"/>
+        <result column="apply_code" property="applyCode"/>
+        <result column="company_id" property="company.id"/>
+        <result column="type" property="type"/>
+        <result column="cost_item" property="costItem"/>
+        <result column="cost_item_name" property="costItemName"/>
+        <result column="org_name" property="company.orgName"/>
+        <result column="signature_date" property="signatureDate"/>
+        <result column="total_money" property="totalMoney"/>
+        <result column="reason" property="reason"/>
+        <result column="status" property="status"/>
+        <result column="attachment" property="attachment"/>
+        <result column="surpass_budget" property="surpassBudget"/>
+        <result column="create_user" property="createUser.id"/>
+        <result column="create_user_name" property="createUser.name"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="current_approver_name" property="currentApproverName"/>
+        <result column="cc_user" property="ccUser"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, apply_title,apply_code,type,cost_item,company_id, signature_date, total_money, reason, status, attachment, surpass_budget, create_user, create_date,
+        update_date, update_user
+  </sql>
+    <select id="getById" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+            S.id,
+            S.apply_title,
+            S.apply_code,
+            S.type,
+            S.cost_item,
+            S.company_id,
+            S.signature_date,
+            S.total_money,
+            S.reason,
+            S.cc_user ccUser,
+            S. STATUS,
+            S.attachment,
+            S.surpass_budget,
+            S.create_user,
+            S.create_date,
+            S.update_date,
+            S.update_user,
+            EM. NAME create_user_name,
+            ORG.org_name,
+  			company.`org_name` companyName
+        FROM
+            oa_payment_signature S
+        LEFT JOIN oa_employee EM ON S.create_user = EM.id
+        LEFT JOIN oa_employee_org oeo on EM.id=oeo.emp_id and oeo.`type` = 'DIRECTLY'
+			  LEFT JOIN oa_organization ORG ON oeo.org_department_id = ORG.id
+			  left join oa_organization company  on oeo.`org_company_id` = company.`id`
+        WHERE S.id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+        delete from oa_payment_signature
+        where id = #{id}
+    </delete>
+    <insert id="insert" keyProperty="id" parameterType="Signature" useGeneratedKeys="true">
+        insert into oa_payment_signature
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applyTitle != null">
+                apply_title,
+            </if>
+            <if test="applyCode != null">
+                apply_code,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="costItem != null">
+                cost_item,
+            </if>
+            <if test="company != null">
+                company_id,
+            </if>
+            <if test="signatureDate != null">
+                signature_date,
+            </if>
+            <if test="totalMoney != null">
+                total_money,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="attachment != null">
+                attachment,
+            </if>
+            <if test="surpassBudget != null">
+                surpass_budget,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="ccUser != null">
+                cc_user,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applyTitle != null">
+                #{applyTitle},
+            </if>
+            <if test="applyCode != null">
+                #{applyCode},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="costItem != null">
+                #{costItem},
+            </if>
+            <if test="company != null">
+                #{company.id},
+            </if>
+            <if test="signatureDate != null">
+                #{signatureDate},
+            </if>
+            <if test="totalMoney != null">
+                #{totalMoney},
+            </if>
+            <if test="reason != null">
+                #{reason},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="attachment != null">
+                #{attachment},
+            </if>
+            <if test="surpassBudget != null">
+                #{surpassBudget},
+            </if>
+            <if test="createUser != null">
+                #{createUser.id},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser},
+            </if>
+            <if test="ccUser != null">
+                #{ccUser},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateUseStaus">
+		UPDATE `oa_payment_signature` SET use_status = #{targetValue} WHERE id = #{signatureId}
+  </update>
+    <update id="update" parameterType="cn.damei.entity.budget.Signature">
+        update oa_payment_signature
+        <set>
+            <if test="applyTitle != null">
+                apply_title = #{applyTitle},
+            </if>
+            <if test="signatureDate != null">
+                signature_date = #{signatureDate},
+            </if>
+            <if test="totalMoney != null">
+                total_money = #{totalMoney},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="costItem != null">
+                cost_item = #{costItem},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="attachment != null">
+                attachment = #{attachment},
+            </if>
+            <if test="reason != null">
+                reason = #{reason},
+            </if>
+            <if test="surpassBudget != null">
+                surpass_budget = #{surpassBudget},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT distinct
+        S.id,S.apply_title,S.apply_code,S.type, S.cost_item,od.name as cost_item_name, S.company_id, S.signature_date,
+        S.total_money, S.reason,
+        S.status, S.attachment, S.surpass_budget, S.create_user,S.create_date,S.update_date, S.update_user,EM.name
+        create_user_name,
+        ORG.org_name org_name,
+        WF.current_approver_name,
+		yy.wfid wfId 
+        FROM oa_payment_signature S LEFT JOIN oa_employee EM ON S.create_user = EM.id
+        LEFT JOIN oa_organization ORG ON S.company_id = ORG.id
+        LEFT JOIN oa_dictionary od on S.cost_item = od.id
+        LEFT JOIN(
+        SELECT x.form_id,group_concat(y.name) AS current_approver_name
+        FROM oa_wf_process x LEFT JOIN oa_employee y ON x.approver_id = y.id WHERE x.type = 'SIGNATURE' 
+        and x.`status` = 'PENDING'  GROUP BY form_id) WF ON S.id = WF.form_id
+        left join (select y.id wfid,y.form_id from oa_wf_process y where y.type = 'SIGNATURE' and y.status = 'PENDING' and y.`approver_id` = #{userId}) yy on yy.form_id = S.id
+        <include refid="searchWhere"/>
+        <if test="sort != null">
+            ORDER BY
+            <foreach collection="sort" item="order" separator=",">
+                S.${order.property} ${order.direction}
+            </foreach>
+        </if>
+    </select>
+
+    <sql id="searchWhere">
+        <where>
+        	<if test="dataType == 'PENDING'">
+        		AND S.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='PENDING'
+        		  AND  (h.`approver_id` LIKE CONCAT('%,${userId},%')
+						OR h.`approver_id` LIKE CONCAT('${userId},%')
+						OR h.`approver_id` LIKE CONCAT('%,${userId}')
+						OR h.`approver_id` LIKE CONCAT('${userId}%')
+						))
+            </if>
+        	<if test="dataType == 'COMPLETE'">
+        		AND S.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='COMPLETE'
+					AND  (h.`approver_id` LIKE CONCAT('%,${userId},%')
+						OR h.`approver_id` LIKE CONCAT('${userId},%')
+						OR h.`approver_id` LIKE CONCAT('%,${userId}')
+						OR h.`approver_id` LIKE CONCAT('${userId}%')
+						))
+            </if>
+        	<if test="dataType == 'CCUSER'">
+        		   AND (S.cc_user LIKE CONCAT('%,', #{ccUserId}, ',%')
+        		   		or S.cc_user LIKE CONCAT('%', #{ccUserId}, ',%')
+        		   		or S.cc_user LIKE CONCAT('%,', #{ccUserId}, '%')
+        		   	) and S.cc_user_status = 1
+            </if>
+        	<if test="dataType == 'APPROVED'">
+        		 <if test="userId != null">
+	                AND S.create_user = #{userId}
+	            </if>
+	            <if test="keyword != null">
+	                AND (S.apply_title LIKE CONCAT('%',#{keyword},'%') OR S.apply_code LIKE CONCAT('%',#{keyword},'%'))
+	            </if>
+	            <if test="status != null">
+	                AND S.status = #{status}
+	            </if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 这是个让人蛋疼的逻辑，请听好：查询没有被关联过的签报单 、 被关联过但报销单状态为拒绝的签报单 和 指定报销单关联的签报单
+    为什么这样写呢？因为，报销单拒绝后的关联的签报单还可以用，所以一张签报单就可能关联多张签报单，所以只能用子查询然后再关联查询，在where中用排除法过滤
+    -->
+    <select id="findByMonthAndUser" resultMap="BaseResultMap">
+        SELECT DISTINCT S.id, S.apply_title,S.apply_code,S.type, S.cost_item, S.company_id, S.signature_date,
+        S.total_money,
+        S.attachment, S.reason,S.surpass_budget, S.create_user, S.create_date, S.update_date, S.update_user
+        FROM oa_payment_signature S LEFT JOIN oa_payment P ON S.company_id = P.company_id
+        WHERE
+        S.create_user = #{userId}
+        AND S.signature_date = #{month}
+        AND (S.`use_status` = 0 OR S.`use_status` IS NULL)
+        <if test="statuses != null">
+            AND
+            <foreach collection="statuses" item="status" open="(" close=")" separator="OR">
+                S.status = #{status}
+            </foreach>
+        </if>
+    </select>
+</mapper>

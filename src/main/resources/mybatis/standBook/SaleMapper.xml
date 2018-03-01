@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.SaleDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.Sale">
+        <result property="orderNo" column="OrderNo"/>
+        <result property="serviceName" column="ServiceName"/>
+        <result property="serviceMobile" column="ServiceMobile"/>
+        <result property="origin" column="Origin"/>
+        <result property="budgetAmount" column="BudgetAmount"/>
+        <result property="planDecorateYear" column="PlanDecorateYear"/>
+        <result property="planDecorateMonth" column="PlanDecorateMonth"/>
+        <result property="reMeasureCreateTime" column="ReMeasureCreateTime"/>
+        <result property="imprestAmount" column="ImprestAmount"/>
+        <result property="isImprestAmount" column="IsImprestAmount"/>
+        <result property="isHaveNoBackTag" column="IsHaveNoBackTag"/>
+    </resultMap>
+    <!--根据订单号查询orderCustomer-->
+    <select id="findOrderCustomerByOrderNo" resultMap="BaseResultMap">
+        SELECT
+            ord.IsHaveNoBackTag,
+            ord.ServiceName,
+            ord.ServiceMobile,
+            ord.ReMeasureCreateTime,
+            cus.Origin
+        FROM Ord_Order ord
+        LEFT JOIN Ord_Customer cus ON ord.CustomerId = cus.CustomerId
+        WHERE ord.OrderNo = #{orderno}
+    </select>
+    <!--根据订单号查询payment-->
+    <select id="findPaymentByOrderNo" resultMap="BaseResultMap">
+        SELECT
+	      pay.ImprestAmount,
+	      pay.IsImprestAmount
+        FROM Ord_Payment pay
+        LEFT JOIN Ord_Order ord ON pay.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderno}
+    </select>
+    <!--根据订单号查询placeOrder-->
+    <select id="findPlaceByOrderNo" resultMap="BaseResultMap">
+        SELECT
+	      place.BudgetAmount
+        FROM Ord_PlaceOrder place
+        LEFT JOIN Ord_Order ord ON place.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderno}
+    </select>
+</mapper>

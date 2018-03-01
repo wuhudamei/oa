@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.WechatMessageLogDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.WechatMessageLog">
+    <id column="id" property="id"/>
+    <result column="url" property="url"/>
+    <result column="form_id" property="formId"/>
+    <result column="wf_type" property="wfType"/>
+    <result column="is_approverr" property="approverr"/>
+    <result column="opinion" property="opinion"/>
+    <result column="from_user_id" property="fromUserId"/>
+    <result column="to_users" property="toUsers"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id,url,form_id,wf_type,is_approverr,opinion,from_user_id,to_users,create_time
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from wechat_message_log
+    where id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="cn.damei.entity.wechat.WechatMessageLog" >
+    insert into wechat_message_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="url != null">
+        url,
+      </if>
+      <if test="formId != null">
+        form_id,
+      </if>
+      <if test="wfType != null">
+        wf_type,
+      </if>
+      <if test="approverr != null">
+        is_approverr,
+      </if>
+      <if test="opinion != null">
+        opinion,
+      </if>
+      <if test="fromUserId != null">
+        from_user_id,
+      </if>
+      <if test="toUsers != null">
+        to_users,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="url != null">
+        #{url},
+      </if>
+      <if test="formId != null">
+        #{formId},
+      </if>
+      <if test="wfType != null">
+        #{wfType},
+      </if>
+      <if test="approverr != null">
+        #{approverr},
+      </if>
+      <if test="opinion != null">
+        #{opinion},
+      </if>
+      <if test="fromUserId != null">
+        #{fromUserId},
+      </if>
+      <if test="toUsers != null">
+        #{toUsers},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="searchTotal" parameterType="map" resultType="long">
+    SELECT COUNT(a.*)
+    <include refid="searchFromWhere"/>
+  </select>
+
+  <select id="search" parameterType="map" resultType="map">
+    SELECT
+		  a.`id`,
+		  a.`url`,
+		  a.`form_id`,
+		  a.`wf_type`,
+		  a.`is_approverr`,
+		  a.`opinion`,
+		  a.`from_user_id`,
+		  a.`to_users`,
+		  a.`create_time`,
+		  DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') createTimeHMS,
+		  (SELECT c.`name` FROM `oa_employee` c WHERE c.`id` = a.from_user_id) fromUser,
+		  (SELECT c.`name` FROM `oa_employee` c WHERE c.`id` = a.to_users) toUsers,
+		  b.`serial_number`,
+		  b.`status`,
+		  b.cc_person_name,
+		  b.title
+		   <include refid="searchFromWhere"/>
+    ORDER BY create_time DESC
+  </select>
+
+  <sql id="searchFromWhere">
+    	FROM
+		  `wechat_message_log` a
+		  LEFT JOIN  `oa_apply_common` b
+		  ON a.form_id = b.`id` 
+      <where>
+        <if test="keyword != null">
+          AND ( a.from_user_id = ( select id from oa_employee where (org_code = #{keyword} or name= #{keyword})) 
+          	or a.to_users = ( select id from oa_employee where  (org_code = #{keyword} or name= #{keyword}) )
+          	or b.`serial_number` =  #{keyword})
+        </if>
+    </where>
+  </sql>
+
+</mapper>

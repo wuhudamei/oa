@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.InsideMessageTargetDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.oa.InsideMessageTarget">
+        <id column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <result column="user_id" property="userId"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, message_id, user_id, status
+  </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from oa_inside_message_target
+        where id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+    delete from oa_inside_message_target
+    where id = #{id}
+  </delete>
+    <insert id="insert" parameterType="cn.damei.entity.oa.InsideMessageTarget" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into oa_inside_message_target
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="messageId != null">
+                message_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="messageId != null">
+                #{messageId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="cn.damei.entity.oa.InsideMessageTarget">
+        update oa_inside_message_target
+        <set>
+            <if test="messageId != null">
+                message_id = #{messageId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="changeStatus" parameterType="cn.damei.entity.oa.InsideMessageTarget">
+    update oa_inside_message_target set  status = #{status} where message_id = #{messageId} and user_id = #{userId}
+  </update>
+
+    <insert id="batchInsert">
+        INSERT INTO oa_inside_message_target(message_id,user_id,status) VALUES
+        <foreach collection="targets" item="target" separator=",">
+            (#{target.messageId},#{target.userId},#{target.status})
+        </foreach>
+    </insert>
+</mapper>

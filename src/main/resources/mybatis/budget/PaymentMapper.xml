@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.budget.PaymentDao">
+	<resultMap id="BaseResultMap" type="Payment">
+		<id column="id" property="id" />
+		<result column="apply_title" property="applyTitle" />
+		<result column="apply_code" property="applyCode" />
+		<result column="company_id" property="company.id" />
+		<result column="type" property="type" />
+		<result column="cost_item" property="costItem" />
+		<result column="cost_item_name" property="costItemName" />
+		<result column="org_name" property="company.orgName" />
+		<result column="payment_date" property="paymentDate" />
+		<result column="total_money" property="totalMoney" />
+		<result column="invoice_num" property="invoiceNum" />
+		<result column="reason" property="reason" />
+		<result column="signature_id" property="signatureId" />
+		<result column="signature_title" property="signatureTitle" />
+		<result column="surpass_budget" property="surpassBudget" />
+		<result column="status" property="status" />
+		<result column="attachment" property="attachment" />
+		<result column="create_user" property="createUser.id" />
+		<result column="create_user_name" property="createUser.name" />
+		<result column="create_date" property="createDate" />
+		<result column="update_date" property="updateDate" />
+		<result column="update_user" property="updateUser" />
+		<result column="cc_user" property="ccUser" />
+		<result column="current_approver_name" property="currentApproverName" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, apply_title,apply_code,type,company_id, payment_date, total_money,
+		invoice_num, reason,signature_id,
+		surpass_budget,status, attachment, create_user, create_date, update_date, update_user
+	</sql>
+	<select id="getById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		BU.id,
+		BU.apply_title,
+		BU.apply_code,
+		BU.type,
+		BU.company_id,
+		BU.payment_date,
+		BU.total_money,
+		BU.invoice_num,
+		BU.reason,
+		BU.status,
+		BU.create_user,
+		BU.create_date,
+		BU.update_date,
+		BU.update_user,
+		BU.attachment,
+		EM.name create_user_name,
+		ORG.org_name org_name,
+		c.`apply_title` signatureTitle,
+		BU.payment_signature_id paymentSignatureId,
+		BU.cc_user ccUser,
+		dept.`org_name` deptName
+		FROM
+		oa_payment BU
+		LEFT JOIN oa_employee EM ON BU.create_user = EM.id
+		LEFT JOIN oa_organization ORG ON BU.company_id = ORG.id
+		LEFT JOIN `oa_payment_signature` c ON BU.`payment_signature_id` = c.`id`
+		left join oa_employee_org oeo on EM.id = oeo.emp_id   and oeo.`type` = 'DIRECTLY'
+		left join oa_organization dept on oeo.org_department_id = dept.id 
+		where BU.id = #{id}
+	</select>
+	<delete id="deleteById" parameterType="long">
+		delete from oa_payment
+		where id = #{id}
+	</delete>
+	<insert id="insert" keyProperty="id" parameterType="Payment"
+		useGeneratedKeys="true">
+		insert into oa_payment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="applyTitle != null">
+				apply_title,
+			</if>
+			<if test="applyCode != null">
+				apply_code,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="company != null">
+				company_id,
+			</if>
+			<if test="paymentDate != null">
+				payment_date,
+			</if>
+			<if test="totalMoney != null">
+				total_money,
+			</if>
+			<if test="invoiceNum != null">
+				invoice_num,
+			</if>
+			<if test="reason != null">
+				reason,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="paymentSignatureId != null">
+				payment_signature_id,
+			</if>
+			<if test="attachment != null">
+				attachment,
+			</if>
+			<if test="ccUser != null">
+				cc_user,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="applyTitle != null">
+				#{applyTitle},
+			</if>
+			<if test="applyCode != null">
+				#{applyCode},
+			</if>
+			<if test="type != null">
+				#{type},
+			</if>
+			<if test="company != null">
+				#{company.id},
+			</if>
+			<if test="paymentDate != null">
+				#{paymentDate},
+			</if>
+			<if test="totalMoney != null">
+				#{totalMoney},
+			</if>
+			<if test="invoiceNum != null">
+				#{invoiceNum},
+			</if>
+			<if test="reason != null">
+				#{reason},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="createUser != null">
+				#{createUser.id},
+			</if>
+			<if test="createDate != null">
+				#{createDate},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser},
+			</if>
+			<if test="paymentSignatureId != null">
+				#{paymentSignatureId},
+			</if>
+			<if test="attachment != null">
+				#{attachment},
+			</if>
+			<if test="ccUser != null">
+				#{ccUser},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="cn.damei.entity.budget.Payment">
+		update oa_payment
+		<set>
+			<if test="applyTitle != null">
+				apply_title = #{applyTitle},
+			</if>
+			<if test="type != null">
+				type = #{type},
+			</if>
+			<if test="paymentDate != null">
+				payment_date = #{paymentDate},
+			</if>
+			<if test="totalMoney != null">
+				total_money = #{totalMoney},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="invoiceNum != null">
+				invoice_num = #{invoiceNum},
+			</if>
+			<if test="reason != null">
+				reason = #{reason},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser},
+			</if>
+			<if test="paymentSignatureId != null">
+				payment_signature_id = #{paymentSignatureId},
+			</if>
+			<if test="attachment != null">
+				attachment = #{attachment},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="sumPaymentByCompany" parameterType="long"
+		resultType="double">
+		SELECT
+		IFNULL(sum(total_money),0)
+		FROM
+		oa_payment op
+		WHERE
+		op.company_id = #{companyId}
+		AND op. STATUS = 'ADOPT'
+		AND LEFT(payment_date , 4) IN(SELECT YEAR(curdate()));
+	</select>
+	<select id="search" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+		BU.id,
+		BU.apply_title,
+		BU.apply_code,
+		BU.type,
+		BU.company_id,
+		BU.payment_date,
+		BU.total_money,
+		BU.invoice_num,
+		BU.reason,
+		BU.status,
+		BU.create_user,
+		BU.create_date,
+		BU.update_date,
+		BU.update_user,
+		EM.name create_user_name,
+		ORG.org_name org_name,
+		WF.current_approver_name,
+		b.name costItemName,
+		yy.wfId 
+		FROM
+		oa_payment BU
+		LEFT JOIN
+		(SELECT DISTINCT
+		a.cost_item_id,
+		a.payment_id
+		FROM oa_payment_details a) aa
+		ON aa. payment_id = BU. id
+		LEFT JOIN oa_employee EM
+		ON BU.create_user = EM.id
+		LEFT JOIN oa_organization ORG
+		ON BU.company_id = ORG.id
+		LEFT JOIN oa_dictionary b
+		ON b.id = aa.cost_item_id
+		LEFT JOIN
+		(SELECT
+			x.form_id,
+			GROUP_CONCAT(y.name) AS current_approver_name
+		FROM
+		oa_wf_process x
+		LEFT JOIN oa_employee y
+		ON x.approver_id = y.id
+		WHERE x.type = 'EXPENSE'
+		AND x. status = 'PENDING'
+		GROUP By x.form_id) WF	ON BU.id = WF.form_id
+		left join (select y.id wfid,y.form_id from oa_wf_process y where y.type = 'EXPENSE' and y.status = 'PENDING' and y.`approver_id` = #{userId}) yy on yy.form_id = BU.id
+		<include refid="searchWhere" />
+		<if test="sort != null">
+			ORDER BY
+			<foreach collection="sort" item="order" separator=",">
+				BU.${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<sql id="searchWhere">
+		<where>
+			<if test="dataType == 'APPROVED'">
+				<if test="userId != null">
+					AND BU.create_user = #{userId}
+				</if>
+				<if test="ccUserId != null">
+					AND BU.cc_user LIKE CONCAT('%,', #{ccUserId}, ',%') and
+					BU.cc_user_status = 1
+				</if>
+				<if test="keyword != null">
+					AND (BU.apply_title LIKE CONCAT('%',#{keyword},'%')
+					OR BU.apply_code LIKE CONCAT('%',#{keyword},'%'))
+				</if>
+				<if test="status != null">
+					AND BU.status = #{status}
+				</if>
+			</if>
+			<if test="dataType == 'PENDING'">
+        		AND BU.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='PENDING'
+        		  AND  (h.`approver_id` LIKE CONCAT('%,${userId},%')
+						OR h.`approver_id` LIKE CONCAT('${userId},%')
+						OR h.`approver_id` LIKE CONCAT('%,${userId}')
+						OR h.`approver_id` LIKE CONCAT('${userId}%')
+						))
+            </if>
+            	<if test="dataType == 'COMPLETE'">
+        		AND BU.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='COMPLETE'
+					AND  (h.`approver_id` LIKE CONCAT('%,${userId},%')
+						OR h.`approver_id` LIKE CONCAT('${userId},%')
+						OR h.`approver_id` LIKE CONCAT('%,${userId}')
+						OR h.`approver_id` LIKE CONCAT('${userId}%')
+						))
+            </if>
+        	<if test="dataType == 'CCUSER'">
+        		   AND (BU.cc_user LIKE CONCAT('%,', #{ccUserId}, ',%')
+        		   		or BU.cc_user LIKE CONCAT('%', #{ccUserId}, ',%')
+        		   		or BU.cc_user LIKE CONCAT('%,', #{ccUserId}, '%')
+        		   	) and BU.cc_user_status = 1
+            </if>
+		</where>
+	</sql>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.damei.repository.account.UserRoleDao">
+  <insert id="insert" parameterType="UserRole">
+        INSERT INTO oa_user_role (user_id, role_id) values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER})
+    </insert>
+
+  <select id="getRoleIdsByUserId" parameterType="long" resultType="long">
+        SELECT role_id
+        FROM oa_user_role
+        WHERE user_id = #{userId}
+    </select>
+
+  <delete id="deleteByUserId" parameterType="long">
+        DELETE FROM oa_user_role WHERE user_id = #{userId}
+    </delete>
+
+  <delete id="deleteByRoleId" parameterType="long">
+        DELETE FROM oa_user_role WHERE role_id = #{roleId}
+    </delete>
+
+  <resultMap id="BaseResultMap" type="User">
+    <id property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="username" column="org_code"/>
+    <result property="password" column="password"/>
+    <result property="salt" column="salt"/>
+    <result property="position" column="position"/>
+    <result property="dataType" column="data_type"/>
+    <result property="accountStatus" column="account_status"/>
+    <result property="employeeStatus" column="employee_status"/>
+  </resultMap>
+
+  <select id="findUsersByRoleId" resultMap="BaseResultMap">
+    SELECT EMP.id,EMP.name,EMP.org_code ,EMP.password ,EMP.salt ,EMP.position,EMP.data_type,EMP.account_status,EMP.employee_status
+    FROM oa_employee EMP JOIN oa_user_role UR ON EMP.id = UR.user_id WHERE UR.role_id = #{roleId}
+  </select>
+</mapper>

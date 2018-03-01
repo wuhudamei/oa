@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.SelectListOccurrenceTimeDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.DesignTime">
+        <result property="createTime" column="createTime"/>
+        <result property="signFinishTime" column="signFinishTime"/>
+        <result property="firstAmountTime" column="firstAmountTime"/>
+        <result property="measureFinishTime" column="measureFinishTime"/>
+        <result property="blueprintFinishTime" column="blueprintFinishTime"/>
+        <result property="stylistAllotTime" column="stylistAllotTime"/>
+        <result property="stylistMobile" column="stylistMobile"/>
+        <result property="stylistName" column="stylistName"/>
+    </resultMap>
+
+
+    <!--根据订单号查询发生时间-->
+    <select id="findOccurrenceTime" resultMap="BaseResultMap">
+        SELECT
+              con.CreateTime,
+              con.SignFinishTime,
+              (SELECT pay.FirstAmountTime FROM Ord_Payment pay
+               LEFT JOIN Ord_Order ord ON pay.OrderId = ord.OrderId
+               WHERE ord.OrderNo = #{orderno} AND pay.IsFirstAmount = 1) AS FirstAmountTime,
+              des.MeasureFinishTime,
+              des.BlueprintFinishTime,
+              ord.StylistAllotTime,
+              ord.StylistMobile,
+              ord.StylistName
+        FROM Ord_Order ord
+        LEFT JOIN Ord_Design des ON des.OrderId = ord.OrderId
+        LEFT JOIN Ord_Contract con ON con.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderno}
+    </select>
+</mapper>

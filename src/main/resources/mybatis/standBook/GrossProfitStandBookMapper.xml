@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.GrossProfitStandBookDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.GrossProfitStandBook">
+        <result column="storeprice" property="storePrice"/>
+        <result column="marketprice" property="marketPrice"/>
+        <result column="item_type" property="itemType"/>
+        <result column="pd_name" property="pdName"/>
+        <result column="pd_price" property="pdPrice"/>
+        <result column="pd_count" property="pdCount"/>
+        <result column="pd_total" property="pdTotal"/>
+        <result column="quota_way" property="quotaWay"/>
+        <result column="dosageArea" property="dosageArea"/>
+        <result column="ChangeMoney" property="changeMoney"/>
+    </resultMap>
+
+    <select id="findGrossProfit" resultMap="BaseResultMap">
+        SELECT isnull(c.sm_storeprice,0) as storeprice,isnull(c.sm_marketprice,0) marketprice,
+                item_type = (case item_itemtype when 0 then 'item' when 1 then 'item' when 2 then 'itemquota' when 4 then 'itemquotaservice' when 3 then 'itemotherquota' end ),
+                pd_name,item_price as pd_price,item_count as pd_count,item_total as pd_total,quota_way,
+                (select sum(count*consumptionfactor) from ST_RD_ItemDetail  where item_pkid=a.pkid and isdelete=0) as dosageArea
+                FROM ST_RD_Item  a
+                left join st_rd_customermaterial b on a.material_pkid=b.pkid
+                left join ST_RD_Sku c on a.pd_skuid=c.pkid
+                WHERE a.state=0 and  a.ISDELETE = 0 and b.orderno=#{orderNo}
+        UNION all
+        SELECT isnull(c.sm_storeprice,0) as storeprice,isnull(c.sm_marketprice,0) marketprice,
+                item_type = (case add_itemtype when 0 then 'addlimited' when 1 then 'add' when 2 then 'addquota' when 4 then 'addquotaservice' when 3 then 'addotherquota' when 5 then 'ccquota' when 6 then 'ccquotaservice' when 7 then 'ccotherquota' end ),
+                pd_name, add_unitprice pd_price, add_count pd_count, add_total pd_total,quota_way,
+                (select sum(count*consumptionfactor) from ST_RD_ItemDetail where item_pkid=a.pkid and isdelete=0) as dosageArea
+                FROM ST_RD_AddItem a
+                left join st_rd_customermaterial b on a.material_pkid=b.pkid
+                left join ST_RD_Sku c on a.pd_skuid=c.pkid
+                WHERE a.ISDELETE = 0 and b.orderno=#{orderNo}
+        UNION all
+        SELECT isnull(c.sm_storeprice,0) as storeprice,isnull(c.sm_marketprice,0) marketprice,
+                item_type = (case lessen_itemtype when 1 then 'lessen' when 2 then 'lessenquota' end),
+                pd_name, lessen_unitprice pd_price, lessen_count pd_count, lessen_total pd_total,quota_way,
+                (select sum(count*consumptionfactor) from ST_RD_ItemDetail where item_pkid=a.pkid and isdelete=0) as dosageArea
+                FROM ST_RD_LessenItem a
+                left join st_rd_customermaterial b on a.material_pkid=b.pkid
+                left join ST_RD_Sku c on a.pd_skuid=c.pkid
+                WHERE a.ISDELETE = 0 and b.orderno=#{orderNo}
+        UNION all
+        SELECT isnull(c.sm_storeprice,0) as storeprice,isnull(c.sm_marketprice,0) marketprice,
+                item_type = 'upgrade', pd_name, upgrade_unitprice pd_price, upgrade_count pd_count,
+                upgrade_total pd_total,quota_way=1,
+                (select sum(count*consumptionfactor) from ST_RD_ItemDetail where item_pkid=a.pkid and isdelete=0) as dosageArea
+                FROM ST_RD_UpgradeItem a
+                left join st_rd_customermaterial b on a.material_pkid=b.pkid
+                left join ST_RD_Sku c on a.pd_skuid=c.pkid
+                WHERE a.ISDELETE = 0 and b.orderno=#{orderNo}
+        UNION all
+        SELECT storeprice=0,marketprice=0,item_type = 'activity',  name pd_name, pd_price=NULL,
+                account pd_count ,pd_total=(case itemtype when 1 then account when 2 then -account end),itemtype quota_way,dosageArea=null
+                FROM ST_RD_ActivityItem a left join st_rd_customermaterial b on a.material_pkid=b.pkid
+                WHERE a.ISDELETE = 0 and b.orderno=#{orderNo}
+    </select>
+    <select id="findChangeMoney" resultMap="BaseResultMap">
+        select sum(ChangeMoney) AS ChangeMoney from Ord_ChangeMoney a
+        left join Ord_Order b on a.OrderId=b.OrderId
+        where ChangeType=3 and orderno= #{orderNo}
+    </select>
+
+</mapper>

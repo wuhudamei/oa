@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.budget.BudgetDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.budget.Budget">
+    <id column="id" property="id"/>
+    <result column="apply_title" property="applyTitle"/>
+    <result column="apply_code" property="applyCode"/>
+    <result column="company_id" property="company.id"/>
+    <result column="company_name" property="company.orgName"/>
+    <result column="budget_date" property="budgetDate"/>
+    <result column="total_money" property="totalMoney"/>
+    <result column="status" property="status"/>
+    <result column="attachment" property="attachment"/>
+    <result column="is_year" property="isYear"/>
+    <result column="type" property="type"/>
+    <result column="remark" property="remark"/>
+    <result column="create_user" property="createUser.id"/>
+    <result column="create_user_name" property="createUser.name"/>
+    <result column="create_date" property="createDate"/>
+    <result column="update_date" property="updateDate"/>
+    <result column="update_user" property="updateUser"/>
+    <result column="current_approver_name" property="currentApproverName"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, apply_title,apply_code,company_id, budget_date, total_money, status, attachment, is_year,type,remark, create_user, create_date,
+    update_date, update_user
+  </sql>
+  <select id="getById" parameterType="long" resultMap="BaseResultMap">
+        select
+        BU.id,BU.apply_title,BU.type,BU.apply_code, BU.company_id, BU.budget_date, BU.total_money, BU.status, BU.attachment, BU.is_year,BU.remark, BU.create_user,
+        BU.create_date,
+        BU.update_date, BU.update_user,EM.name create_user_name ,ORG.org_name company_name
+        FROM oa_budget BU LEFT JOIN oa_employee EM ON BU.create_user = EM.id
+        LEFT JOIN oa_organization ORG ON BU.company_id = ORG.id
+        where BU.id = #{id}
+    </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_budget
+    where id = #{id}
+  </delete>
+  <insert id="insert" keyProperty="id" parameterType="Budget" useGeneratedKeys="true">
+    insert into oa_budget
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applyTitle != null">
+        apply_title,
+      </if>
+      <if test="applyCode != null">
+        apply_code,
+      </if>
+      <if test="company != null">
+        company_id,
+      </if>
+      <if test="budgetDate != null">
+        budget_date,
+      </if>
+      <if test="totalMoney != null">
+        total_money,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="attachment != null">
+        attachment,
+      </if>
+      <if test="isYear != null">
+        is_year,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applyTitle != null">
+        #{applyTitle},
+      </if>
+      <if test="applyCode != null">
+        #{applyCode},
+      </if>
+      <if test="company != null">
+        #{company.id},
+      </if>
+      <if test="budgetDate != null">
+        #{budgetDate},
+      </if>
+      <if test="totalMoney != null">
+        #{totalMoney},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="attachment != null">
+        #{attachment},
+      </if>
+      <if test="isYear != null">
+        #{isYear},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="remark != null">
+        #{remark},
+      </if>
+      <if test="createUser != null">
+        #{createUser.id},
+      </if>
+      <if test="createDate != null">
+        #{createDate},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.budget.Budget">
+    update oa_budget
+    <set>
+      <if test="budgetDate != null">
+        budget_date = #{budgetDate},
+      </if>
+      <if test="totalMoney != null">
+        total_money = #{totalMoney},
+      </if>
+      <if test="remark != null">
+        remark=#{remark},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="attachment !=null">
+        attachment = #{attachment},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="search" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    BU.id,BU.apply_title,BU.type,BU.apply_code, BU.company_id, BU.budget_date, BU.total_money, BU.status,
+    BU.attachment, BU.is_year,BU.remark, BU.create_user,
+    BU.create_date,
+    BU.update_date, BU.update_user,EM.name create_user_name ,ORG.org_name company_name,
+    WF.current_approver_name
+
+    FROM oa_budget BU LEFT JOIN oa_employee EM ON BU.create_user = EM.id
+    LEFT JOIN oa_organization ORG ON BU.company_id = ORG.id
+    LEFT JOIN(
+    SELECT x.form_id,group_concat(y.name) AS current_approver_name
+    FROM oa_wf_process x LEFT JOIN oa_employee y ON x.approver_id = y.id WHERE x.type = 'BUDGET' and x.`status` =
+    'PENDING' group by apply_code
+    ) WF ON BU.id = WF.form_id
+    <include refid="searchWhere"/>
+    <if test="sort != null">
+      ORDER BY
+      <foreach collection="sort" item="order" separator=",">
+        BU.${order.property} ${order.direction}
+      </foreach>
+    </if>
+  </select>
+
+  <sql id="searchWhere">
+    <where>
+      <if test="userId != null">
+        AND BU.create_user = #{userId}
+      </if>
+      <if test="keyword != null">
+        AND (BU.apply_title LIKE CONCAT('%',#{keyword},'%') OR BU.apply_code LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+      <if test="status != null">
+        AND BU.status = #{status}
+      </if>
+    </where>
+  </sql>
+
+  <select id="getByBudgetDate" resultMap="BaseResultMap">
+    SELECT
+    BU.id,BU.apply_title,BU.type,BU.apply_code, BU.company_id, BU.budget_date, BU.total_money, BU.status,
+    BU.attachment, BU.is_year,BU.remark, BU.create_user,
+    BU.create_date,
+    BU.update_date, BU.update_user,EM.name create_user_name ,ORG.org_name company_name
+    FROM oa_budget BU LEFT JOIN oa_employee EM ON BU.create_user = EM.id
+    LEFT JOIN oa_organization ORG ON BU.company_id = ORG.id
+    WHERE BU.company_id = #{companyId} AND BU.budget_date = #{budgetDate}
+    <if test="status">
+      AND BU.status = #{status}
+    </if>
+  </select>
+
+  <select id="sumBudgetByCompany" parameterType="long" resultType="long">
+       SELECT
+            IFNULL(sum(total_money) , 0)
+        FROM
+            oa_budget ob
+        WHERE
+            ob.company_id = #{companyId}
+
+        AND ob. STATUS = 'ADOPT'
+        AND LEFT(budget_date , 4) IN(SELECT YEAR(curdate()));
+    </select>
+  <!-- 根据一级类型二级类型查询改类型费用详情-->
+  <select id="getBudgetDetailsByParam" resultType="BudgetResultMap">
+        SELECT IFNULL( lastMonthBudget.money ,0 ) AS lastMonthBudget,
+        IFNULL( lastMonthPayment.money ,0 ) AS lastMonthPayment,
+        IFNULL( lastMonthPurchase.money ,0 ) AS lastMonthPurchase,
+        IFNULL( currentSinceBudget.money ,0 ) AS currentSinceBudget,currentSinceBudget.remark,
+        IFNULL(budgetDateBudget.money,0) AS budgetDateBudget,
+        IFNULL( currentYearBudget.money ,0 ) AS currentYearBudget,
+        IFNULL( currentYearPayment.money ,0 ) AS currentYearPayment,
+        IFNULL(currentYearPurchase.money,0) AS currentYearPurchase
+        FROM
+        -- 上月预算
+        (SELECT SUM(a.money) AS money FROM oa_budget_details a,oa_budget b  WHERE a.budget_id = b.id AND b.status = 'ADOPT' AND b.company_id = #{companyId} AND DATE_FORMAT( b.budget_date,'%Y-%m' ) = #{lastMonth} AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) lastMonthBudget,
+        -- 上月报销
+        (SELECT SUM(a.money) AS money FROM oa_payment_details a,oa_payment b WHERE a.payment_id = b.id AND b.status = 'ADOPT' AND b.company_id = #{companyId} AND DATE_FORMAT( b.payment_date,'%Y-%m' ) = #{lastMonth} AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) lastMonthPayment,
+        -- 上月采购
+        (SELECT SUM(a.total_price) AS money FROM oa_apply_purchase a WHERE a.status = 'ADOPT' AND a.apply_company = #{companyId} AND DATE_FORMAT( a.create_time,'%Y-%m' ) = #{lastMonth} AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) lastMonthPurchase,
+        -- 本次预算
+        (SELECT a.remark ,SUM(a.money) AS money FROM oa_budget_details a WHERE a.budget_id = #{budgetId} AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+         ) currentSinceBudget,
+         -- 查询本月预算
+         (SELECT SUM(a.money) AS money FROM oa_budget_details a,oa_budget b  WHERE a.budget_id = b.id AND b.status = 'ADOPT' AND b.company_id = #{companyId} AND DATE_FORMAT( b.budget_date,'%Y-%m' ) = #{budgetDate} AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) budgetDateBudget,
+        -- 本年预算
+        (SELECT SUM(a.money) AS money FROM oa_budget_details a,oa_budget b  WHERE a.budget_id = b.id AND b.status = 'ADOPT' AND b.company_id = #{companyId} AND DATE_FORMAT( b.budget_date,'%Y' ) = DATE_FORMAT( #{budgetDate},'%Y') AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) currentYearBudget,
+        -- 本年报销
+        (SELECT SUM(a.money) AS money FROM oa_payment_details a,oa_payment b  WHERE a.payment_id = b.id AND b.status = 'ADOPT' AND b.company_id = #{companyId} AND DATE_FORMAT( b.payment_date,'%Y' ) = DATE_FORMAT( #{budgetDate},'%Y') AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) currentYearPayment,
+        -- 本年采购
+        (SELECT SUM(a.total_price) AS money FROM oa_apply_purchase a WHERE a.status = 'ADOPT' AND a.apply_company = #{companyId} AND DATE_FORMAT( a.create_time,'%Y' ) = DATE_FORMAT( #{budgetDate},'%Y') AND a.first_type_id = #{firstTypeId} AND a.second_type_id = #{secondTypeId}
+        ) currentYearPurchase
+    </select>
+
+  <resultMap id="ExecutionMap" type="cn.damei.entity.budget.BudgetMoney">
+    <result column="money" property="money"/>
+    <result column="sub_id" property="subId"/>
+    <result column="budget_date" property="date"/>
+  </resultMap>
+
+  <select id="getExecution" resultMap="ExecutionMap">
+    SELECT d.cost_item_id AS sub_id,SUM(d.money) AS money
+    FROM oa_payment p LEFT JOIN oa_payment_details d ON p.id = d.payment_id
+    WHERE p.type = #{type} AND p.payment_date LIKE CONCAT(#{date},'%') AND p.company_id = #{companyId} AND p.status = 'ADOPT'
+    GROUP BY d.cost_item_id
+  </select>
+
+  <select id="getMonthBudget" resultMap="ExecutionMap">
+    SELECT d.cost_item_id AS sub_id,SUM(d.money) AS money
+    FROM oa_budget b LEFT JOIN oa_budget_details d ON b.id = d.budget_id
+    WHERE b.type = #{type} AND b.budget_date = #{date} AND b.company_id = #{companyId} AND b.status = 'ADOPT'
+    GROUP BY d.cost_item_id
+    </select>
+
+  <select id="getMonthBudgetExcludeId" resultMap="ExecutionMap">
+    SELECT d.cost_item_id AS sub_id,SUM(d.money) AS money
+    FROM oa_budget b LEFT JOIN oa_budget_details d ON b.id = d.budget_id
+    WHERE b.type = #{type} AND b.budget_date = #{date} AND b.company_id = #{companyId} AND b.status = 'ADOPT' AND b.id &lt;&gt; #{companyId}
+    GROUP BY d.cost_item_id
+  </select>
+
+  <select id="getMonthBudgetGroupByMonth" resultMap="ExecutionMap">
+    SELECT d.cost_item_id AS sub_id,SUM(d.money) AS money, b.budget_date AS budget_date
+    FROM oa_budget b LEFT JOIN oa_budget_details d ON b.id = d.budget_id
+    WHERE b.type = #{type} AND b.budget_date LIKE CONCAT(#{date},'%') AND b.company_id = #{companyId} AND b.status = 'ADOPT' AND b.id &lt;&gt; #{companyId}
+    GROUP BY d.cost_item_id,b.budget_date
+  </select>
+</mapper>

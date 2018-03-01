@@ -1,0 +1,47 @@
+
+/* ngGrid */
+
+.gridStyle {
+    border: 1px solid #d4d4d4;
+    width: 100%;
+    height: 400px;
+}
+
+.gridStyle2 {
+    border: 1px solid #d4d4d4;
+    width: 500px;
+    height: 300px;
+}
+
+.ngH eaderCell {
+    border-right: none;
+    border-bottom: 1px solid #e7eaec;
+}
+
+.ngCell {
+    border-right: none;
+}
+
+.ngTopPanel {
+    background: #F5F5F6;
+}
+
+.ngRow.even {
+    background: #f9f9f9;
+}
+
+.ngRow.selected {
+    background: #EBF2F1;
+}
+
+.ngRow {
+    border-bottom: 1px solid #e7eaec;
+}
+
+.ngCell {
+    background-color: transparent;
+}
+
+.ngHeaderCell {
+    border-right: none;
+}

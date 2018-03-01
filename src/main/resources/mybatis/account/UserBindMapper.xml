@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.account.UserBindDao">
+
+    <resultMap id="BaseResultMap" type="UserBind">
+        <id property="id" column="id"/>
+        <result property="user.id" column="user_id"/>
+        <result property="oid" column="oid"/>
+        <result property="platform" column="platform"/>
+        <result property="bindTime" column="bind_time"/>
+    </resultMap>
+
+    <sql id="SelectInfo">
+    id,user_id,oid,platform,bind_time
+  </sql>
+
+    <insert id="insert" parameterType="UserBind" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO oa_employee_bind(user_id,oid,platform,bind_time)
+        VALUES (#{user.id},#{oid},#{platform},#{bindTime})
+    </insert>
+
+    <select id="getByOidAndPlatform" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        FROM oa_employee_bind WHERE oid = #{oid} and platform = #{platform}
+    </select>
+
+    <select id="getByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        FROM oa_employee_bind WHERE user_id = #{userId} and platform = #{platform}
+    </select>
+
+    <select id="getByUserIds" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        FROM oa_employee_bind WHERE user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator="">
+            #{userId}
+        </foreach>
+        <if test="platform != null">
+            and platform = #{platform}
+        </if>
+    </select>
+</mapper>

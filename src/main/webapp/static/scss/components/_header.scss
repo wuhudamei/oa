@@ -1,0 +1,43 @@
+.header{
+  margin:0;
+  padding:0 15px;
+}
+
+.header.fixed{
+  position: fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index: 1000;
+  background: white;
+  margin-left: 220px;
+}
+
+@media (max-width: 767px) {
+  .header.fixed{
+    margin-left:0;
+  }
+}
+
+body.no-navbar .header.fixed,
+body.body-small.mini-navbar .header.fixed {
+    margin: 0;
+}
+
+body.mini-navbar .header.fixed,
+body.body-small.mini-navbar .header.fixed {
+    margin: 0 0 0 70px;
+}
+
+body.mini-navbar.canvas-menu .header.fixed,
+body.canvas-menu .header.fixed {
+    margin: 0 !important;
+}
+
+body.fixed-sidebar.body-small.mini-navbar .header.fixed {
+    margin: 0 0 0 220px;
+}
+
+body.body-small .header.fixed {
+    margin-left: 0px;
+}

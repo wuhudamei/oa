@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.mdnicontract.StylistContractDao">
+
+  <resultMap id="BaseResultMap" type="StylistContract">
+    <result column="StylistName" property="stylistName"/>
+    <result column="StylistMobile" property="stylistMobile"/>
+    <result column="OrderId" property="orderId"/>
+    <result column="OrderMo" property="orderNo"/>
+    <result column="CustomerName" property="customerName"/>
+    <result column="ContractNo" property="contractNo"/>
+    <result column="ActualStartTime" property="actualStartTime"/>
+    <result column="TotalMoney" property="totalMoney"/>
+    <result column="IsFirstAmount" property="firstAmountPayed"/>
+    <result column="FirstAmount" property="firstAmount"/>
+    <result column="FirstAmountTime" property="firstAmountTime"/>
+    <result column="IsMediumAmount" property="mediumAmountPayed"/>
+    <result column="MediumAmount" property="mediumAmount"/>
+    <result column="MediumAmountTime" property="mediumAmountTime"/>
+    <result column="IsFinalAmount" property="finalAmountPayed"/>
+    <result column="FinalAmount" property="finalAmount"/>
+    <result column="FinalAmountTime" property="finalAmountTime"/>
+  </resultMap>
+
+  <select id="getByCondition" resultMap="BaseResultMap">
+    select
+    o.StylistName,o.StylistMobile,o.OrderId,o.OrderNo,cus.CustomerName,cta.ContractNo,o.ActualStartTime,cta.TotalMoney,
+    p.IsFirstAmount, p.FirstAmount,p.FirstAmountTime,
+    p.IsMediumAmount,p.MediumAmount,p.MediumAmountTime,
+    p.IsFinalAmount,p.FinalAmount,p.FinalAmountTime
+    FROM [MdnBjOrder].[dbo].[Ord_Order] o
+    join [MdnBjOrder].[dbo].[Ord_Payment] p on o.OrderId = p.OrderId
+    LEFT JOIN [MdnBjOrder].[dbo].[Ord_Customer] cus on o.CustomerId = cus.CustomerId
+    join [MdnBjOrder].[dbo].[Ord_Contract] cta on o.OrderId = cta.OrderId
+    <where>
+      <if test="stylistName != null">
+        AND o.StylistName= #{stylistName}
+      </if>
+      <if test="stylistMobile != null">
+        AND o.StylistMobile = #{stylistMobile}
+      </if>
+      <if test="month != null">
+        and (
+        (p.IsFirstAmount =1 and SUBSTRING(CONVERT(varchar(7), p.FirstAmountTime, 23),1,7) =#{month}) or
+        (p.IsMediumAmount = 1 and SUBSTRING(CONVERT(varchar(7), p.MediumAmountTime, 23),1,7) =#{month}) or
+        (p.IsFinalAmount = 1 and SUBSTRING(CONVERT(varchar(7), p.FinalAmountTime, 23),1,7) =#{month})
+        )
+      </if>
+    </where>
+  </select>
+
+</mapper>

@@ -1,0 +1,88 @@
+
+/* LIST GROUP */
+
+a.list-group-item.active,
+a.list-group-item.active:hover,
+a.list-group-item.active:focus {
+    background-color: #1ab394;
+    border-color: #1ab394;
+    color: #FFFFFF;
+    z-index: 2;
+}
+
+.list-group-item-heading {
+    margin-top: 10px;
+}
+
+.list-group-item-text {
+    margin: 0 0 10px;
+    color: inherit;
+    font-size: 12px;
+    line-height: inherit;
+}
+
+.no-padding .list-group-item {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.no-padding .list-group-item:first-child {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: none;
+}
+
+.no-padding .list-group {
+    margin-bottom: 0;
+}
+
+.list-group-item {
+    background-color: inherit;
+    border: 1px solid #e7eaec;
+    display: block;
+    margin-bottom: -1px;
+    padding: 10px 15px;
+    position: relative;
+}
+
+.elements-list .list-group-item {
+    border-left: none;
+    border-right: none;
+    /*border-top: none;*/
+    padding: 15px 25px;
+}
+
+.elements-list .list-group-item:first-child {
+    border-left: none;
+    border-right: none;
+    border-top: none !important;
+}
+
+.elements-list .list-group {
+    margin-bottom: 0;
+}
+
+.elements-list a {
+    color: inherit;
+}
+
+.elements-list .list-group-item.active,
+.elements-list .list-group-item:hover {
+    background: #f3f3f4;
+    color: inherit;
+    border-color: #e7eaec;
+    /*border-bottom: 1px solid #e7eaec;*/
+    /*border-top: 1px solid #e7eaec;*/
+    border-radius: 0;
+}
+
+.elements-list li.active {
+    -webkit-transition: none;
+    transition: none;
+}
+
+.element-detail-box {
+    padding: 25px;
+}

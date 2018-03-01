@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.subjectprocess.SubjectProcessDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.subjectprocess.SubjectProcess">
+        <id column="id" property="id"/>
+        <result column="wf_type" property="wfType"/>
+        <result column="wf_id" property="wfId" />
+        <result column="process_type_id" property="processTypeId" />
+        <result column="subject_id" property="subjectId" />
+        <result column="create_user" property="createUser" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="wfName" property="wfName" />
+        <result column="processTypeName" property="processTypeName" />
+        <result column="subjectName" property="subjectName" />
+    </resultMap>
+
+    <insert id="insert" parameterType="SubjectProcess" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO oa_subject_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wfType != null">
+                wf_type,
+            </if>
+            <if test="wfId != null">
+                wf_id,
+            </if>
+            <if test="processTypeId != null">
+                process_type_id,
+            </if>
+            <if test="subjectId != null">
+                subject_id,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wfType != null">
+                #{wfType},
+            </if>
+            <if test="wfId != null">
+                #{wfId},
+            </if>
+            <if test="processTypeId != null">
+                #{processTypeId},
+            </if>
+            <if test="subjectId != null">
+                #{subjectId},
+            </if>
+            <if test="createUser != null">
+                #{createUser},
+            </if>
+            <if test="status != null">
+                #[status},
+            </if>
+            <if test="createTime != null">
+                #{createTime}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="SubjectProcess">
+        UPDATE oa_subject_process
+        <set>
+            <if test="wfType != null">
+                wf_type = #{wfType},
+            </if>
+            <if test="wfId != null">
+                wf_id = #{wfId},
+            </if>
+            <if test="processTypeId != null">
+                process_type_id = #{processTypeId},
+            </if>
+            <if test="subjectId != null">
+                subject_id = #{subjectId},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        UPDATE oa_subject_process set status = 0 where id = #{id}
+    </delete>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT osp.id,
+            osp.wf_type,
+            osp.wf_id,
+            osp.process_type_id,
+            osp.subject_id,
+            osp.create_time,
+            owat.node_title wfName,
+            od1.`name` processTypeName,
+            od2.`name` subjectName
+        FROM oa_subject_process osp
+        left JOIN oa_wf_approval_template owat on osp.wf_id = owat.id
+        left join oa_dictionary od1 on od1.id = osp.process_type_id
+        left join oa_dictionary od2 on od2.id = osp.subject_id
+        where osp.status = 1
+        <if test="keyword != null and keyword != ''">
+            and owat.node_title like CONCAT('%', #{keyword},'%')
+        </if>
+        order by osp.create_time DESC
+    </select>
+    
+    <select id="findWfByCondition" parameterType="map" resultMap="BaseResultMap">
+    	select id,wf_type,wf_id,process_type_id,subject_id,create_user,status,create_time
+    	from oa_subject_process where status=1 and wf_type=#{wfType} and process_type_id=#{processTypeId} and subject_id=#{subjectId}
+    </select>
+
+    <select id="checkExistForSubAndPro" resultType="int">
+        SELECT count(0) from oa_subject_process where status = 1 and wf_type=#{wfType} and process_type_id = #{proId} and subject_id = #{subId}
+    </select>
+
+    <select id="getByWfId" resultType="int">
+        select count(0)
+    	from oa_subject_process where status = 1 and wf_id = #{wfId}
+    </select>
+</mapper>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.employee.EmployeeContractDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.employee.EmployeeContract">
+    <id column="id" property="id"/>
+    <result column="emp_id" property="empId"/>
+    <result column="contract_no" property="contractNo"/>
+    <result column="first_party" property="firstParty"/>
+    <result column="second_party" property="secondParty"/>
+    <result column="sign_date" property="signDate"/>
+    <result column="effective_date" property="effectiveDate"/>
+    <result column="try_date" property="tryDate"/>
+    <result column="end_date" property="endDate"/>
+    <result column="base_salary" property="baseSalary"/>
+    <result column="merit_pay" property="meritPay"/>
+    <result column="other_salary" property="otherSalary"/>
+    <result column="remarks" property="remarks"/>
+    <result column="file_name" property="fileName"/>
+    <result column="file_url" property="fileUrl"/>
+    <result column="create_user" property="createUser"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_user" property="updateUser"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, emp_id, contract_no, first_party, second_party, sign_date, effective_date,
+    try_date, end_date, base_salary, merit_pay, other_salary, remarks, create_user, create_time,file_name,file_url, update_user, update_time
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_employee_contract
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_employee_contract
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.employee.EmployeeContract" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_employee_contract
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="contractNo != null">
+        contract_no,
+      </if>
+      <if test="firstParty != null">
+        first_party,
+      </if>
+      <if test="secondParty != null">
+        second_party,
+      </if>
+      <if test="signDate != null">
+        sign_date,
+      </if>
+      <if test="effectiveDate != null">
+        effective_date,
+      </if>
+      <if test="tryDate != null">
+        try_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+      <if test="baseSalary != null">
+        base_salary,
+      </if>
+      <if test="meritPay != null">
+        merit_pay,
+      </if>
+      <if test="otherSalary != null">
+        other_salary,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        #{empId},
+      </if>
+      <if test="contractNo != null">
+        #{contractNo},
+      </if>
+      <if test="firstParty != null">
+        #{firstParty},
+      </if>
+      <if test="secondParty != null">
+        #{secondParty},
+      </if>
+      <if test="signDate != null">
+        #{signDate},
+      </if>
+      <if test="effectiveDate != null">
+        #{effectiveDate},
+      </if>
+      <if test="tryDate != null">
+        #{tryDate},
+      </if>
+      <if test="endDate != null">
+        #{endDate},
+      </if>
+      <if test="baseSalary != null">
+        #{baseSalary},
+      </if>
+      <if test="meritPay != null">
+        #{meritPay},
+      </if>
+      <if test="otherSalary != null">
+        #{otherSalary},
+      </if>
+      <if test="remarks != null">
+        #{remarks},
+      </if>
+      <if test="createUser != null">
+        #{createUser},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+      <if test="fileName != null">
+        #{fileName},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.employee.EmployeeContract">
+    update oa_employee_contract
+    <set>
+      <if test="empId != null">
+        emp_id = #{empId},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo},
+      </if>
+      <if test="firstParty != null">
+        first_party = #{firstParty},
+      </if>
+      <if test="secondParty != null">
+        second_party = #{secondParty},
+      </if>
+      <if test="signDate != null">
+        sign_date = #{signDate},
+      </if>
+      <if test="effectiveDate != null">
+        effective_date = #{effectiveDate},
+      </if>
+      <if test="tryDate != null">
+        try_date = #{tryDate},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate},
+      </if>
+      <if test="baseSalary != null">
+        base_salary = #{baseSalary},
+      </if>
+      <if test="meritPay != null">
+        merit_pay = #{meritPay},
+      </if>
+      <if test="otherSalary != null">
+        other_salary = #{otherSalary},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from oa_employee_contract
+  </select>
+  <select id="searchTotal" parameterType="map" resultType="Long">
+    SELECT
+    COUNT(*)
+    <include refid="searchWhere"/>
+  </select>
+  <select id="search" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+
+    <include refid="searchWhere"/>
+    <if test="sort != null">
+      ORDER BY
+      <foreach collection="sort" item="order" separator=",">
+        ${order.property} ${order.direction}
+      </foreach>
+    </if>
+  </select>
+
+  <sql id="searchWhere">
+    from oa_employee_contract
+    <where>
+      <if test="empId != null">
+        emp_id = #{empId}
+      </if>
+    </where>
+  </sql>
+</mapper>

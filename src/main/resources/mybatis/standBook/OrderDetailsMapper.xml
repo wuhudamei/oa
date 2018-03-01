@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.OrderDetailsDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.OrderDetails">
+        <result property="orderNo" column="OrderNo"/>
+        <result property="customerId" column="CustomerId"/>
+        <result property="customerName" column="CustomerName"/>
+        <result property="mobile" column="Mobile"/>
+        <result property="allotState" column="AllotState"/>
+        <result property="comboType" column="ComboType"/>
+        <result property="floorArea" column="FloorArea"/>
+        <result property="houseAddress" column="Address"/>
+        <result property="housetype" column="housetype"/>
+        <result property="lift" column="IsLift"/>
+        <result property="newHouse" column="IsNew"/>
+        <result property="secondLinkman" column="secondLinkman"/>
+        <result property="secondLinkmanMobile" column="secondLinkmanMobile"/>
+        <result property="housetype" column="housetype"/>
+        <result property="measurehousearea" column="measurehousearea"/>
+        <result property="contractStartTime" column="ContractStartTime"/>
+        <result property="contractCompleteTime" column="ContractCompleteTime"/>
+        <result property="totalMoney" column="TotalMoney"/>
+        <result property="changeMoney" column="ChangeMoney"/>
+        <result property="allotGroupId" column="AllotGroupId"/>
+        <result property="serviceName" column="ServiceName"/>
+        <result property="stylistName" column="StylistName"/>
+    </resultMap>
+
+    <!--<select id="findAllOrder" statementType="CALLABLE" parameterType="java.util.Map" resultMap="BaseResultMap">
+        <![CDATA[
+		 exec newPageSplit #{sql},#{page},#{pageSize}
+		 ]]>
+    </select>-->
+    <select id="findOrderDetail" resultMap="BaseResultMap">
+        select oo.OrderNo,oc.CustomerName,REPLACE(oc.Mobile, substring(oc.Mobile,4,4), '****') AS Mobile,
+                oo.IsLift,oo.IsNew,oo.AllotState,oo.AllotGroupId,oo.ComboType,oo.FloorArea,
+				oo.Address,oo.ContractStartTime,oo.ContractCompleteTime,
+				cast(oo.RoomNum as varchar(10))+'室'+cast(oo.HallNum as varchar(10))+'厅'+cast(oo.HallNum as varchar(10))+'卫' AS housetype,
+				c.TotalMoney, (select sum(ChangeMoney) from Ord_ChangeMoney where Ord_ChangeMoney.orderid=oo.orderid) as ChangeMoney,oo.ServiceName,oo.StylistName
+        FROM Ord_Order oo
+        LEFT JOIN Ord_Customer oc ON oo.CustomerId = oc.CustomerId
+		LEFT JOIN Ord_Contract c ON oo.OrderId = c.OrderId
+		WHERE oo.OrderNo = #{orderno}
+    </select>
+    <select id="findServiceNameAndStylistName" resultMap="BaseResultMap">
+        select ServiceName,StylistName
+        FROM Ord_Order
+		WHERE OrderNo = #{orderno}
+    </select>
+
+</mapper>

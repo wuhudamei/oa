@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.menu.ConditionalMenuDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.menu.ConditionalMenu">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="description" property="description"/>
+    <result column="oid" property="oid"/>
+    <result column="tag_id" property="tag.id"/>
+    <result column="tag_oid" property="tag.oid"/>
+    <result column="tag_name" property="tag.name"/>
+    <result column="sex" property="sex"/>
+    <result column="country" property="country"/>
+    <result column="province" property="province"/>
+    <result column="city" property="city"/>
+    <result column="client_platform_type" property="clientPlatformType"/>
+    <result column="language" property="language"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, name, description, oid, tag_id, sex, country, province, city, client_platform_type, 
+    language
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from wechat_conditional_menu
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_conditional_menu
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.wechat.menu.ConditionalMenu" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into wechat_conditional_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="oid != null">
+        oid,
+      </if>
+      <if test="tag != null">
+        tag_id,
+      </if>
+      <if test="tag != null">
+        tag_oid,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="clientPlatformType != null">
+        client_platform_type,
+      </if>
+      <if test="language != null">
+        language,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="description != null">
+        #{description},
+      </if>
+      <if test="oid != null">
+        #{oid},
+      </if>
+      <if test="tag != null">
+        #{tag.id},
+      </if>
+      <if test="tag != null">
+        #{tag.oid},
+      </if>
+      <if test="sex != null">
+        #{sex},
+      </if>
+      <if test="country != null">
+        #{country},
+      </if>
+      <if test="province != null">
+        #{province},
+      </if>
+      <if test="city != null">
+        #{city},
+      </if>
+      <if test="clientPlatformType != null">
+        #{clientPlatformType},
+      </if>
+      <if test="language != null">
+        #{language},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.wechat.menu.ConditionalMenu">
+    update wechat_conditional_menu
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="description != null">
+        description = #{description},
+      </if>
+      <if test="oid != null">
+        oid = #{oid},
+      </if>
+      <if test="tag != null">
+        tag_id = #{tag.id},
+      </if>
+      <if test="tag != null">
+        tag_oid = #{tag.oid},
+      </if>
+      <if test="sex != null">
+        sex = #{sex},
+      </if>
+      <if test="country != null">
+        country = #{country},
+      </if>
+      <if test="province != null">
+        province = #{province},
+      </if>
+      <if test="city != null">
+        city = #{city},
+      </if>
+      <if test="clientPlatformType != null">
+        client_platform_type = #{clientPlatformType},
+      </if>
+      <if test="language != null">
+        language = #{language},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT m.*, t.name AS tag_name
+    FROM wechat_conditional_menu m LEFT JOIN wechat_tag t ON m.tag_id = t.id
+    <where>
+      <if test="keyword != null">
+        AND m.name LIKE concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </select>
+
+  <resultMap id="MultiResultMap" type="cn.damei.entity.wechat.menu.ConditionalMenu" extends="BaseResultMap">
+    <collection property="details" ofType="cn.damei.entity.wechat.menu.ConditionalMenuDetail">
+      <id column="detail_id" property="id"/>
+      <result column="detail_name" property="name"/>
+      <result column="detail_type" property="type"/>
+      <result column="detail_level" property="level"/>
+      <result column="detail_click_key" property="clickKey"/>
+      <result column="detail_url" property="url"/>
+      <result column="detail_media_id" property="mediaId"/>
+      <result column="detail_pid" property="pid"/>
+      <result column="detail_sort" property="sort"/>
+      <result column="detail_c_id" property="cid"/>
+    </collection>
+  </resultMap>
+
+  <select id="getDetailById" parameterType="java.lang.Long" resultMap="MultiResultMap">
+    SELECT m.*,
+    d.id AS detail_id,
+    d.name AS detail_name,
+    d.type AS detail_type,
+    d.level AS detail_level,
+    d.click_key AS detail_click_key,
+    d.url AS detail_url,
+    d.media_id AS detail_media_id,
+    d.pid AS detail_pid,
+    d.sort AS detail_sort,
+    d.c_id AS detail_c_id
+    FROM wechat_conditional_menu m LEFT JOIN wechat_conditional_menu_detail d
+    ON m.id = d.c_id
+    WHERE m.id = #{id}
+  </select>
+</mapper>

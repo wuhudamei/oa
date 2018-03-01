@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.salarydetail.SalaryBasicDataDao">
+	<resultMap id="BaseResultMap" type="cn.damei.entity.salarydetail.SalaryBasicData">
+		<id column="id" property="id" />
+		<result column="oa_employee_org_id" property="oaEmployeeOrgId" />
+		<result column="credit_card_numbers" property="creditCardNumbers" />
+		<result column="bank" property="bank" />
+		<result column="bank_of_deposit" property="bankOfDeposit" />
+		<result column="salary_basic" property="salaryBasicDn" />
+		<result column="salary_performance" property="salaryPerformanceDn" />
+		<result column="salary_basic_total" property="salaryBasicTotalDn" />
+		<result column="deduction_wage" property="deductionWageDn" />
+		<result column="salary_total" property="salaryTotalDn" />
+		<result column="should_work_days" property="shouldWorkDays" />
+		<result column="practical_work_days" property="practicalWorkDays" />
+		<result column="work_coefficient" property="workCoefficient" />
+		<result column="sick_leave_salary" property="sickLeaveSalaryDn" />
+		<result column="meal_subsidy" property="mealSubsidyDn" />
+		<result column="traffic_subsidy" property="trafficSubsidyDn" />
+		<result column="should_basic_salary" property="shouldBasicSalaryDn" />
+		<result column="should_salary_total" property="shouldSalaryTotalDn" />
+		<result column="salary_taxable" property="salaryTaxableDn" />
+		<result column="endowment_insurance" property="endowmentInsuranceDn" />
+		<result column="employment_injury_insurance" property="employmentInjuryInsuranceDn" />
+		<result column="medicare" property="medicareDn" />
+		<result column="birth_insurance" property="birthInsuranceDn" />
+		<result column="unemployment_insurance" property="unemploymentInsuranceDn" />
+		<result column="housing_fund" property="housingFundDn" />
+		<result column="social_security_personal" property="socialSecurityPersonalDn" />
+		<result column="deduct_money" property="deductMoneyDn" />
+		<result column="individual_income_tax" property="individualIncomeTaxDn" />
+		<result column="social_security_company" property="socialSecurityCompanyDn" />
+		<result column="effective_date" property="effectiveDate" />
+		<result column="expiry_date" property="expiryDate" />
+		<result column="other_subsidy" property="otherSubsidyDn" />
+		<result column="compensation" property="compensationDn" />
+		<result column="practical_salary_total" property="practicalSalaryTotalDn" />
+		<result column="name" property="empName" />
+		<result column="org_code" property="orgCode" />
+		<result column="update_user" property="updateUser" />
+		<result column="update_date" property="updateDate" />
+		<result column="month_salary" property="monthSalary" />
+		<result column="org_name" property="orgDepartmentName" />
+		<result column="org_name" property="orgCompanyName" />
+		<result column="id_num" property="idNum" />
+		<result column="emp_id" property="empId" />
+	</resultMap>
+
+	<sql id="BaseColumn">
+		id, oa_employee_org_id, credit_card_numbers,bank,bank_of_deposit,salary_basic,salary_performance,salary_basic_total,
+		deduction_wage,salary_total,should_work_days,practical_work_days,work_coefficient,sick_leave_salary,
+		meal_subsidy,traffic_subsidy,should_basic_salary,should_salary_total,salary_taxable,endowment_insurance,
+		employment_injury_insurance,medicare,birth_insurance,unemployment_insurance,housing_fund,
+		social_security_personal,deduct_money,individual_income_tax,social_security_company,effective_date,expiry_date,
+		other_subsidy,compensation,practical_salary_total,update_user,update_date,month_salary,emp_id
+	</sql>
+
+	<select id="findAllSalaryBasicData" resultMap="BaseResultMap" parameterType="long">
+		SELECT
+		sa.id,
+		sa.oa_employee_org_id,
+		sa.credit_card_numbers,
+		sa.bank,
+		sa.bank_of_deposit,
+		sa.salary_basic,
+		sa.meal_subsidy,
+		sa.housing_fund,
+		sa.social_security_personal,
+		sa.effective_date,
+		sa.expiry_date,
+		sa.update_user,
+		sa.update_date,
+		org.org_name AS orgCompanyName,
+		ort.org_name AS orgDepartmentName,
+		emp.id_num
+		FROM oa_salary_basic_data sa
+		LEFT JOIN oa_employee emp ON sa.emp_id = emp.id
+		LEFT JOIN oa_employee_org em ON emp.id = em.emp_id
+		LEFT JOIN oa_organization org ON em.org_company_id = org.id
+		LEFT JOIN oa_organization ort ON em.org_department_id = ort.id
+    	WHERE emp.id = #{empId}
+	</select>
+
+
+	<insert id="insert" parameterType="cn.damei.entity.salarydetail.SalaryBasicData"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into oa_salary_basic_data
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="oaEmployeeOrgId != null">
+				oa_employee_org_id,
+			</if>
+			<if test="creditCardNumbers != null">
+				credit_card_numbers,
+			</if>
+			<if test="bank != null">
+				bank,
+			</if>
+			<if test="bankOfDeposit != null">
+				bank_of_deposit,
+			</if>
+			<if test="salaryBasic != null">
+				salary_basic,
+			</if>
+			<if test="salaryPerformance != null">
+				salary_performance,
+			</if>
+			<if test="salaryBasicTotal != null">
+				salary_basic_total,
+			</if>
+			<if test="deductionWage != null">
+				deduction_wage,
+			</if>
+			<if test="salaryTotal != null">
+				salary_total,
+			</if>
+			<if test="shouldWorkDays != null">
+				should_work_days,
+			</if>
+			<if test="practicalWorkDays != null">
+				practical_work_days,
+			</if>
+			<if test="workCoefficient != null">
+				work_coefficient,
+			</if>
+			<if test="sickLeaveSalary != null">
+				sick_leave_salary,
+			</if>
+			<if test="mealSubsidy != null">
+				meal_subsidy,
+			</if>
+			<if test="trafficSubsidy != null">
+				traffic_subsidy,
+			</if>
+			<if test="shouldBasicSalary != null">
+				should_basic_salary,
+			</if>
+			<if test="shouldSalaryTotal != null">
+				should_salary_total,
+			</if>
+			<if test="salaryTaxable != null">
+				salary_taxable,
+			</if>
+			<if test="endowmentInsurance != null">
+				endowment_insurance,
+			</if>
+			<if test="employmentInjuryInsurance != null">
+				employment_injury_insurance,
+			</if>
+			<if test="medicare != null">
+				medicare,
+			</if>
+			<if test="birthInsurance != null">
+				birth_insurance,
+			</if>
+			<if test="unemploymentInsurance != null">
+				unemployment_insurance,
+			</if>
+			<if test="housingFund != null">
+				housing_fund,
+			</if>
+			<if test="socialSecurityPersonal != null">
+				social_security_personal,
+			</if>
+			<if test="deductMoney != null">
+				deduct_money,
+			</if>
+			<if test="individualIncomeTax != null">
+				individual_income_tax,
+			</if>
+			<if test="socialSecurityCompany != null">
+				social_security_company,
+			</if>
+			<if test="effectiveDate != null">
+				effective_date,
+			</if>
+			<if test="expiryDate != null">
+				expiry_date,
+			</if>
+			<if test="otherSubsidy != null">
+				other_subsidy,
+			</if>
+			<if test="compensation != null">
+				compensation,
+			</if>
+			<if test="practicalSalaryTotal != null">
+				practical_salary_total,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="monthSalary != null">
+				month_salary,
+			</if>
+			<if test="empId != null">
+				emp_id
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="oaEmployeeOrgId != null">
+				#{oaEmployeeOrgId},
+			</if>
+			<if test="creditCardNumbers != null">
+				#{creditCardNumbers},
+			</if>
+			<if test="bank != null">
+				#{bank},
+			</if>
+			<if test="bankOfDeposit != null">
+				#{bankOfDeposit},
+			</if>
+			<if test="salaryBasic != null">
+				#{salaryBasic},
+			</if>
+			<if test="salaryPerformance != null">
+				#{salaryPerformance},
+			</if>
+			<if test="salaryBasicTotal != null">
+				#{salaryBasicTotal},
+			</if>
+			<if test="deductionWage != null">
+				#{deductionWage},
+			</if>
+			<if test="salaryTotal != null">
+				#{salaryTotal},
+			</if>
+			<if test="shouldWorkDays != null">
+				#{shouldWorkDays},
+			</if>
+			<if test="practicalWorkDays != null">
+				#{practicalWorkDays},
+			</if>
+			<if test="workCoefficient != null">
+				#{workCoefficient},
+			</if>
+			<if test="sickLeaveSalary != null">
+				#{sickLeaveSalary},
+			</if>
+			<if test="mealSubsidy != null">
+				#{mealSubsidy},
+			</if>
+			<if test="trafficSubsidy != null">
+				#{trafficSubsidy},
+			</if>
+			<if test="shouldBasicSalary != null">
+				#{shouldBasicSalary},
+			</if>
+			<if test="shouldSalaryTotal != null">
+				#{shouldSalaryTotal},
+			</if>
+			<if test="salaryTaxable != null">
+				#{salaryTaxable},
+			</if>
+			<if test="endowmentInsurance != null">
+				#{endowmentInsurance},
+			</if>
+			<if test="employmentInjuryInsurance != null">
+				#{employmentInjuryInsurance},
+			</if>
+			<if test="medicare != null">
+				#{medicare},
+			</if>
+			<if test="birthInsurance != null">
+				#{birthInsurance},
+			</if>
+			<if test="unemploymentInsurance != null">
+				#{unemploymentInsurance},
+			</if>
+			<if test="housingFund != null">
+				#{housingFund},
+			</if>
+			<if test="socialSecurityPersonal != null">
+				#{socialSecurityPersonal},
+			</if>
+			<if test="deductMoney != null">
+				#{deductMoney},
+			</if>
+			<if test="individualIncomeTax != null">
+				#{individualIncomeTax},
+			</if>
+			<if test="socialSecurityCompany != null">
+				#{socialSecurityCompany},
+			</if>
+			<if test="effectiveDate != null">
+				#{effectiveDate},
+			</if>
+			<if test="expiryDate != null">
+				#{expiryDate},
+			</if>
+			<if test="otherSubsidy != null">
+				#{otherSubsidy},
+			</if>
+			<if test="compensation != null">
+				#{compensation},
+			</if>
+			<if test="practicalSalaryTotal != null">
+				#{practicalSalaryTotal},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate},
+			</if>
+			<if test="monthSalary != null">
+				#{monthSalary},
+			</if>
+			<if test="empId != null">
+				#{empId}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="cn.damei.entity.salarydetail.SalaryBasicData">
+		update oa_salary_basic_data
+		<set>
+			<if test="oaEmployeeOrgId != null">
+				oa_employee_org_id=#{oaEmployeeOrgId},
+			</if>
+			<if test="creditCardNumbers != null">
+				credit_card_numbers=#{creditCardNumbers},
+			</if>
+			<if test="bank != null">
+				bank=#{bank},
+			</if>
+			<if test="bankOfDeposit != null">
+				bank_of_deposit=#{bankOfDeposit},
+			</if>
+			<if test="salaryBasic != null">
+				salary_basic=#{salaryBasic},
+			</if>
+			<if test="salaryPerformance != null">
+				salary_performance=#{salaryPerformance},
+			</if>
+			<if test="salaryBasicTotal != null">
+				salary_basic_total=#{salaryBasicTotal},
+			</if>
+			<if test="deductionWage != null">
+				deduction_wage=#{deductionWage},
+			</if>
+			<if test="salaryTotal != null">
+				salary_total=#{salaryTotal},
+			</if>
+			<if test="shouldWorkDays != null">
+				should_work_days=#{shouldWorkDays},
+			</if>
+			<if test="practicalWorkDays != null">
+				practical_work_days=#{practicalWorkDays},
+			</if>
+			<if test="workCoefficient != null">
+				work_coefficient=#{workCoefficient},
+			</if>
+			<if test="sickLeaveSalary != null">
+				sick_leave_salary=#{sickLeaveSalary},
+			</if>
+			<if test="mealSubsidy != null">
+				meal_subsidy=#{mealSubsidy},
+			</if>
+			<if test="trafficSubsidy != null">
+				traffic_subsidy=#{trafficSubsidy},
+			</if>
+			<if test="shouldBasicSalary != null">
+				should_basic_salary=#{shouldBasicSalary},
+			</if>
+			<if test="shouldSalaryTotal != null">
+				should_salary_total=#{shouldSalaryTotal},
+			</if>
+			<if test="salaryTaxable != null">
+				salary_taxable=#{salaryTaxable},
+			</if>
+			<if test="endowmentInsurance != null">
+				endowment_insurance=#{endowmentInsurance},
+			</if>
+			<if test="employmentInjuryInsurance != null">
+				employment_injury_insurance=#{employmentInjuryInsurance},
+			</if>
+			<if test="medicare != null">
+				medicare=#{medicare},
+			</if>
+			<if test="birthInsurance != null">
+				birth_insurance=#{birthInsurance},
+			</if>
+			<if test="unemploymentInsurance != null">
+				unemployment_insurance=#{unemploymentInsurance},
+			</if>
+			<if test="housingFund != null">
+				housing_fund=#{housingFund},
+			</if>
+			<if test="socialSecurityPersonal != null">
+				social_security_personal=#{socialSecurityPersonal},
+			</if>
+			<if test="deductMoney != null">
+				deduct_money=#{deductMoney},
+			</if>
+			<if test="individualIncomeTax != null">
+				individual_income_tax=#{individualIncomeTax},
+			</if>
+			<if test="socialSecurityCompany != null">
+				social_security_company=#{socialSecurityCompany},
+			</if>
+			<if test="effectiveDate != null">
+				effective_date=#{effectiveDate},
+			</if>
+			<if test="expiryDate != null">
+				expiry_date=#{expiryDate},
+			</if>
+			<if test="otherSubsidy != null">
+				other_subsidy=#{otherSubsidy},
+			</if>
+			<if test="compensation != null">
+				compensation=#{compensation},
+			</if>
+			<if test="practicalSalaryTotal != null">
+				practical_salary_total=#{practicalSalaryTotal},
+			</if>
+			<if test="updateUser != null">
+				update_user=#{updateUser},
+			</if>
+			<if test="updateDate != null">
+				update_date=#{updateDate},
+			</if>
+			<if test="monthSalary != null">
+				month_salary=#{monthSalary},
+			</if>
+			<if test="empId != null">
+				emp_id=#{empId}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!--生成工资单列表-->
+	<select id="search" resultMap="BaseResultMap">
+		SELECT
+		sala.id,
+		sala.oa_employee_org_id,
+		sala.credit_card_numbers,
+		sala.bank,
+		sala.bank_of_deposit,
+		sala.salary_basic,
+		sala.salary_performance,
+		sala.salary_basic_total,
+		sala.deduction_wage,
+		sala.salary_total,
+		sala.should_work_days,
+		sala.practical_work_days,
+		sala.work_coefficient,
+		sala.sick_leave_salary,
+		sala.meal_subsidy,
+		sala.traffic_subsidy,
+		sala.should_basic_salary,
+		sala.should_salary_total,
+		sala.salary_taxable,
+		sala.endowment_insurance,
+		sala.employment_injury_insurance,
+		sala.medicare,
+		sala.birth_insurance,
+		sala.unemployment_insurance,
+		sala.housing_fund,
+		sala.social_security_personal,
+		sala.deduct_money,
+		sala.individual_income_tax,
+		sala.social_security_company,
+		sala.effective_date,
+		sala.expiry_date,
+		sala.other_subsidy,
+		sala.compensation,
+		sala.practical_salary_total,
+		sala.update_user,
+		sala.update_date,
+		sala.month_salary,
+		emp. NAME,
+		emp.org_code,emp.name,emp.org_code
+		FROM
+		oa_salary_basic_data sala
+		LEFT JOIN oa_employee_org org ON sala.oa_employee_org_id = org.id
+		LEFT JOIN oa_employee emp ON org.emp_id = emp.id
+		LEFT JOIN oa_organization organ ON organ.id = org.org_id
+		<where>
+
+			<if test="orgCode != null">
+				organ.family_code like concat(#{orgCode},'%')
+			</if>
+			<if test="keyword != null">
+				AND (emp.org_code LIKE CONCAT('%',#{keyword},'%') OR
+				emp.name LIKE CONCAT('%',#{keyword},'%'))
+			</if>
+			<if test="salaMonth != null">
+				AND sala.month_salary=#{salaMonth}
+			</if>
+		</where>
+
+	</select>
+
+	<!--我的工资单列表,通过id查询数据(回显)-->
+	<select id="getSalaryDetail" resultMap="BaseResultMap">
+		SELECT
+		sala.id, sala.oa_employee_org_id, sala.credit_card_numbers,sala.bank,sala.bank_of_deposit,sala.salary_basic,sala.salary_performance,sala.salary_basic_total,
+		sala.deduction_wage,sala.salary_total,sala.should_work_days,sala.practical_work_days,sala.work_coefficient,sala.sick_leave_salary,
+		sala.meal_subsidy,sala.traffic_subsidy,sala.should_basic_salary,sala.should_salary_total,sala.salary_taxable,sala.endowment_insurance,
+		sala.employment_injury_insurance,sala.medicare,sala.birth_insurance,sala.unemployment_insurance,sala.housing_fund,
+		sala.social_security_personal,sala.deduct_money,sala.individual_income_tax,sala.social_security_company,sala.effective_date,sala.expiry_date,
+		sala.other_subsidy,sala.compensation,sala.practical_salary_total,sala.update_user,sala.update_date,sala.month_salary,emp.name,emp.org_code
+		FROM
+		oa_salary_basic_data sala
+		LEFT JOIN oa_employee_org org ON sala.oa_employee_org_id = org.id
+		LEFT JOIN oa_employee emp ON org.emp_id = emp.id
+		<where>
+			org.org_company_id = '194'
+			<if test="empId != null">
+				AND emp.id = #{empId}
+			</if>
+			<if test="id != null">
+				AND sala.id = #{id}
+			</if>
+		</where>
+	</select>
+
+
+
+	<select id="findListByEmpId" resultMap="BaseResultMap" parameterType="long">
+		SELECT
+		*
+		FROM oa_salary_basic_data where emp_id = #{empId}
+	</select>
+
+	<select id="findAllDate" resultType="int" parameterType="map">
+		SELECT
+		COUNT(*) FROM oa_salary_basic_data
+		WHERE ((#{effectiveDate} &gt;= effective_date  and #{effectiveDate} &lt;= expiry_date)
+		or ( #{expiryDate} &gt;= effective_date and #{expiryDate} &lt;= expiry_date)
+		or (#{effectiveDate} &lt;= effective_date and #{expiryDate} &gt;= effective_date)) AND emp_id = #{empId}
+	</select>
+
+	<select id="find" resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM oa_salary_basic_data
+	</select>
+
+	<select id="getById" resultMap="BaseResultMap" parameterType="long">
+		SELECT
+		*
+		FROM oa_salary_basic_data where id= #{id}
+	</select>
+
+	<delete id="deleteById" parameterType="long">
+		DELETE  FROM oa_salary_basic_data where id= #{id}
+	</delete>
+
+	<insert id="insertSalary" parameterType="java.util.Map">
+		insert ignore into oa_salary_basic_data
+		<foreach collection="params.keys" item="key" open="(" close=")" separator="," >
+			${key}
+		</foreach>
+		values
+		<foreach collection="params.keys"  item="key" open="(" close=")" separator=",">
+			#{params[${key}]}
+		</foreach>
+	</insert>
+
+
+
+
+	<update id="updateSalary" parameterType="java.util.Map">
+		insert ignore into oa_salary_basic_data
+		<foreach collection="params.keys" item="key" open="(" close=")" separator="," >
+			${key}
+		</foreach>
+		values
+		<foreach collection="params.keys"  item="key" open="(" close=")" separator=",">
+			#{params[${key}]}
+		</foreach>
+		where id=#{id}
+	</update>
+
+
+	<select id="findAllByUpMonth"  resultMap="BaseResultMap">
+		SELECT * FROM oa_salary_basic_data where  effective_date &lt;=#{upMonth} AND #{upMonth} &lt;= expiry_date and emp_id = #{empId}
+	</select>
+
+
+	<update id="updateById">
+		UPDATE oa_salary_basic_data SET effective_date=#{effectiveDate},expiry_date=#{expiryDate},should_work_days=#{shouldWorkDays} WHERE id = #{id}
+	</update>
+
+	<select id="findShouldWorkDays" resultType="double" parameterType="long">
+		select should_work_days from oa_salary_basic_data where emp_id = #{empId}
+	</select>
+</mapper>

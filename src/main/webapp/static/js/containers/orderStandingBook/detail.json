@@ -1,0 +1,27 @@
+{
+    "code": "1",
+    "message": "Success!",
+    "data": {
+        "rows": {
+            "id": 262,
+            "customerName": "邵霞",
+            "selectedPackage": "999套餐",
+            "constructionArea": "90.00m²",
+            "contact": "139****0751",
+            "houseAddress": "长阳翠林漫步",
+            "houseDoorModel": "2室1厅1卫",
+            "elevator": "有",
+            "houseConditions": "新房",
+            "valuationArea": "90.00m²",
+            "secondContact": "张振海",
+            "secondContactTel": "135****5903",
+            "houseType": "楼房平层",
+            "planStartTime": "2017/6/26",
+            "planFinishTime": "2017/9/19",
+            "orderStatus": "施工中",
+            "orderAmount": "100000" 
+        },
+        "total": 1
+    },
+    "success": true
+}

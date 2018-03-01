@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.employee.EmployeeDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.employee.Employee">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="job_num" property="jobNum"/>
+    <result column="dep_code" property="depCode"/>
+    <result column="org_code" property="orgCode"/>
+    <result column="username" property="username"/>
+    <result column="password" property="password"/>
+    <result column="salt" property="salt"/>
+    <result column="gender" property="gender"/>
+    <result column="native_place" property="nativePlace"/>
+    <result column="id_num" property="idNum"/>
+    <result column="census_address" property="censusAddress"/>
+    <result column="census_nature" property="censusNature"/>
+    <result column="nation" property="nation"/>
+    <result column="politics_status" property="politicsStatus"/>
+    <result column="marital_status" property="maritalStatus"/>
+    <result column="education" property="education"/>
+    <result column="english_level" property="englishLevel"/>
+    <result column="title" property="title"/>
+    <result column="family_address" property="familyAddress"/>
+    <result column="present_address" property="presentAddress"/>
+    <result column="type" property="type"/>
+    <result column="email" property="email"/>
+    <result column="mobile" property="mobile"/>
+    <result column="employee_status" property="employeeStatus"/>
+    <result column="account_status" property="accountStatus"/>
+    <result column="account_type" property="accountType"/>
+    <result column="linkman_1" property="linkman1"/>
+    <result column="linkphone_1" property="linkphone1"/>
+    <result column="linkman_2" property="linkman2"/>
+    <result column="linkphone2" property="linkphone2"/>
+    <result column="orig_prove" property="origProve"/>
+    <result column="retire_prove" property="retireProve"/>
+    <result column="no_prove" property="noProve"/>
+    <result column="birthday" property="birthday"/>
+    <result column="photo" property="photo"/>
+    <result column="create_user" property="createUser"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_user" property="updateUser"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="entry_date" property="entryDate"/>
+    <result column="position" property="position"/>
+    <result column="dimission_date" property="dimissionDate"/>
+    <result column="deleted" property="deleted"/>
+  </resultMap>
+
+  <sql id="SelectInfo">
+    id, name, job_num,dep_code,org_code, username, password, salt, gender, native_place, id_num, census_address, 
+    census_nature, nation, politics_status, marital_status, education, english_level, 
+    title, family_address, present_address, type, email, mobile, employee_status, account_status, 
+    account_type, linkman_1, linkphone_1, linkman_2, linkphone2, orig_prove, retire_prove,
+    no_prove, birthday, photo, create_user, create_time, update_user,
+    update_time,entry_date,position,dimission_date, deleted
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee
+    where id = #{id}
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+    delete from oa_employee
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="cn.damei.entity.employee.Employee" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="jobNum != null">
+        job_num,
+      </if>
+      <if test="depCode != null">
+        dep_code,
+      </if>
+      <if test="orgCode != null">
+        org_code,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="salt != null">
+        salt,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="nativePlace != null">
+        native_place,
+      </if>
+      <if test="idNum != null">
+        id_num,
+      </if>
+      <if test="censusAddress != null">
+        census_address,
+      </if>
+      <if test="censusNature != null">
+        census_nature,
+      </if>
+      <if test="nation != null">
+        nation,
+      </if>
+      <if test="politicsStatus != null">
+        politics_status,
+      </if>
+      <if test="maritalStatus != null">
+        marital_status,
+      </if>
+      <if test="education != null">
+        education,
+      </if>
+      <if test="englishLevel != null">
+        english_level,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="familyAddress != null">
+        family_address,
+      </if>
+      <if test="presentAddress != null">
+        present_address,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="employeeStatus != null">
+        employee_status,
+      </if>
+      <if test="accountStatus != null">
+        account_status,
+      </if>
+      <if test="accountType != null">
+        account_type,
+      </if>
+      <if test="linkman1 != null">
+        linkman_1,
+      </if>
+      <if test="linkphone1 != null">
+        linkphone_1,
+      </if>
+      <if test="linkman2 != null">
+        linkman_2,
+      </if>
+      <if test="linkphone2 != null">
+        linkphone2,
+      </if>
+      <if test="origProve != null">
+        orig_prove,
+      </if>
+      <if test="retireProve != null">
+        retire_prove,
+      </if>
+      <if test="noProve != null">
+        no_prove,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="photo != null">
+        photo,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="entryDate != null">
+        entry_date,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="dimissionDate != null">
+        dimission_date,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="jobNum != null">
+        #{jobNum},
+      </if>
+      <if test="depCode != null">
+        #{depCode},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode},
+      </if>
+      <if test="username != null">
+        #{username},
+      </if>
+      <if test="password != null">
+        #{password},
+      </if>
+      <if test="salt != null">
+        #{salt},
+      </if>
+      <if test="gender != null">
+        #{gender},
+      </if>
+      <if test="nativePlace != null">
+        #{nativePlace},
+      </if>
+      <if test="idNum != null">
+        #{idNum},
+      </if>
+      <if test="censusAddress != null">
+        #{censusAddress},
+      </if>
+      <if test="censusNature != null">
+        #{censusNature},
+      </if>
+      <if test="nation != null">
+        #{nation},
+      </if>
+      <if test="politicsStatus != null">
+        #{politicsStatus},
+      </if>
+      <if test="maritalStatus != null">
+        #{maritalStatus},
+      </if>
+      <if test="education != null">
+        #{education},
+      </if>
+      <if test="englishLevel != null">
+        #{englishLevel},
+      </if>
+      <if test="title != null">
+        #{title},
+      </if>
+      <if test="familyAddress != null">
+        #{familyAddress},
+      </if>
+      <if test="presentAddress != null">
+        #{presentAddress},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="email != null">
+        #{email},
+      </if>
+      <if test="mobile != null">
+        #{mobile},
+      </if>
+      <if test="employeeStatus != null">
+        #{employeeStatus},
+      </if>
+      <if test="accountStatus != null">
+        #{accountStatus},
+      </if>
+      <if test="accountType != null">
+        #{accountType},
+      </if>
+      <if test="linkman1 != null">
+        #{linkman1},
+      </if>
+      <if test="linkphone1 != null">
+        #{linkphone1},
+      </if>
+      <if test="linkman2 != null">
+        #{linkman2},
+      </if>
+      <if test="linkphone2 != null">
+        #{linkphone2},
+      </if>
+      <if test="origProve != null">
+        #{origProve},
+      </if>
+      <if test="retireProve != null">
+        #{retireProve},
+      </if>
+      <if test="noProve != null">
+        #{noProve},
+      </if>
+      <if test="birthday != null">
+        #{birthday},
+      </if>
+      <if test="photo != null">
+        #{photo},
+      </if>
+      <if test="createUser != null">
+        #{createUser},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime},
+      </if>
+      <if test="entryDate != null">
+        #{entryDate},
+      </if>
+      <if test="position != null">
+        #{position},
+      </if>
+      <if test="dimissionDate != null">
+        #{dimissionDate},
+      </if>
+      <if test="deleted != null">
+        #{deleted},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="cn.damei.entity.employee.Employee">
+    update oa_employee
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="depCode != null">
+        dep_code = #{depCode},
+      </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode},
+      </if>
+      <if test="username != null">
+        username = #{username},
+      </if>
+      <if test="password != null">
+        password = #{password},
+      </if>
+      <if test="salt != null">
+        salt = #{salt},
+      </if>
+      <if test="gender != null">
+        gender = #{gender},
+      </if>
+      <if test="nativePlace != null">
+        native_place = #{nativePlace},
+      </if>
+      <if test="idNum != null">
+        id_num = #{idNum},
+      </if>
+      <if test="censusAddress != null">
+        census_address = #{censusAddress},
+      </if>
+      <if test="censusNature != null">
+        census_nature = #{censusNature},
+      </if>
+      <if test="nation != null">
+        nation = #{nation},
+      </if>
+      <if test="politicsStatus != null">
+        politics_status = #{politicsStatus},
+      </if>
+      <if test="maritalStatus != null">
+        marital_status = #{maritalStatus},
+      </if>
+      <if test="education != null">
+        education = #{education},
+      </if>
+      <if test="englishLevel != null">
+        english_level = #{englishLevel},
+      </if>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="familyAddress != null">
+        family_address = #{familyAddress},
+      </if>
+      <if test="presentAddress != null">
+        present_address = #{presentAddress},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="email != null">
+        email = #{email},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile},
+      </if>
+      <if test="employeeStatus != null">
+        employee_status = #{employeeStatus},
+      </if>
+      <if test="accountStatus != null">
+        account_status = #{accountStatus},
+      </if>
+      <if test="accountType != null">
+        account_type = #{accountType},
+      </if>
+      <if test="linkman1 != null">
+        linkman_1 = #{linkman1},
+      </if>
+      <if test="linkphone1 != null">
+        linkphone_1 = #{linkphone1},
+      </if>
+      <if test="linkman2 != null">
+        linkman_2 = #{linkman2},
+      </if>
+      <if test="linkphone2 != null">
+        linkphone2 = #{linkphone2},
+      </if>
+      <if test="origProve != null">
+        orig_prove = #{origProve},
+      </if>
+      <if test="retireProve != null">
+        retire_prove = #{retireProve},
+      </if>
+      <if test="noProve != null">
+        no_prove = #{noProve},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday},
+      </if>
+      <if test="photo != null">
+        photo = #{photo},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime},
+      </if>
+      <if test="entryDate != null">
+        entry_date = #{entryDate},
+      </if>
+      <if test="position != null">
+        position = #{position},
+      </if>
+      <if test="dimissionDate != null">
+        dimission_date = #{dimissionDate},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <resultMap id="MultiResultMap" type="cn.damei.entity.employee.Employee" extends="BaseResultMap">
+    <result column="department_id" property="org.department.id"/>
+    <result column="department_name" property="org.department.orgName"/>
+    <result column="company_id" property="org.company.id"/>
+    <result column="company_name" property="org.company.orgName"/>
+    <result column="org_type" property="org.type"/>
+    <result column="org_department_principal" property="org.departmentPrincipal"/>
+    <result column="org_company_principal" property="org.companyPrincipal"/>
+  </resultMap>
+
+  <select id="search" parameterType="map" resultMap="MultiResultMap">
+    SELECT
+    e.id, e.name, e.job_num,e.dep_code,e.org_code, e.position, e.username, e.gender, e.employee_status, e.mobile, e.email,
+    o.org_department_id AS department_id,
+    o.org_company_id AS company_id,
+    o.type AS org_type,
+    o.department_principal AS org_department_principal,
+    o.company_principal AS org_company_principal,
+    o1.org_name AS department_name, o2.org_name AS company_name
+    FROM oa_employee e
+    LEFT JOIN oa_employee_org o ON e.id = o.emp_id
+    LEFT JOIN oa_organization o1 ON o.org_department_id = o1.id
+    LEFT JOIN oa_organization o2 ON o.org_company_id = o2.id
+    LEFT JOIN oa_organization o3 ON o.org_id = o3.id
+    <where>
+      account_type &lt;&gt; 'VIRTUAL' AND deleted = 0
+      <if test="keyword != null">
+        AND (e.org_code LIKE CONCAT('%',#{keyword},'%') OR
+        e.name LIKE CONCAT('%',#{keyword},'%') OR
+        e.mobile LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+      <if test="orgCode != null">
+        AND o3.family_code like concat(#{orgCode},'%')
+      </if>
+      <if test="employeeStatus != null">
+        AND e.employee_status = #{employeeStatus}
+      </if>
+      <if test="department != null">
+        AND o.org_department_id = #{department}
+      </if>
+      <if test="companyId != null">
+        AND o.org_company_id = #{companyId}
+      </if>
+    </where>
+    ORDER BY o2.`sort` ASC ,o1.`sort` ASC ,e.`org_code` ASC
+  </select>
+
+  <select id="getByUsername" parameterType="String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee
+    WHERE username = #{username}
+  </select>
+
+  <select id="getByOrgCode" parameterType="String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM oa_employee
+    WHERE org_code = #{orgCode}
+  </select>
+
+  <resultMap id="ResultMapWithOpenid" type="cn.damei.entity.employee.Employee" extends="MultiResultMap">
+    <result column="openid" property="openid"/>
+  </resultMap>
+
+  <select id="searchWithOpenid" parameterType="map" resultMap="ResultMapWithOpenid">
+    SELECT
+    e.id, e.name, e.job_num,e.dep_code,e.org_code, e.position, e.username, e.gender, e.employee_status, e.mobile, e.email,
+    o.org_department_id AS department_id,
+    o.org_company_id AS company_id,
+    o.type AS org_type,
+    o.department_principal AS org_department_principal,
+    o.company_principal AS org_company_principal,
+    o1.org_name AS department_name, o2.org_name AS company_name,
+    w.openid AS openid
+    FROM oa_employee e
+    LEFT JOIN oa_employee_org o ON e.id = o.emp_id
+    LEFT JOIN oa_organization o1 ON o.org_department_id = o1.id
+    LEFT JOIN oa_organization o2 ON o.org_company_id = o2.id
+    LEFT JOIN oa_organization o3 ON o.org_id = o3.id
+    INNER JOIN wechat_user w ON e.id = w.user_id
+    <where>
+      account_type &lt;&gt; 'VIRTUAL' AND w.openid IS NOT NULL AND w.openid &lt;&gt; ''
+      AND deleted = 0
+      <if test="keyword != null">
+        AND (e.org_code LIKE CONCAT('%',#{keyword},'%') OR
+        e.name LIKE CONCAT('%',#{keyword},'%') OR
+        e.mobile LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+      <if test="orgCode != null">
+        AND o3.family_code like concat(#{orgCode},'%')
+      </if>
+      <if test="employeeStatus != null">
+        AND e.employee_status = #{employeeStatus}
+      </if>
+    </where>
+    ORDER BY o1.sort DESC ,o2.sort DESC
+  </select>
+
+  <select id="getId" resultType="long">
+    select id from oa_employee
+  </select>
+  <select id="getByIds" resultMap="BaseResultMap">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="getMaxNextOrgCode" parameterType="map" resultType="string">
+   	<![CDATA[
+		select case 
+			when (max(org_code + 1)) < 10 then CONCAT('0000',max(org_code + 1))
+			when (max(org_code + 1)) >= 10 and (max(org_code + 1)) < 99 then CONCAT('000',max(org_code + 1))
+			when (max(org_code + 1)) >= 100 and (max(org_code + 1)) < 999 then CONCAT('00',max(org_code + 1))
+			when (max(org_code + 1)) >= 1000 and (max(org_code + 1)) < 9999 then CONCAT('0',max(org_code + 1))
+		  else max(org_code + 1) end orgCode 
+		from oa_employee where LENGTH( TRIM(org_code) ) <6 and org_code regexp '^[0-9]+$' ;
+       ]]>
+   </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from oa_employee
+  </select>
+
+  <select id="getAllCount" resultType="long">
+    select count(*) from oa_employee
+  </select>
+
+  <select id="findEmployee" parameterType="long" resultMap="BaseResultMap">
+    select * from oa_employee as oe
+    LEFT JOIN (select oeo.emp_id as emp_id,oeo.org_department_id as org_department_id from oa_employee_org as oeo
+,oa_organization as oo where oo.id = oeo.org_department_id and oo.remindmessage_type = 0) as a
+		on a.emp_id = oe.id
+    where  a.org_department_id = #{id}
+  </select>
+
+  <select id="findOutEmployee" parameterType="long" resultMap="BaseResultMap">
+    select * from oa_employee as oe
+    LEFT JOIN (select oeo.emp_id as emp_id,oeo.org_department_id as org_department_id from oa_employee_org as oeo
+,oa_organization as oo where oo.id = oeo.org_department_id and oo.out_remindmessage_type = 0) as a
+		on a.emp_id = oe.id
+    where  a.org_department_id = #{id}
+  </select>
+
+  <select id="getByUserJobNumForIDS" resultMap="BaseResultMap">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee where id IN
+    <foreach collection="ids" item="id" open="(" close=")"
+             separator=",">
+      #{id}
+    </foreach>
+  </select>
+  <select id="findOrgCodeByMobil" resultMap="BaseResultMap">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee where mobile = #{mobile}
+  </select>
+
+  <select id="findOrgCodeByName" resultMap="BaseResultMap">
+    select
+    <include refid="SelectInfo"/>
+    from oa_employee where name = #{name}
+  </select>
+
+  <select id="getAuditByOrgCode" resultMap="BaseResultMap" parameterType="string">
+    select oe.name,oe.org_code,oe.mobile from oa_employee as oe  where id in
+    (select oeo.emp_id from oa_organization as oo LEFT JOIN
+    oa_employee_org as oeo on oeo.org_id = oo.id where oo.org_code =concat(#{storeCode},'_019') )
+  </select>
+</mapper>

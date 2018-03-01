@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.ApplyBusinessAwayDao">
+	<resultMap id="BaseResultMap" type="cn.damei.entity.oa.ApplyBusinessAway">
+		<id column="id" property="id" />
+		<result column="apply_user_id" property="applyUserId" />
+		<result column="apply_user_name" property="applyUserName" />
+		<result column="apply_title" property="applyTitle" />
+		<result column="apply_code" property="applyCode" />
+		<result column="set_out_address" property="setOutAddress" />
+		<result column="address" property="address" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="days_num" property="daysNum" />
+		<result column="estimated_cost" property="estimatedCost" />
+		<result column="reason" property="reason" />
+		<result column="create_user" property="createUser" />
+		<result column="create_time" property="createTime" />
+		<result column="status" property="status" />
+		<result column="current_approver_name" property="currentApproverName" />
+		<result column="cc_user" property="ccUser" />
+		<result column="cc_user_status" property="ccUserStatus" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, apply_user_id,apply_user_name,apply_title,apply_code,
+		set_out_address, address, begin_time, end_time,
+		days_num,estimated_cost, reason, create_user, create_time,
+		status,cc_user,cc_user_status
+	</sql>
+	<select id="getById" resultMap="BaseResultMap" parameterType="long">
+		select
+		<include refid="Base_Column_List" />
+		from oa_apply_business_away
+		where id = #{id}
+	</select>
+	<delete id="deleteById" parameterType="long">
+		delete from oa_apply_business_away
+		where id = #{id}
+	</delete>
+	<insert id="insert" parameterType="cn.damei.entity.oa.ApplyBusinessAway"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into oa_apply_business_away
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="applyUserId != null">
+				apply_user_id,
+			</if>
+			<if test="applyUserName != null">
+				apply_user_name,
+			</if>
+			<if test="applyTitle != null">
+				apply_title,
+			</if>
+			<if test="applyCode != null">
+				apply_code,
+			</if>
+			<if test="setOutAddress != null">
+				set_out_address,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="beginTime != null">
+				begin_time,
+			</if>
+			<if test="endTime != null">
+				end_time,
+			</if>
+			<if test="daysNum != null">
+				days_num,
+			</if>
+			<if test="estimatedCost != null">
+				estimated_cost,
+			</if>
+			<if test="reason != null">
+				reason,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="ccUser != null">
+				cc_user,
+			</if>
+			<if test="ccUserStatus != null">
+				cc_user_status
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="applyUserId != null">
+				#{applyUserId},
+			</if>
+			<if test="applyUserName != null">
+				#{applyUserName},
+			</if>
+			<if test="applyTitle != null">
+				#{applyTitle},
+			</if>
+			<if test="applyCode != null">
+				#{applyCode},
+			</if>
+			<if test="setOutAddress != null">
+				#{setOutAddress},
+			</if>
+			<if test="address != null">
+				#{address},
+			</if>
+			<if test="beginTime != null">
+				#{beginTime},
+			</if>
+			<if test="endTime != null">
+				#{endTime},
+			</if>
+			<if test="daysNum != null">
+				#{daysNum},
+			</if>
+			<if test="estimatedCost != null">
+				#{estimatedCost},
+			</if>			
+			<if test="reason != null">
+				#{reason},
+			</if>
+			<if test="createUser != null">
+				#{createUser},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="ccUser != null">
+				#{ccUser},
+			</if>
+			<if test="ccUserStatus != null">
+				#{ccUserStatus}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="cn.damei.entity.oa.ApplyBusinessAway">
+		update oa_apply_business_away
+		<set>
+			<if test="applyUserId != null">
+				apply_user_id = #{applyUserId},
+			</if>
+			<if test="applyUserName != null">
+				apply_user_name = #{applyUserName},
+			</if>
+			<if test="applyTitle != null">
+				apply_title = #{applyTitle},
+			</if>
+			<if test="applyCode != null">
+				apply_code = #{applyCode},
+			</if>
+			<if test="setOutAddress != null">
+				set_out_address = #{setOutAddress},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="beginTime != null">
+				begin_time = #{beginTime},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime},
+			</if>
+			<if test="daysNum != null">
+				days_num = #{daysNum},
+			</if>
+			<if test="estimatedCost != null">
+				estimated_cost = #{estimatedCost},
+			</if>			
+			<if test="reason != null">
+				reason = #{reason},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser},
+			</if>
+			<if test="createTime != null">
+
+				create_time = #{createTime},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="ccUser != null">
+				cc_user = #{ccUser}
+			</if>
+			<if test="ccUserStatus != null">
+				cc_user_status = #{ccUserStatus}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		from oa_apply_business_away
+	</select>
+	<select id="searchTotal" parameterType="map" resultType="Long">
+		SELECT
+		COUNT(*)
+		<include refid="searchWhere" />
+	</select>
+	<select id="search" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+		a.*,b.current_approver_name
+		<include refid="searchWhere" />
+		<if test="sort != null">
+			ORDER BY
+			<foreach collection="sort" item="order" separator=",">
+				a.${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<sql id="searchWhere">
+		from oa_apply_business_away a
+		left join (
+		select x.form_id,group_concat(y.name) as current_approver_name
+		from oa_wf_process x left join oa_employee y on x.approver_id = y.id where
+		x.type = 'BUSINESS' and x.`status` = 'PENDING' group by apply_code
+		) b on a.id = b.form_id
+		where 1=1
+		<if test="keyword!=null">
+			AND (
+			a.address LIKE CONCAT('%', #{keyword}, '%')
+			OR a.reason LIKE CONCAT('%', #{keyword}, '%')
+			)
+		</if>
+
+		<if test="status != null">
+			and a.status = #{status}
+		</if>
+		<if test="userId != null">
+			and a.apply_user_id = #{userId}
+		</if>
+
+	</sql>
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.completionSiteData.CompletionSiteDataDao">
+
+    <resultMap id="BaseResultMap" type="ContractInformation">
+        <id column="id" property="id"/>
+        <result column="project_code" property="projectCode"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="customer_phone" property="customerPhone"/>
+        <result column="project_address" property="projectAddress"/>
+        <result column="designer_name" property="designerName"/>
+        <result column="designer_phone" property="designerPhone"/>
+        <result column="manager_name" property="managerName"/>
+        <result column="manager_phone" property="managerPhone"/>
+        <result column="inspector_name" property="inspectorName"/>
+        <result column="inspector_phone" property="inspectorPhone"/>
+        <result column="contract_start_date" property="contractStartDate"/>
+        <result column="contract_finish_date" property="contractFinishDate"/>
+        <result column="actual_start_date" property="actualStartDate"/>
+        <result column="actual_finish_date" property="actualFinishDate"/>
+        <result column="contract_total_amount" property="contractTotalAmount"/>
+        <result column="alteration_total_amount" property="alterationTotalAmount"/>
+        <result column="change_total_amount" property="changeTotalAmount"/>
+        <result column="paid_total_amount" property="paidTotalAmount"/>
+        <result column="store_name" property="storeName"/>
+        <result column="project_mode" property="projectMode"/>
+        <result column="data_sources" property="dataSources"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="comSiteCount" property="comSiteCount"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, project_code, customer_name, customer_phone, project_address, designer_name, designer_phone, manager_name,
+        manager_phone, inspector_name, inspector_phone, contract_start_date, contract_finish_date, actual_start_date,
+        actual_finish_date, contract_total_amount, alteration_total_amount, change_total_amount, paid_total_amount, store_name,
+        project_mode, data_sources, create_time, create_user_id
+    </sql>
+
+    <select id="getCompletionSiteData" parameterType="map" resultMap="BaseResultMap">
+       SELECT conInfo.store_name ,
+            MAX(CASE conInfo.months WHEN 'January' THEN conInfo.comSiteCount ELSE 0 END)  januaryCount,
+            MAX(CASE conInfo.months WHEN 'February' THEN conInfo.comSiteCount ELSE 0 END)  februaryCount,
+            MAX(CASE conInfo.months WHEN 'March' THEN conInfo.comSiteCount ELSE 0 END)  marchCount,
+            MAX(CASE conInfo.months WHEN 'April' THEN conInfo.comSiteCount ELSE 0 END)  aprilCount,
+            MAX(CASE conInfo.months WHEN 'May' THEN conInfo.comSiteCount ELSE 0 END)  mayCount,
+            MAX(CASE conInfo.months WHEN 'June' THEN conInfo.comSiteCount ELSE 0 END)  juneCount,
+            MAX(CASE conInfo.months WHEN 'July' THEN conInfo.comSiteCount ELSE 0 END)  julyCount,
+            MAX(CASE conInfo.months WHEN 'August' THEN conInfo.comSiteCount ELSE 0 END)  augustCount,
+            MAX(CASE conInfo.months WHEN 'September' THEN conInfo.comSiteCount ELSE 0 END)  septemberCount,
+            MAX(CASE conInfo.months WHEN 'October' THEN conInfo.comSiteCount ELSE 0 END)  octoberCount,
+            MAX(CASE conInfo.months WHEN 'November' THEN conInfo.comSiteCount ELSE 0 END)  novemberCount,
+            MAX(CASE conInfo.months WHEN 'December' THEN conInfo.comSiteCount ELSE 0 END)  decemberCount
+      FROM (SELECT
+          DATE_FORMAT(actual_finish_date, '%M') months,count(id) as comSiteCount,store_name
+      FROM
+          order_contract_info
+      <where>
+          1 = 1
+          <if test="keyword != null">
+              AND DATE_FORMAT(actual_finish_date,'%Y') = #{keyword}
+          </if>
+      </where>
+      GROUP BY months,store_name) conInfo
+      GROUP BY conInfo.store_name;
+    </select>
+    <!--查询详情-->
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          order_contract_info
+        <where>
+            1 = 1
+            <if test="storeName != null">
+                AND store_name = #{storeName}
+            </if>
+            <if test="keyword != null">
+                AND (project_code LIKE CONCAT('%',#{keyword},'%') OR
+                customer_name LIKE CONCAT('%',#{keyword},'%') OR
+                customer_phone LIKE CONCAT('%',#{keyword},'%'))
+            </if>
+        </where>
+
+    </select>
+    <!--批量插入 -->
+    <insert id="batchInsert">
+        INSERT INTO order_contract_info
+            (project_code,
+            customer_name,
+            customer_phone,
+            project_address,
+            designer_name,
+            designer_phone,
+            manager_name,
+            manager_phone,
+            inspector_name,
+            inspector_phone,
+            contract_start_date,
+            contract_finish_date,
+            actual_start_date,
+            actual_finish_date,
+            contract_total_amount,
+            alteration_total_amount,
+            change_total_amount,
+            paid_total_amount,
+            store_name,
+            project_mode,
+            data_sources,
+            create_time,
+            create_user_id)
+        VALUES
+        <foreach collection="contractInformationList" item="item" separator=",">
+            (#{item.projectCode},
+            #{item.customerName},
+            #{item.customerPhone},
+            #{item.projectAddress},
+            #{item.designerName},
+            #{item.designerPhone},
+            #{item.managerName},
+            #{item.managerPhone},
+            #{item.inspectorName},
+            #{item.inspectorPhone},
+            #{item.contractStartDate},
+            #{item.contractFinishDate},
+            #{item.actualStartDate},
+            #{item.actualFinishDate},
+            #{item.contractTotalAmount},
+            #{item.alterationTotalAmount},
+            #{item.changeTotalAmount},
+            #{item.paidTotalAmount},
+            #{item.storeName},
+            #{item.projectMode},
+            #{item.dataSources},
+            #{item.createTime},
+            #{item.createUserId})
+        </foreach>
+    </insert>
+
+    <!--查询合同总金额,拆改总金额-->
+    <select id="getContractTotalAmountByProjectCode" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+	      (con.TotalMoney - con.ModifyCost) as contract_total_amount,
+	      con.ModifyCost as alteration_total_amount
+        FROM
+	      Ord_Contract con
+        LEFT JOIN Ord_Order ord ON con.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderNumber}
+    </select>
+
+    <!--查询实收总金额-->
+    <select id="getPaidTotalAmountByProjectCode" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+	    (pay.FirstAmount + pay.FinalAmount + pay.ModifyCost) AS paid_total_amount
+        FROM
+	      Ord_Payment pay
+        LEFT JOIN Ord_Order ord ON pay.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderNumber}
+    </select>
+
+    <!--查询变更总金额-->
+    <select id="getChangeTotalAmountByProjectCode" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+	      SUM(cha.ChangeMoney) as change_total_amount
+        FROM
+	      Ord_ChangeMoney cha
+        LEFT JOIN Ord_Order ord ON cha.OrderId = ord.OrderId
+        WHERE ord.OrderNo = #{orderNumber}
+    </select>
+    <!--按门店删除所有数据-->
+    <delete id="deleteByStoreName" parameterType="string">
+        delete from order_contract_info
+        <where>
+            <if test="storeName != null">
+               store_name = #{storeName}
+            </if>
+        </where>
+    </delete>
+</mapper>

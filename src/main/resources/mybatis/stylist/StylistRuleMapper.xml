@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.RuleDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.stylist.Rule">
+    <id column="id" property="id"/>
+    <result column="code" property="code"/>
+    <result column="name" property="name"/>
+    <result column="ratio1" property="ratio1"/>
+    <result column="ratio2" property="ratio2"/>
+    <result column="type" property="type"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, name, ratio1, ratio2, type
+  </sql>
+
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_rule
+    where id = #{id}
+  </select>
+  <select id="findAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_rule
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_stylist_rule
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.stylist.Rule" useGeneratedKeys="true" keyProperty="id">
+    insert into oa_stylist_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="ratio1 != null">
+        ratio1,
+      </if>
+      <if test="ratio2 != null">
+        ratio2,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code},
+      </if>
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="ratio1 != null">
+        #{ratio1},
+      </if>
+      <if test="ratio2 != null">
+        #{ratio2},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.stylist.Rule">
+    update oa_stylist_rule
+    <set>
+      <if test="code != null">
+        code = #{code},
+      </if>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="ratio1 != null">
+        ratio1 = #{ratio1},
+      </if>
+      <if test="ratio2 != null">
+        ratio2 = #{ratio2},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <delete id="clean">
+    DELETE FROM oa_stylist_rule
+  </delete>
+
+  <insert id="batchInsert">
+    INSERT INTO oa_stylist_rule(code, name, ratio1, ratio2, type) VALUES
+    <foreach collection="rules" item="rule" separator=",">
+      (#{rule.code},#{rule.name},#{rule.ratio1},#{rule.ratio2},#{rule.type})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.stylist.ContractStatusDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.stylist.ContractStatus">
+    <id column="id" property="id"/>
+    <result column="contract_id" property="contractId"/>
+    <result column="status" property="status"/>
+    <result column="status_time" property="statusTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, contract_id, status, status_time
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from oa_stylist_contract_status
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from oa_stylist_contract_status
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.stylist.ContractStatus" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into oa_stylist_contract_status
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="contractId != null">
+        contract_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="statusTime != null">
+        status_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="contractId != null">
+        #{contractId},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="statusTime != null">
+        #{statusTime},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.stylist.ContractStatus">
+    update oa_stylist_contract_status
+    <set>
+      <if test="contractId != null">
+        contract_id = #{contractId},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="statusTime != null">
+        status_time = #{statusTime},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="batchInsert">
+    INSERT INTO oa_stylist_contract_status(contract_id, status, status_time) VALUES
+    <foreach collection="contractStatuses" item="contractStatus" separator=",">
+      (#{contractStatus.contractId},#{contractStatus.status},#{contractStatus.statusTime})
+    </foreach>
+  </insert>
+</mapper>

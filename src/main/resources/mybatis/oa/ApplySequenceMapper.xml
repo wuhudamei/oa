@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.ApplySequenceDao" >
+  <resultMap id="BaseResultMap" type="cn.damei.entity.oa.ApplySequence" >
+    <result column="id" property="id" />
+    <result column="apply_date" property="applyDate" />
+    <result column="apply_type" property="applyType" />
+    <result column="current_sequence" property="currentSequence" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, apply_date, apply_type, current_sequence
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from oa_apply_sequence
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long" >
+    delete from oa_apply_sequence
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.oa.ApplySequence" useGeneratedKeys="true" keyProperty="id" >
+    insert into oa_apply_sequence
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="applyDate != null" >
+        apply_date,
+      </if>
+      <if test="applyType != null" >
+        apply_type,
+      </if>
+      <if test="currentSequence != null" >
+        current_sequence,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="applyDate != null" >
+        #{applyDate},
+      </if>
+      <if test="applyType != null" >
+        #{applyType},
+      </if>
+      <if test="currentSequence != null" >
+        #{currentSequence},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.oa.ApplySequence" >
+    update oa_apply_sequence
+    <set >
+      <if test="applyDate != null" >
+        apply_date = #{applyDate},
+      </if>
+      <if test="applyType != null" >
+        apply_type = #{applyType},
+      </if>
+      <if test="currentSequence != null" >
+        current_sequence = #{currentSequence},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <select id="getSequence" resultType="java.lang.Integer" parameterType="cn.damei.entity.oa.ApplySequence">
+    select current_sequence from oa_apply_sequence where apply_date = #{applyDate} and apply_type = #{applyType}
+  </select>
+  <update id="updateSequence" parameterType="cn.damei.entity.oa.ApplySequence">
+    update oa_apply_sequence set current_sequence = current_sequence + 1 where apply_date = #{applyDate} and apply_type = #{applyType}
+  </update>
+</mapper>

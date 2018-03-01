@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 生产环境配置-->
+<portable-config>
+    <!-- application.properties -->
+    <config-file path="WEB-INF/classes/application.properties">
+        <replace key="jdbc.url">jdbc:mysql://172.16.12.101/mdni_sale_service?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true&amp;allowMultiQueries=true</replace>
+        <replace key="jdbc.username">mdni</replace>
+        <replace key="jdbc.password">mdni1234</replace>
+        <replace key="base.url">http://oatest.mdni.net.cn</replace>
+        <replace key="profile">test</replace>
+
+
+
+        <!--施工计划台账请求路径-->
+        <replace key="standBook.plan.url">http://121.69.9.150/a/api/contructionPlanStandBook/findPlanAndDoneTimeByOrderNo</replace>
+        <!--基装成本台账项目经理提成请求接口-->
+        <replace key="standBook.installBasePm.url">http://121.69.9.150/a/api/baseLoadingCost/queryPmSettleInfoByOrderNumber</replace>
+        <!--基装成本台账基装成本接口-->
+        <replace key="standBook.installBase.url">http://121.69.9.150/a/api/baseLoadingCost/findOrderTaskpackageInfo</replace>
+        <!--工程台账延期单接口-->
+        <replace key="standBook.project.url">http://121.69.9.150/a/api/delaySheetStandBook/findDelaySheet</replace>
+        <!--质检台账-->
+        <replace key="standBook.qualityCheck.url">http://121.69.9.150/a/api/qualityCheckStandBook/findQualityCheck</replace>
+        <!--质检台账复检列表-->
+        <replace key="standBook.repeatQualityCheck.url">http://121.69.9.150/a/api/qualityCheckStandBook/findRepeatQualityCheck</replace>
+        <!--主材安装台账-->
+        <replace key="standBook.principalInstall.url">http://121.69.9.150/a/api/principalInstallStandBook/findPrincipalInstall</replace>
+        <!--主材安装台账：复尺信息-->
+        <replace key="standBook.review.url">http://supplychainuat.mdni.cn/externalApi/review/findReview</replace>
+        <!--供应台账-->
+        <replace key="standBook.supply.url">http://supplychainuat.mdni.cn/externalApi/supply/findSupplyInfoByContractNo</replace>
+        <!--客管台账-->
+        <replace key="standBook.customerManagement.url">http://mdss.mdni.net.cn/api/customerManagement/getCustomerManagementByOrderNo</replace>
+        <!--质检台账面积找平信息台账-->
+        <replace key="standBook.areaLevelInfo.url">http://121.69.9.150/a/api/orderFloor/findOrderFloorByOrderNumber</replace>
+        <!--售后 域名-->
+        <replace key="sale.url">http://mdnss.rocozxb.cn</replace>
+        <!--竣工工地数据路径-->
+        <replace key="completionSiteData.orderByActualEndDate.url">http://121.69.9.150/a/api/completeCheck/orderByActualEndDate</replace>
+        <!--竣工工地同步数据路径-->
+        <replace key="completionSiteData.findOrder.url">http://121.69.9.150/a/api/completeCheck/findOrder</replace>
+    </config-file>
+
+    <!-- wechat.properties -->
+    <config-file path="WEB-INF/classes/wechat.properties">
+        <replace key="appid">wxa3b36bda18546de8</replace>
+        <replace key="secret">1de140002d409a4add971eb19c6d1108</replace>
+        <replace key="token">KUSDF97vhjasf87ASKDFJ8</replace>
+    </config-file>
+
+    <!-- logback.xml -->
+    <config-file path="WEB-INF/classes/logback.xml">
+        <replace
+                xpath="//appender[@class='ch.qos.logback.core.ConsoleAppender']/filter[@class='ch.qos.logback.classic.filter.ThresholdFilter']/level">
+            INFO
+        </replace>
+        <replace
+                xpath="//appender[@class='ch.qos.logback.core.rolling.RollingFileAppender']/filter[@class='ch.qos.logback.classic.filter.ThresholdFilter']/level">
+            INFO
+        </replace>
+        <replace xpath="/configuration/root/@level">INFO</replace>
+        <replace xpath="/configuration/logger/@level">INFO</replace>
+    </config-file>
+</portable-config>

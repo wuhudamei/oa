@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.mdniorder.MdniOrderDao">
+
+    <resultMap id="BaseResultMap" type="MdniOrder">
+     	<result property="orderId" column="OrderId"/>
+     	<result property="orderNo" column="OrderNo"/>
+     	<result property="customerId" column="CustomerId"/>
+        <result property="customerName" column="CustomerName"/>
+        <result property="mobile" column="Mobile"/>
+        <result property="address" column="Address"/>
+        <result property="contractStartTime" column="ContractStartTime"/>
+        <result property="contractCompleteTime" column="ContractCompleteTime"/>
+        <result property="actualStartTime" column="ActualStartTime"/>
+        <result property="actualCompletionTime" column="ActualCompletionTime"/>
+        <result property="styListName" column="StylistName"/>
+        <result property="styListMobile" column="StylistMobile"/>
+        <result property="superVisorName" column="SupervisorName"/>
+        <result property="superVisoMobile" column="SupervisorMobile"/>
+        <result property="contractor" column="Contractor"/>
+        <result property="contact" column="Contact"/>
+    </resultMap>
+
+    <select id="getOrderInfoByCondition" resultMap="BaseResultMap">
+		select O.OrderId,O.OrderNo,C.CustomerId, C.CustomerName,C.Mobile,O.City + O.District+O.Address as Address ,O.ContractStartTime,O.ContractCompleteTime,O.ActualStartTime,
+			O.ActualCompletionTime,O.StylistName,O.StylistMobile,O.SupervisorName,O.SupervisorMobile,O.Contractor,O.Contact 
+		from dbo.ord_order O left join dbo.Ord_Customer C on O.CustomerId= C.CustomerId
+		where 1=1
+		<if test="mobile != null and mobile != ''">
+			and C.Mobile = #{mobile}
+		</if>
+		<if test="orderId != null and orderId != ''">
+			and O.OrderId  ${orderId}
+		</if>
+    </select>
+</mapper>

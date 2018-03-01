@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	     http://www.springframework.org/schema/context
+	     http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	     http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task-4.0.xsd"
+       default-lazy-init="true">
+
+  <context:property-placeholder ignore-unresolvable="true"
+                                location="classpath*:/application.properties" file-encoding="UTF-8"/>
+  <context:property-placeholder ignore-unresolvable="true"
+                                location="classpath*:/wechatTemplateId.properties" file-encoding="UTF-8"/>
+
+  <!-- 扫描rocoinfo包下的所有类 -->
+  <context:component-scan base-package="cn.damei"/>
+
+  <!-- 扫描basePackage下所有接口-->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="cn.damei.repository"/>
+  </bean>
+
+  <!-- 启用spring Task-->
+  <!-- 配置执行任务线性池 -->
+  <task:executor id="executor" pool-size="3"/>
+  <!-- 配置任务调度线程池-->
+  <task:scheduler id="scheduler" pool-size="3"/>
+  <!-- 启用annotation方式 -->
+  <task:annotation-driven scheduler="scheduler"
+                          executor="executor" proxy-target-class="true"/>
+
+  <!-- 引入其他配置文件 -->
+  <import resource="applicationContext-mybatis.xml"/>
+  <import resource="shiro/applicationContext-shiro.xml"/>
+
+</beans>

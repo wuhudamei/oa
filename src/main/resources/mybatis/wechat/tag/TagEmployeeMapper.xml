@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.tag.TagEmployeeDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.tag.TagEmployee">
+    <id column="id" property="id"/>
+    <result column="tag_id" property="tag.id"/>
+    <result column="tag_oid" property="tag.oid"/>
+    <result column="emp_id" property="employee.id"/>
+    <result column="openid" property="openid"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, tag_id, tag_oid, emp_id, openid
+  </sql>
+
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_tag_employee WHERE id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    DELETE FROM wechat_tag_employee WHERE id = #{id}
+  </delete>
+
+  <select id="findAllByTagId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wechat_tag_employee WHERE tag_id = #{tagId}
+  </select>
+
+  <delete id="deleteByOpenids" parameterType="java.util.List">
+    DELETE FROM wechat_tag_employee
+    WHERE openid IN
+    <foreach collection="openids" item="openid" open="(" close=")" separator=",">
+      #{openid}
+    </foreach>
+  </delete>
+
+  <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+    INSERT INTO wechat_tag_employee(tag_id, tag_oid, emp_id, openid)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.tag.id}, #{item.tag.oid}, #{item.employee.id}, #{item.openid})
+    </foreach>
+  </insert>
+  
+  <update id="update" parameterType="cn.damei.entity.wechat.tag.TagEmployee">
+    update wechat_tag_employee set emp_id=#{employee.id} where openid = #{openid}
+  </update>
+
+  <resultMap id="EmployeeMapper" type="cn.damei.entity.wechat.tag.TagEmployee">
+    <id column="id" property="id"/>
+    <result column="tag_id" property="tag.id"/>
+    <result column="tag_oid" property="tag.oid"/>
+    <result column="emp_id" property="employee.id"/>
+    <result column="emp_name" property="employee.name"/>
+    <result column="emp_job_num" property="employee.jobNum"/>
+    <result column="emp_mobile" property="employee.mobile"/>
+    <result column="emp_position" property="employee.position"/>
+    <result column="emp_department_name" property="employee.org.department.orgName"/>
+    <result column="emp_company_name" property="employee.org.company.orgName"/>
+    <result column="emp_org_type" property="employee.org.type"/>
+    <result column="emp_org_department_principal" property="employee.org.departmentPrincipal"/>
+    <result column="emp_org_company_principal" property="employee.org.companyPrincipal"/>
+  </resultMap>
+
+  <select id="findByTagIdScrollPage" parameterType="java.util.Map" resultMap="EmployeeMapper">
+    SELECT t.*,
+    e.id AS emp_id,
+    e.name AS emp_name,
+    e.job_num AS emp_job_num,
+    e.position AS emp_position,
+    e.mobile AS emp_mobile,
+    o1.org_name AS emp_department_name,
+    o2.org_name AS emp_company_name,
+    o.department_principal AS emp_org_department_principal,
+    o.company_principal AS emp_org_company_principal
+    FROM wechat_tag_employee t
+    LEFT JOIN oa_employee e ON t.emp_id = e.id
+    LEFT JOIN oa_employee_org o ON e.id = o.emp_id
+    LEFT JOIN oa_organization o1 ON o.org_department_id = o1.id
+    LEFT JOIN oa_organization o2 ON o.org_company_id = o2.id
+    LEFT JOIN oa_organization o3 ON o.org_id = o3.id
+    <where>
+      t.tag_id = #{tagId}
+      <if test="keyword != null">
+        AND (e.job_num LIKE CONCAT('%',#{keyword},'%') OR
+        e.name LIKE CONCAT('%',#{keyword},'%') OR
+        e.mobile LIKE CONCAT('%',#{keyword},'%'))
+      </if>
+      <if test="orgCode != null">
+        AND o3.family_code like concat(#{orgCode},'%')
+      </if>
+      <if test="employeeStatus != null">
+        AND e.employee_status = #{employeeStatus}
+      </if>
+    </where>
+    ORDER BY o1.sort DESC ,o2.sort DESC
+  </select>
+</mapper>

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.commonapply.ApplyCommonDao">
+	<resultMap id="BaseResultMap" type="cn.damei.entity.commonapply.ApplyCommon">
+		<id column="id" property="id" />
+		<result column="apply_person" property="applyPerson" />
+		<result column="serial_number" property="serialNumber" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="photos" property="photos" />
+		<result column="accessories" property="accessories" />
+		<result column="cc_person" property="ccPerson" />
+		<result column="apply_time" property="applyTime" />
+		<result column="submit_user" property="submitUser" />
+		<result column="create_time" property="createTime" />
+		<result column="status" property="status" />
+		<result column="apply_person_info" property="applyPersonInfo" />
+		<result column="cc_person_info" property="ccPersonInfo" />
+		<result column="apply_person_name" property="applyPersonName" />
+		<result column="cc_person_name" property="ccPersonName" />
+		<result column="submit_user_name" property="submit_user_name" />
+
+	</resultMap>
+	<sql id="Base_Column_List">
+		apply_person, id, serial_number, title, content, photos, accessories, cc_person,
+		apply_time, submit_user, create_time, status, apply_person_info,
+		cc_person_info,apply_person_name,cc_person_name
+	</sql>
+	<select id="getById" resultMap="BaseResultMap">
+		SELECT
+		a.apply_person,
+		a.id,
+		a.serial_number,
+		a.title,
+		a.content,
+		a.photos,
+		a.accessories,
+		a.cc_person,
+		a.apply_time,
+		DATE_FORMAT(a.apply_time,'%Y-%m-%d %H:%i:%s') applyTimeHMS,
+		a.submit_user,
+		a.create_time,
+		a.STATUS,
+		a.apply_person_info,
+		a.cc_person_info,
+		a.apply_person_name,
+		a.cc_person_name,
+		b.name submitUserName,
+		d.`org_name` subOrgName,
+		(SELECT
+		y.name
+		FROM
+		oa_wf_process x,
+		oa_employee y
+		WHERE x.approver_id = y.id
+		AND x.form_id = a.`id`
+		AND x.status = 'PENDING' and x.type='COMMON') waitApplyPerson,
+		e.org_name orgName
+		FROM
+		oa_apply_common a
+		LEFT JOIN oa_employee b
+		ON a.submit_user = b.id
+		LEFT JOIN `oa_employee_org` c
+		ON b.`id` = c.`emp_id`
+		LEFT JOIN `oa_organization` d
+		ON c.`org_id` = d.`id`
+		LEFT JOIN `oa_organization` e
+		ON e.`id` = c.`org_company_id`
+		WHERE a.id = #{id} AND c.`type` = 'DIRECTLY'
+	</select>
+	<insert id="insert" useGeneratedKeys="true" keyColumn="id"
+		keyProperty="id">
+		insert into oa_apply_common (
+		apply_person,
+		serial_number,
+		title,
+		content,
+		photos,
+		accessories,
+		cc_person,
+		apply_time,
+		submit_user,
+		create_time,
+		status,
+		apply_person_info,
+		cc_person_info,
+		apply_person_name,
+		cc_person_name)
+		values(#{applyPerson},
+		#{serialNumber},
+		#{title},
+		#{content},
+		#{photos},
+		#{accessories},
+		#{ccPerson},
+		#{applyTime},
+		#{submitUser},
+		#{createTime},
+		#{status},
+		#{applyPersonInfo},
+		#{ccPersonInfo},
+		#{applyPersonName},
+		#{ccPersonName})
+	</insert>
+	<update id="update">
+		update oa_apply_common
+		<set>
+			<if test="applyPerson != null">
+				apply_person = #{applyPerson},
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="content != null">
+				content = #{content},
+			</if>
+			<if test="photos != null">
+				photos = #{photos},
+			</if>
+			<if test="accessories != null">
+				accessories = #{accessories},
+			</if>
+			<if test="ccPerson != null">
+				cc_person = #{ccPerson},
+			</if>
+			<if test="applyTime != null">
+				apply_time = #{applyTime},
+			</if>
+			<if test="submitUser != null">
+				submit_user = #{submitUser},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="applyPersonInfo != null">
+				apply_person_info = #{applyPersonInfo},
+			</if>
+			<if test="ccPersonInfo != null">
+				cc_person_info = #{ccPersonInfo},
+			</if>
+			<if test="applyPersonName != null">
+				apply_person_name = #{applyPersonName},
+			</if>
+			<if test="ccPersonName != null">
+				cc_person_name = #{ccPersonName},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<select id="sourceData" resultType="map">
+		select
+		  `id`,
+		  `serial_number`,
+		  `title`,
+		  `content`,
+		  `photos`,
+		  `accessories`,
+		  `apply_person`,
+		  `cc_person`,
+		  `apply_time`,
+		  `submit_user`,
+		  (select b.`name` from oa_employee b where b.`id` = submit_user) submit_user_name,
+		  `create_time`,
+		  `status`,
+		  `apply_person_info`,
+		  `cc_person_info`,
+		  `apply_person_name`,
+		  `cc_person_name`,
+		  `cc_user_status`,
+		  `last_update`
+		from
+		  `oa_apply_common`
+		 where id = #{id}
+	</select>
+	<select id="searchTotal" parameterType="map" resultType="Long">
+		SELECT COUNT(*)
+		<include refid="searchWhere" />
+	</select>
+
+	<sql id="search_column">
+	   a.id,
+       a.apply_person,
+       a.serial_number,
+       a.title,
+       a.content,
+       a.photos,
+       a.accessories,
+       a.cc_person,
+       DATE_FORMAT(a.apply_time, '%Y-%m-%d %H:%i:%s') apply_timehms,
+       a.apply_time,
+       a.submit_user,
+       a.create_time,
+       a.status,
+       a.apply_person_info,
+       a.cc_person_info,
+       a.apply_person_name,
+       a.cc_person_name,
+       d.name,
+       d.wfid,
+       g.org_name subOrgName,
+       h.org_name orgName,
+       f.org_company_id,
+       f.org_department_id,
+       e.name submitUserName
+	</sql>
+	<select id="search" parameterType="map" resultType="map">
+		SELECT
+		<include refid="search_column" />
+		<include refid="searchWhere" />
+		<if test="sort != null">
+			ORDER BY
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+	<sql id="searchWhere">
+		FROM
+		oa_apply_common a
+		  left join (select c. name, b. form_id, b. id wfid
+		               from oa_wf_process b, oa_employee c
+		              where b. approver_id = c. id
+		                and node_type = 'COMMON'
+		                and status = 'PENDING') d
+		    on d.form_id = id
+		  left join oa_employee e    on submit_user = e. id
+		  left join oa_employee_org f    on e. id = f. emp_id
+		  left join oa_organization g    on f. org_department_id = g. id
+		  left join oa_organization h    on f. org_company_id = h. id
+		<where>
+			<if test="dataType == 'APPROVED'">
+				AND a.submit_user=#{loginUserId}
+				<if test="keyword != null and keyword != '' ">
+					AND (a.title LIKE CONCAT('%${keyword}%') OR a.serial_number LIKE
+					CONCAT('%${keyword}%'))
+				</if>
+				<if test="status != null and status != ''">
+					AND a.status = #{status}
+				</if>
+			</if>
+			<if test="dataType == 'PENDING'">
+       		a.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='PENDING'
+       			AND  (h.`approver_id` LIKE CONCAT('%,${loginUserId},%')
+					OR h.`approver_id` LIKE CONCAT('${loginUserId},%')
+					OR h.`approver_id` LIKE CONCAT('%,${loginUserId}')
+					OR h.`approver_id` LIKE CONCAT('${loginUserId}%')
+					))
+					<if test="keyword != null and keyword != '' ">
+						AND (a.title LIKE CONCAT('%${keyword}%') 
+							OR a.serial_number LIKE CONCAT('%${keyword}%')
+							OR a.submit_user in (select id from  `oa_employee` j where j.`name` like CONCAT('%${keyword}%'))
+						)
+					</if>
+            </if>
+			<if test="dataType == 'COMPLETE'">
+       		a.`id` IN (SELECT form_id FROM `oa_wf_process` h WHERE h.status='COMPLETE'
+       		  	AND  (h.`approver_id` LIKE CONCAT('%,${loginUserId},%')
+					OR h.`approver_id` LIKE CONCAT('${loginUserId},%')
+					OR h.`approver_id` LIKE CONCAT('%,${loginUserId}')
+					OR h.`approver_id` LIKE CONCAT('${loginUserId}%')
+					))
+					<if test="keyword != null and keyword != '' ">
+						AND (a.title LIKE CONCAT('%${keyword}%') 
+						OR a.serial_number LIKE	CONCAT('%${keyword}%')
+						OR a.submit_user in (select id from  `oa_employee` j where j.`name` like CONCAT('%${keyword}%')))
+					</if>
+            </if>
+            <if test="dataType == 'CCPERSON'">
+        		 (a.cc_person LIKE CONCAT('%,${loginUserId},%')
+					OR a.cc_person LIKE CONCAT('${loginUserId},%')
+					OR a.cc_person LIKE CONCAT('%,${loginUserId}')
+					OR a.cc_person LIKE CONCAT('${loginUserId}%')
+					)
+					<if test="keyword != null and keyword != '' ">
+						AND (a.title LIKE CONCAT('%${keyword}%') 
+						OR a.serial_number LIKE	CONCAT('%${keyword}%')
+						OR a.submit_user in (select id from  `oa_employee` j where j.`name` like CONCAT('%${keyword}%')))
+					</if>
+					and cc_user_status = 1
+            </if>
+            <if test="dataType == 'MONIT'">
+				<if test="keyword != null and keyword != '' ">
+					AND (a.title LIKE CONCAT('%${keyword}%') OR a.serial_number LIKE
+					CONCAT('%${keyword}%'))
+				</if>
+            </if>
+            and f.`type` = 'DIRECTLY'
+		</where>
+	</sql>
+	<update id="updateReset">
+		update oa_apply_common set status='RESET' where id = #{id} and status =
+		'APPROVALING';
+	</update>
+  <delete id="deleteById" parameterType="long">
+    DELETE FROM `oa_apply_common` WHERE id = #{id}
+  </delete>
+</mapper>

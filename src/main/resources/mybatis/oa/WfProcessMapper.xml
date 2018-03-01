@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.oa.WfProcessDao" >
+  <resultMap id="BaseResultMap" type="WfProcess" >
+    <id column="id" property="id" />
+    <result column="node_id" property="nodeId" />
+    <result column="node_type" property="nodeType" />
+    <result column="wf_nature" property="wfNature" />
+    <result column="is_sign" property="isSign" />
+    <result column="status" property="status" />
+    <result column="type" property="type" />
+    <result column="approver_id" property="approverEmployee.id" />
+    <result column="approver_name" property="approverEmployee.name" />
+    <result column="create_time" property="createTime" />
+    <result column="read_time" property="readTime" />
+    <result column="approve_time" property="approveTime" />
+    <result column="approve_result" property="approveResult" />
+    <result column="super_node_id" property="superNodeId" />
+    <result column="form_id" property="formId" />
+    <result column="apply_code" property="applyCode" />
+    <result column="apply_title" property="applyTitle" />
+    <result column="apply_user_id" property="applyUserId" />
+    <result column="apply_username" property="applyUserName" />
+    <result column="remark" property="remark" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, node_id,node_type,wf_nature,is_sign,status,type, approver_id,create_time,read_time,approve_time,approve_result,super_node_id,form_id,apply_code,apply_title,apply_user_id,remark
+  </sql>
+  
+  <insert id="insert" parameterType="WfProcess" useGeneratedKeys="true" keyProperty="id" >
+    insert into oa_wf_process(node_id,node_type,wf_nature,is_sign,status,type, approver_id,create_time,read_time,approve_time,approve_result,super_node_id,form_id,apply_code,apply_title,apply_user_id,remark) 
+    		VALUES(#{nodeId},#{nodeType},#{wfNature},#{isSign}, #{status},#{type},#{approverEmployee.id},#{createTime},#{readTime},#{approveTime},#{approveResult},#{superNodeId},#{formId},#{applyCode},#{applyTitle},#{applyUserId},#{remark})
+  </insert>
+  
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO oa_wf_process(node_id,node_type,wf_nature,is_sign,status,type, approver_id,create_time,read_time,approve_time,approve_result,super_node_id,form_id,apply_code,apply_title,apply_user_id,remark)
+       VALUES
+       <foreach collection="list" separator="," item="item">
+           (#{item.nodeId},#{item.nodeType},#{item.wfNature},#{item.isSign},#{item.status},#{item.type},#{item.approverEmployee.id},#{item.createTime},#{item.readTime},#{item.approveTime},#{item.approveResult},#{item.superNodeId},#{item.formId},#{item.applyCode},#{item.applyTitle},#{item.applyUserId},#{item.remark})
+       </foreach>
+   </insert>
+   
+   <update id="updateReadTime" parameterType="map" >
+    	update oa_wf_process set read_time=#{readTime} where id = #{id} and read_time is null;
+   </update>
+   <update id="updateReset" parameterType="map" >
+    	update oa_wf_process set status='RESET' where form_id = #{id} and status = 'PENDING';
+   </update>
+   <update id="updateCurrentLev" parameterType="WfProcess" >
+   		update oa_wf_process set status='INVALIDATE' where node_id=#{nodeId} and form_id=#{formId} and id !=#{id}
+   </update>
+   
+   <update id="updateRefuse" parameterType="WfProcess" >
+    	update oa_wf_process set status='INVALIDATE' where id!=#{id} and status IN ('INIT','PENDING')  and form_id=#{formId} and approve_result is null;
+   </update>
+   <update id="updateNextReset" parameterType="WfProcess" >
+    	update oa_wf_process set status='INVALIDATE' where status = 'INIT'  and form_id=#{id} and approve_result is null;
+   </update>
+   	<select id="sourceData" resultType="java.util.Map"  >
+		select
+		  `id`,
+		  `node_id`,
+		  `node_type`,
+		  `wf_nature`,
+		  `is_sign`,
+		  `status`,
+		  `type`,
+		  `approver_id`,
+		   (select b.`name` from oa_employee b where b.`id` = approver_id) approver_name,
+		  `create_time`,
+		   DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') create_timehms,
+		  `read_time`,
+		   DATE_FORMAT(read_time, '%Y-%m-%d %H:%i:%s') read_timehms,
+		  `approve_time`,
+		   DATE_FORMAT(approve_time, '%Y-%m-%d %H:%i:%s') approve_timehms,
+		  `approve_result`,
+		  `remark`,
+		  `form_id`,
+		  `apply_code`,
+		  `apply_title`,
+		  `apply_user_id`,
+		   (select b.`name` from oa_employee b where b.`id` = apply_user_id) apply_user_name,
+		  `super_node_id`
+		from
+		  `oa_wf_process`
+		 where form_id = #{id}
+	</select>
+   <update id="update" parameterType="WfProcess" >
+    	update oa_wf_process
+	    <set >
+	      <if test="status != null and status != '' " >
+	        status = #{status},
+	      </if>
+	      <if test="approveTime != null and approveTime != '' " >
+	        approve_time = #{approveTime},
+	      </if>
+	      <if test="approveResult != null and approveResult != '' " >
+	        approve_result = #{approveResult},
+	      </if>
+	      <if test="superNodeId != null and superNodeId != '' " >
+	        super_node_id = #{superNodeId},
+	      </if>
+	       <if test="remark != null and remark != '' " >
+	        remark = #{remark},
+	      </if>
+	    </set>
+    	where 1=1
+	      <if test="id != null and id != '' " >
+	        and id = #{id}
+	      </if>
+	      <if test="nodeId != null and nodeId != '' " >
+	        and super_node_id = #{nodeId}
+	      </if>
+	      <if test="formId != null and formId != '' " >
+	        and form_id = #{formId}
+	      </if>      
+   </update>
+   
+   <!-- 根据ID更新申请表状态 -->
+   <update id="updateFormTable" parameterType="map">
+   		update ${tableName} set status=#{status} where id=#{id}
+   </update>
+   <!-- 根据ID更新申请表状态 -->
+   <update id="updateNextNodeSupserNodeId" parameterType="map">
+   		update oa_wf_process set super_node_id=#{currentNodeId} where super_node_id=#{superNodeId}
+   </update>
+   <!-- 根据ID更新申请表抄送人,抄送人是否可见字段 -->
+   <update id="updateApplyCcUser" parameterType="map">
+   		update ${tableName} set cc_user=#{ccUser},cc_user_status=0 where id=#{id}
+   </update>
+   <!-- 根据ID更新申请表抄送人状态为可见 -->
+   <update id="updateApplyCcUserStatus" parameterType="map">
+   		update ${tableName} set cc_user_status=1 where id=#{id}
+   </update>   
+   <update id="updateWfProcessSupserNodeId" parameterType="map">
+   		update oa_wf_process set super_node_id=#{superNodeId} where id=#{id}
+   </update>   
+  
+   <select id="getNextNode" parameterType="map" resultMap="BaseResultMap">
+	  SELECT
+		<include refid="Base_Column_List"/>
+	  from oa_wf_process where super_node_id=#{nodeId} and form_id=#{formId}
+ 	</select>
+ 	
+   <select id="getCurrentLeveIsEnd" parameterType="map" resultMap="BaseResultMap">
+   	  SELECT
+   		<include refid="Base_Column_List"/>
+   	  from oa_wf_process where id!=#{id} and node_id=#{nodeId} and form_id=#{formId} and status ='PENDING'
+ 	</select>  	
+  
+  <select id="findApproveDetailByFormId" parameterType="map" resultMap="BaseResultMap">
+    select wf.id,wf.approver_id,emp.name as approver_name,
+    	wf.node_type,wf.wf_nature,wf.status,wf.approve_result,
+    	wf.approve_time,wf.remark,wf.`node_id`,wf.`super_node_id` 
+    from oa_wf_process wf
+		left join oa_employee emp on wf.approver_id=emp.id
+		where wf.form_id=#{formId} and wf.type=#{type} 
+	order by wf.approve_time asc
+  </select>
+  
+  <select id="getProcessByCondition" parameterType="map" resultMap="BaseResultMap">
+    select wf.id,wf.approver_id,wf.node_type,wf.wf_nature,wf.status from oa_wf_process wf
+		where wf.node_id=#{nodeId} and node_type=#{nodeType} and wf_nature=#{wfNature} and wf.type=#{type} and status = 'PENDING'
+  </select>
+  
+  <select id="getById" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from oa_wf_process
+    where id = #{id}
+  </select>
+  <select id="getByFormId"  resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from oa_wf_process
+    where form_id=#{formId}
+  </select>
+   <select id="getWfprocessByFormId" parameterType="map" resultType="map">
+	SELECT
+	  b.`name`,
+	  a.status,
+	  a.approve_result,
+	  DATE_FORMAT(a.approve_time, '%Y-%m-%d %H:%i:%s') approve_time,
+	  a.remark,
+	  a.`node_id`,
+	  a.`super_node_id`
+	FROM
+	  `oa_wf_process` a
+	  LEFT JOIN `oa_employee` b
+	    ON a.`approver_id` = b.`id`
+	WHERE form_id =#{formId} 
+	order by a.approve_time asc
+  </select>
+  <select id="search" parameterType="map" resultMap="BaseResultMap">
+    SELECT distinct a.id,
+		  a.`form_id`,
+		  a.`apply_code`,
+		  a.`create_time` createTime,
+		  a.`apply_title`,
+		  a.status,
+		  em.name AS apply_username,
+  		  a.`node_type` type
+  		  FROM oa_wf_process a    
+    	left join oa_employee em on a.apply_user_id=em.id
+    where a.approver_id=#{userId} and a.status=#{status}
+      order by a.create_time desc
+   </select>
+  
+</mapper>

@@ -1,0 +1,30 @@
+package cn.damei.service.message.apply;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import cn.damei.entity.budget.Budget;
+import cn.damei.service.budget.BudgetService;
+import cn.damei.service.message.MessageManagerService;
+@Service
+public class BudgetHandler extends BaseHandler{
+    @Autowired
+    private BudgetService budgetService;
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    public BaseHandler.HandleInsideAndWechatMessage send2Approver(MessageManagerService.SendParams sendParams) {
+        Budget budget = budgetService.getById(sendParams.getFormId());
+        if (budget == null) {
+            logger.warn(LOGGER_ENTITY_IS_NULL, sendParams.getFormId(), sendParams.getWfType().getLabel());
+            return null;
+        }
+        return commonlySend2Approver(sendParams, budget.getApplyTitle(), "", budget.getCreateDate());
+    }
+    public BaseHandler.HandleInsideAndWechatMessage send2Applicant(MessageManagerService.SendParams sendParams) {
+        Budget budget = budgetService.getById(sendParams.getFormId());
+        if (budget == null) {
+            logger.warn(LOGGER_ENTITY_IS_NULL, sendParams.getFormId(), sendParams.getWfType().getLabel());
+            return null;
+        }
+        return commonlySend2Applicant(sendParams, budget.getApplyTitle());
+    }
+}

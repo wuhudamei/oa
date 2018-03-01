@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.sign.CheckOnWorkDao">
+
+
+    <resultMap id="BaseResultMap" type="cn.damei.entity.sign.Sign">
+        <id property="id" column="id"/>
+        <result property="empId" column="emp_id"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="signOutTime" column="signout_time"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="address" column="address"/>
+        <result property="signSiteId" column="signsite_id"/>
+        <result property="company" column="company"/>
+        <result property="companyName" column="companyname"/>
+        <result property="department" column="department"/>
+        <result property="empName" column="emp_name"/>
+        <result property="punchCardType" column="punch_card_type"/>
+        <result property="outAddress" column="out_address"/>
+        <result property="outLatitude" column="out_latitude"/>
+        <result property="outLongitude" column="out_longitude"/>
+        <result property="outPunchCardType" column="out_punch_card_type"/>
+        <result property="signType" column="sign_type"/>
+        <result property="creator" column="creator"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="insertSigntypeTime" column="insert_signtype_time"/>
+        <result property="shouldWorkDays" column="should_work_days"/>
+        <result property="practicalWorkDays" column="practical_work_days"/>
+    </resultMap>
+
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        select a.emp_id,a.department,a.company,a.emp_name,a.signout_time,a.sign_time,a.address,
+        a.sign_type,a.punch_card_type,a.out_punch_card_type,a.companyName,a.out_address,oo.org_name as depName from
+        (SELECT
+        os.emp_id as emp_id,
+        os.department as department,
+        os.company as company,
+        oe. NAME AS emp_name,
+        os.sign_time as sign_time,
+        os.signout_time as signout_time,
+        os.address as address,
+        os.sign_type as sign_type,
+        os.punch_card_type as punch_card_type,
+        os.out_punch_card_type as out_punch_card_type,
+        oo.org_name AS companyName,
+        os.out_address as out_address
+        FROM
+        oa_sign os
+        LEFT JOIN oa_organization oo ON os.company = oo.id
+        LEFT JOIN oa_employee oe ON os.emp_id = oe.id
+        WHERE 1=1 and oe.deleted != 1
+        <include refid="searchEmployee"/>) as a
+        LEFT JOIN oa_organization oo ON a.department = oo.id
+        ORDER BY a.sign_time DESC
+    </select>
+
+    <select id="findCheckOnWork" parameterType="map" resultMap="BaseResultMap">
+        SELECT DISTINCT
+        os.id,
+        os.emp_id as emp_id,
+        oe.org_code as org_code,
+        os.department as department,
+        os.company as company,
+        oe. NAME AS emp_name,
+        os.sign_time as sign_time,
+        os.signout_time as signout_time,
+        os.address as address,
+        os.sign_type as sign_type,
+        os.punch_card_type as punch_card_type,
+        os.out_punch_card_type as out_punch_card_type,
+        ooo.org_name AS companyName,
+        os.out_address as out_address,
+        osbd.should_work_days as should_work_days,
+        oo.org_name AS depName
+        FROM
+        oa_sign os
+        LEFT JOIN oa_organization ooo ON os.company = ooo.id
+        LEFT JOIN oa_employee oe ON os.emp_id = oe.id
+        LEFT JOIN oa_salary_basic_data osbd on oe.id = osbd.emp_id
+        LEFT JOIN oa_organization oo ON oo.id = os.department
+        <where>
+            1=1
+            <if test="empName != null and empName != ''">
+                AND oe.name LIKE CONCAT('%',#{empName},'%')
+            </if>
+            <if test="companyName != null and companyName != ''">
+                AND ooo.org_name LIKE CONCAT('%',#{companyName},'%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND os.sign_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND os.sign_time &lt;= #{endDate}
+            </if>
+            <if test="signType != null and signType != ''">
+                AND os.sign_type = #{signType}
+            </if>
+            <if test="punchCardType != null and punchCardType != ''">
+                AND (os.punch_card_type = #{punchCardType} OR os.out_punch_card_type = #{punchCardType})
+            </if>
+            AND
+            oe.deleted != 1 AND oe.employee_status = 'ON_JOB'
+        </where>
+        ORDER BY oe.name ASC,os.id ASC
+    </select>
+
+    <select id="findCollect" resultMap="BaseResultMap" parameterType="map">
+
+
+        select a.name as
+        empName,a.emp_id,a.org_code,b.BELATENUM,c.NORMALNUM,d.LEAVEEARLYNUM,e.ABSENTEEISMNUM,g.BELATEANDLEAVEEARLYNUM,
+        h.SIGNDAYSNUM,aa.comname as companyName,aa.depname as depName
+        from ( select DISTINCT oe.name as name,os.emp_id,oe.org_code
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 GROUP BY os.emp_id ) a
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as BELATENUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted !=1 AND os.sign_type = 'BELATE' GROUP BY
+        os.emp_id) b
+        on a.emp_id = b.emp_id
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as NORMALNUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted !=1 AND os.sign_type = 'NORMAL' GROUP BY
+        os.emp_id ) c
+        on a.emp_id = c.emp_id
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as LEAVEEARLYNUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted !=1 AND os.sign_type = 'LEAVEEARLY' GROUP
+        BY os.emp_id ) d
+        on a.emp_id = d.emp_id
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as ABSENTEEISMNUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted !=1 AND os.sign_type = 'ABSENTEEISM' GROUP
+        BY os.emp_id ) e
+        on a.emp_id = e.emp_id
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as BELATEANDLEAVEEARLYNUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 AND os.sign_type = 'BELATEANDLEAVEEARLY' GROUP BY os.emp_id ) g
+        on a.emp_id = g.emp_id
+        left join ( select DISTINCT oe.name as name,os.emp_id, count(os.sign_type) as SIGNDAYSNUM
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id
+        where 1=1
+        <include refid="searchEmployee"/>
+        AND oe.deleted !=1 and os.sign_type != 'ABSENTEEISM' GROUP BY os.emp_id ) h
+        on a.emp_id = h.emp_id
+        left join (select f.name,f.emp_id,f.org_name as comname,oo.org_name as depname from
+        (select DISTINCT oe.name as name,os.emp_id,oo.org_name,os.department,os.creat_time,oe.deleted
+        from oa_sign as os
+        LEFT JOIN (select * from oa_employee_org GROUP BY emp_id) as oeo on oeo.emp_id=os.emp_id
+        LEFT JOIN oa_employee as oe on oeo.emp_id=oe.id
+        LEFT JOIN oa_organization as oo on os.company = oo.id) as f
+        LEFT JOIN oa_organization as oo on oo.id=f.department
+        where 1=1
+        <if test="empName != null and empName != ''">
+            AND f.name LIKE CONCAT('%',#{empName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND f.org_name LIKE CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND f.creat_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND f.creat_time &lt;= #{endDate}
+        </if>
+        <if test="signType != null and signType != ''">
+            AND f.sign_type = #{signType}
+        </if>
+        <if test="punchCardType != null and punchCardType != ''">
+            AND f.punch_card_type = #{punchCardType}
+        </if>
+        and f.deleted !=1 GROUP BY f.emp_id) as aa
+        on a.emp_id = aa.emp_id
+        order by aa.comname asc,aa.depname asc,a.org_code asc
+
+    </select>
+
+    <sql id="searchEmployee">
+        <if test="empName != null and empName != ''">
+            AND oe.name LIKE CONCAT('%',#{empName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND oo.org_name LIKE CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND os.creat_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND os.creat_time &lt;= #{endDate}
+        </if>
+        <if test="signType != null and signType != ''">
+            AND os.sign_type = #{signType}
+        </if>
+        <if test="punchCardType != null and punchCardType != ''">
+            AND (os.punch_card_type = #{punchCardType} OR os.out_punch_card_type = #{punchCardType})
+        </if>
+    </sql>
+
+
+    <select id="findSignNum" resultType="long">
+        select count(emp_id) from oa_sign where sign_type!= 'ABSENTEEISM' and creat_time &gt;= #{startDate} AND creat_time &lt;= #{endDate}  GROUP BY emp_id
+    </select>
+
+
+    <select id="findAllCount" resultMap="BaseResultMap" parameterType="map">
+        SELECT a.BELATEANDLEAVEEARLYNUM,b.NORMALNUM,c.LEAVEEARLYNUM,d.BELATENUM,e.ABSENTEEISMNUM,
+        f.PUNCHCARDTYPENUM,g.OUTPUNCHCARDTYPENUM from
+        (select count(os.sign_type) as BELATEANDLEAVEEARLYNUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 AND os.sign_type = 'BELATEANDLEAVEEARLY' GROUP BY os.emp_id ) AS a
+        LEFT JOIN(select count(os.sign_type)as NORMALNUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 AND os.sign_type = 'NORMAL' GROUP BY
+        os.emp_id) as b
+        on b.emp_id = a.emp_id
+        LEFT JOIN(select count(os.sign_type)as LEAVEEARLYNUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 AND os.sign_type = 'LEAVEEARLY' GROUP
+        BY os.emp_id) as c
+        on c.emp_id = a.emp_id
+        LEFT JOIN(select count(os.sign_type)as BELATENUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and oe.deleted!=1 AND os.sign_type = 'BELATE' GROUP BY
+        os.emp_id) as d
+        on d.emp_id = a.emp_id
+        LEFT JOIN(select count(os.sign_type)as ABSENTEEISMNUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        AND os.sign_type != 'ABSENTEEISM' GROUP BY os.emp_id ) as e
+        on e.emp_id = a.emp_id
+        LEFT JOIN(select count(punch_card_type) as PUNCHCARDTYPENUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and os.punch_card_type = 2) as f
+        on f.emp_id = a.emp_id
+        LEFT JOIN(select count(out_punch_card_type) as OUTPUNCHCARDTYPENUM,os.emp_id from oa_sign as os
+        LEFT JOIN oa_employee as oe on oe.id=os.emp_id
+        LEFT JOIN oa_organization as oo on oo.id=os.company
+        where 1=1
+        <include refid="searchEmployee"/>
+        and os.out_punch_card_type = 2) as g
+        on g.emp_id = a.emp_id
+
+    </select>
+
+    <select id="findAllcount" resultMap="BaseResultMap" parameterType="map">
+        select * from oa_sign as os
+        LEFT JOIN oa_employee as oe on os.emp_id= oe.id
+        LEFT JOIN oa_organization as oo on oo.id = os.company
+        where 1=1 and oe.deleted != 1
+        <if test="empName != null and empName != ''">
+            AND oe.name LIKE CONCAT('%',#{empName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND oo.org_name LIKE CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND os.creat_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND os.creat_time &lt;= #{endDate}
+        </if>
+        <if test="signType != null and signType != ''">
+            AND os.sign_type = #{signType}
+        </if>
+        <if test="punchCardType != null and punchCardType != ''">
+            AND (os.punch_card_type = #{punchCardType} OR os.out_punch_card_type = #{punchCardType})
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.organization.MdniOrganizationDao">
+    <resultMap id="BaseResultMap" type="MdniOrganization">
+        <id column="id" property="id"/>
+        <result column="org_code" property="orgCode"/>
+        <result column="org_name" property="orgName"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="family_code" property="familyCode"/>
+        <result column="sort" property="sort"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_user" property="createUser"/>
+        <result column="type" property="type"/>
+        <result column="sign_time" property="signTime"/>
+        <result column="signout_time" property="signOutTime"/>
+        <result column="remindmessage_type" property="remindMessageType"/>
+        <result column="out_remindmessage_type" property="outRemindMessageType"/>
+        <result column="store_flag" property="storeFlag"/>
+    </resultMap>
+    <sql id="SelectInfo">
+    id, org_code, org_name, parent_id, family_code, sort,status, create_date, create_user,
+    type,sign_time,signout_time,remindmessage_type,out_remindmessage_type,store_flag
+  </sql>
+    <select id="getById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization
+        where id = #{id}
+    </select>
+
+    <select id="getByIds" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getByCode" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization
+        where org_code = #{orgCode}
+    </select>
+    <select id="findAll" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization where status=1 order by sort
+    </select>
+    <select id="findByType" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization where status=1 AND type=#{type}
+    </select>
+    <select id="findDepartment" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization where status=1
+        and family_code like CONCAT('%',#{familyCode},'%')
+    </select>
+    <delete id="deleteById" parameterType="long">
+    delete from oa_organization
+    where id = #{id}
+  </delete>
+    <insert id="insert" keyProperty="id" parameterType="MdniOrganization" useGeneratedKeys="true">
+        insert into oa_organization
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orgCode != null">
+                org_code,
+            </if>
+            <if test="orgName != null">
+                org_name,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="familyCode != null">
+                family_code,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="signTime != null">
+                sign_time,
+            </if>
+            <if test="signOutTime != null">
+                signout_time,
+            </if>
+            <if test="remindMessageType != null">
+                remindmessage_type,
+            </if>
+            <if test="outRemindMessageType != null">
+                out_remindmessage_type,
+            </if>
+            <if test="storeFlag != null">
+                store_flag
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orgCode != null">
+                #{orgCode},
+            </if>
+            <if test="orgName != null">
+                #{orgName},
+            </if>
+            <if test="sort != null">
+                #{sort},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="familyCode != null">
+                #{familyCode},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="createUser != null">
+                #{createUser},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="signTime != null">
+                #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                #{signOutTime},
+            </if>
+            <if test="remindMessageType != null">
+                #{remindMessageType},
+            </if>
+            <if test="outRemindMessageType != null">
+                #{outRemindMessageType},
+            </if>
+            <if test="storeFlag != null">
+                #{storeFlag}
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="MdniOrganization">
+        update oa_organization
+        <set>
+            <if test="orgCode != null">
+                org_code = #{orgCode},
+            </if>
+            <if test="orgName != null">
+                org_name = #{orgName},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="familyCode != null">
+                family_code = #{familyCode},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+            <if test="type != null">
+                type=#{type},
+            </if>
+            <if test="signTime != null">
+                sign_time = #{signTime},
+            </if>
+            <if test="signOutTime != null">
+                signout_time = #{signOutTime},
+            </if>
+            <if test="remindMessageType != null">
+                remindmessage_type = #{remindMessageType},
+            </if>
+            <if test="outRemindMessageType != null">
+                out_remindmessage_type = #{outRemindMessageType},
+            </if>
+            <if test="storeFlag != null">
+                store_flag = #{storeFlag}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        from oa_organization where status=1
+        <include refid="searchWhere"/>
+        <if test="sort != null">
+            ORDER BY
+            <foreach collection="sort" item="order" separator=",">
+                ${order.property} ${order.direction}
+            </foreach>
+        </if>
+        LIMIT #{offset},#{pageSize}
+        order by sort asc
+    </select>
+    <select id="selectByparentId" parameterType="long" resultType="int">
+         select count(1) from oa_organization where status=1 and parent_id=#{parentId}
+    </select>
+    <select id="getOrgByLastCode" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            oa_organization so
+        WHERE
+        so.family_code LIKE CONCAT('%-' , #{code})
+    </select>
+
+    <select id="searchTotal" parameterType="map" resultType="Long">
+        SELECT
+        COUNT(*)
+        FROM oa_organization where status=1
+        <include refid="searchWhere"/>
+    </select>
+
+    <update id="disableOrg" parameterType="long">
+        update oa_organization set STATUS=0 where id=#{id}
+    </update>
+
+    <select id="findFamilyCodeById" resultType="string" parameterType="long">
+        select family_code from oa_organization where id=#{id}
+    </select>
+
+    <select id="setsignTime">
+        UPDATE oa_organization set sign_time = #{newSignTime},signout_time=#{newSignOutTime} WHERE family_code IN
+        (select a.* from (select family_code from oa_organization  where  family_code LIKE CONCAT(#{familyCode},'%')) a)
+    </select>
+
+    <select id="findSignTimeByDepartmentId" parameterType="long" resultType="date">
+        SELECT sign_time from oa_organization where id = #{departmentId}
+    </select>
+
+    <select id="findSignOutTimeByDepartmentId" parameterType="long" resultType="date">
+        SELECT signout_time from oa_organization where id = #{departmentId}
+    </select>
+    <sql id="searchWhere">
+        <if test="keyword!=null">
+            AND (
+            org_code LIKE CONCAT('%', #{keyword}, '%')
+            OR org_name LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
+    <select id="selectOrgByFamilyCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        from oa_organization where status=1
+        and family_code like CONCAT(#{familyCode},'-%')
+    </select>
+
+    <select id="getSignTimeByDepId" resultType="date">
+        select sign_time from oa_organization where id = #{department}
+    </select>
+
+    <select id="getSignOutTimeByDepId" resultType="date">
+        select signout_time from oa_organization where id = #{department}
+    </select>
+
+    <select id="getSignTime" resultMap="BaseResultMap" parameterType="long">
+        select sign_time,signout_time from oa_organization where id=#{id}
+    </select>
+
+    <select id="findAllSignTime" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="SelectInfo"/>
+        from oa_organization
+    </select>
+
+    <update id="updateRemindMessageType">
+        update oa_organization set remindmessage_type=#{type} where id = #{id}
+    </update>
+
+
+    <update id="updateOutRemindMessageType">
+         update oa_organization set out_remindmessage_type=#{type} where id = #{id}
+    </update>
+
+    <select id="findIdAndSIgnTime" resultMap="BaseResultMap">
+        select oo.* from oa_employee_org as oeo
+    LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+    LEFT JOIN oa_organization as oo on oo.id = oeo.org_department_id
+    where oeo.org_department_id in(select id from oa_organization)
+    GROUP BY oeo.org_department_id
+    </select>
+
+    <select id="findComIdAndSignTime" resultMap="BaseResultMap">
+        select oo.* from oa_employee_org  as oeo
+      LEFT JOIN oa_employee as oe on oe.id = oeo.emp_id
+      LEFT JOIN oa_organization as oo on oo.id = oeo.org_company_id
+      where oeo.org_company_id  in(select id from oa_organization) and oeo.org_department_id is NULL
+      GROUP BY oeo.org_company_id
+    </select>
+
+
+    <update id="updateRemMessage">
+        update oa_organization set remindmessage_type = 0,out_remindmessage_type = 0;
+    </update>
+
+    <select id="getByEmpId" resultType="long">
+        select id from oa_employee_org where emp_id = #{empId} AND type ='DIRECTLY'
+    </select>
+    <!--对外提供接口 查询所有是门店的 公司集合(状态可用)-->
+    <select id="findStores" resultMap="BaseResultMap">
+        SELECT
+        <include refid="SelectInfo"/>
+        FROM oa_organization WHERE status = 1
+        AND store_flag = 1 AND type = 'COMPANY'
+    </select>
+
+    <select id="getDesignGroup" resultType="map" parameterType="string">
+        SELECT org_code as orgCode,org_name as orgName from oa_organization
+         where parent_id  = ( select id from oa_organization where org_code  = concat(#{storeCode},'_007') )
+         order by sort asc
+    </select>
+
+    <select id="getEmployeeByOrgCode" resultType="map" parameterType="string">
+        select name,org_code as orgCode,mobile from oa_employee where id in (
+
+            select emp_id from oa_organization as oo
+                LEFT JOIN oa_employee_org as oeo on oeo.org_id = oo.id
+                <where>
+                    <if test="orgCode != null and orgCode != ''">
+                        org_code = #{orgCode}
+                    </if>
+                </where>
+        ) order by org_code asc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.budget.YearBudgetDetailDao" >
+  <resultMap id="BaseResultMap" type="cn.damei.entity.budget.YearBudgetDetail" >
+    <id column="id" property="id" />
+    <result column="year_budget_id" property="yearBudgetId" />
+    <result column="subject_code" property="subjectCode" />
+    <result column="subject_name" property="subjectName" />
+    <result column="january" property="january" />
+    <result column="february" property="february" />
+    <result column="march" property="march" />
+    <result column="april" property="april" />
+    <result column="may" property="may" />
+    <result column="june" property="june" />
+    <result column="july" property="july" />
+    <result column="august" property="august" />
+    <result column="september" property="september" />
+    <result column="october" property="october" />
+    <result column="november" property="november" />
+    <result column="december" property="december" />
+    <result column="budget_year" property="budgetYear" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, year_budget_id, subject_code, january, february, march, april, may, june, july, 
+    august, september, october, november, december, budget_year
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from oa_year_budget_detail
+    where id = #{id}
+  </select>
+  <select id="getByBudgetId" resultMap="BaseResultMap" parameterType="long">
+    select obd.*,od.name as subject_name from oa_year_budget_detail obd join oa_dictionary od
+where obd.subject_code=od.id and year_budget_id=#{yearBudgetId}
+  </select>
+    <select id="getBySubjectCode" resultMap="BaseResultMap">
+    SELECT
+        od.*
+    FROM
+        oa_year_budget_detail od ,
+        oa_year_budget ob
+    WHERE
+        od.year_budget_id = ob.id
+    AND od.subject_code = #{subjectCode}
+    AND ob.budget_year = #{budgetYear}
+    AND ob.apply_company = #{applyCompany}
+    </select>
+  <delete id="deleteById" parameterType="long" >
+    delete from oa_year_budget_detail
+    where id = #{id}
+  </delete>
+  <delete id="deleteByBudgetId" >
+    delete from oa_year_budget_detail
+    where year_budget_id = #{budgetId}
+  </delete>
+  <insert id="insert" parameterType="YearBudgetDetail" useGeneratedKeys="true" keyProperty="id" >
+    insert into oa_year_budget_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="yearBudgetId != null" >
+        year_budget_id,
+      </if>
+      <if test="subjectCode != null" >
+        subject_code,
+      </if>
+      <if test="january != null" >
+        january,
+      </if>
+      <if test="february != null" >
+        february,
+      </if>
+      <if test="march != null" >
+        march,
+      </if>
+      <if test="april != null" >
+        april,
+      </if>
+      <if test="may != null" >
+        may,
+      </if>
+      <if test="june != null" >
+        june,
+      </if>
+      <if test="july != null" >
+        july,
+      </if>
+      <if test="august != null" >
+        august,
+      </if>
+      <if test="september != null" >
+        september,
+      </if>
+      <if test="october != null" >
+        october,
+      </if>
+      <if test="november != null" >
+        november,
+      </if>
+      <if test="december != null" >
+        december,
+      </if>
+      <if test="budgetYear != null" >
+        budget_year,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="yearBudgetId != null" >
+        #{yearBudgetId},
+      </if>
+      <if test="subjectCode != null" >
+        #{subjectCode},
+      </if>
+      <if test="january != null" >
+        #{january},
+      </if>
+      <if test="february != null" >
+        #{february},
+      </if>
+      <if test="march != null" >
+        #{march},
+      </if>
+      <if test="april != null" >
+        #{april},
+      </if>
+      <if test="may != null" >
+        #{may},
+      </if>
+      <if test="june != null" >
+        #{june},
+      </if>
+      <if test="july != null" >
+        #{july},
+      </if>
+      <if test="august != null" >
+        #{august},
+      </if>
+      <if test="september != null" >
+        #{september},
+      </if>
+      <if test="october != null" >
+        #{october},
+      </if>
+      <if test="november != null" >
+        #{november},
+      </if>
+      <if test="december != null" >
+        #{december},
+      </if>
+      <if test="budgetYear != null" >
+        #{budgetYear},
+      </if>
+    </trim>
+  </insert>
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into oa_year_budget_detail
+    (year_budget_id, subject_code, january, february, march, april, may, june, july,
+    august, september, october, november, december, budget_year)
+    VALUES
+    <foreach collection="details" item="detail" separator=",">
+    (#{detail.yearBudgetId},#{detail.subjectCode},#{detail.january},
+    #{detail.february},#{detail.march},#{detail.april},#{detail.may},#{detail.june},
+    #{detail.july},#{detail.august},#{detail.september},#{detail.october},#{detail.november},
+    #{detail.december},#{detail.budgetYear})
+    </foreach>
+  </insert>
+  <update id="update" parameterType="YearBudgetDetail" >
+    update oa_year_budget_detail
+    <set >
+      <if test="yearBudgetId != null" >
+        year_budget_id = #{yearBudgetId},
+      </if>
+      <if test="subjectCode != null" >
+        subject_code = #{subjectCode},
+      </if>
+      <if test="january != null" >
+        january = #{january},
+      </if>
+      <if test="february != null" >
+        february = #{february},
+      </if>
+      <if test="march != null" >
+        march = #{march},
+      </if>
+      <if test="april != null" >
+        april = #{april},
+      </if>
+      <if test="may != null" >
+        may = #{may},
+      </if>
+      <if test="june != null" >
+        june = #{june},
+      </if>
+      <if test="july != null" >
+        july = #{july},
+      </if>
+      <if test="august != null" >
+        august = #{august},
+      </if>
+      <if test="september != null" >
+        september = #{september},
+      </if>
+      <if test="october != null" >
+        october = #{october},
+      </if>
+      <if test="november != null" >
+        november = #{november},
+      </if>
+      <if test="december != null" >
+        december = #{december},
+      </if>
+      <if test="budgetYear != null" >
+        budget_year = #{budgetYear},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

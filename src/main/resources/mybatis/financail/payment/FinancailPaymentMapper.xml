@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.damei.repository.financail.FinancailPaymentDao">
+    <resultMap id="BaseResultMap" type="FinancailPayment">
+        <id column="id" property="id"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="apply_user" property="applyUser.id"/>
+        <result column="user_name" property="applyUser.name"/>
+        <result column="apply_type" property="applyType"/>
+        <result column="apply_company" property="company.id"/>
+        <result column="org_name" property="company.orgName"/>
+        <result column="org_code" property="company.orgCode"/>
+        <result column="budget_month" property="budgetMonth"/>
+        <result column="apply_date" property="applyDate"/>
+        <result column="invoice_total" property="invoiceTotal"/>
+        <result column="wf_process_id" property="wfProcessId"/>
+        <result column="form_id" property="formId"/>
+        <result column="wf_process_tittle" property="wfProcessTittle"/>
+        <result column="note" property="note"/>
+        <result column="status" property="status"/>
+        <result column="payment_handler" property="paymentHandler"/>
+        <result column="payment_handle_date" property="paymentHandleDate"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        S.id,S.total_price,S.apply_user,EM.name user_name,S.apply_type,S.apply_company,ORG.org_code org_code,ORG.org_name org_name,
+        S.budget_month,S.apply_date,S.invoice_total,S.wf_process_id,S.form_id,S.wf_process_tittle,S.note,S.status,S.payment_handler,
+        S.payment_handle_date,S.create_time
+    </sql>
+    <select id="getById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+      	<include refid="from"/>
+        where S.id = #{id}
+    </select>
+    <delete id="deleteById" parameterType="long">
+        delete from oa_financail_payment
+        where id = #{id}
+    </delete>
+    <insert id="insert" keyProperty="id" parameterType="FinancailPayment" useGeneratedKeys="true">
+        insert into oa_financail_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="totalPrice != null">
+                total_price,
+            </if>
+            <if test="applyUser.id != null">
+                apply_user,
+            </if>
+            <if test="company.id != null">
+                apply_company,
+            </if>
+            <if test="applyType != null">
+                apply_type,
+            </if>
+            <if test="budgetMonth != null">
+                budget_month,
+            </if>
+            <if test="applyDate != null">
+                apply_date,
+            </if>
+            <if test="invoiceTotal != null">
+                invoice_total,
+            </if>
+            <if test="wfProcessId != null">
+                wf_process_id,
+            </if>
+            <if test="formId != null">
+                form_id,
+            </if>
+            <if test="wfProcessTittle != null">
+                wf_process_tittle,
+            </if>
+            <if test="note != null">
+                note,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="paymentHandler != null">
+                paymentHandler,
+            </if>
+            <if test="paymentHandleDate != null">
+                payment_handle_date,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="totalPrice != null">
+                #{totalPrice},
+            </if>
+            <if test="applyUser.id != null">
+                #{applyUser.id},
+            </if>
+            <if test="company.id != null">
+                #{company.id},
+            </if>
+            <if test="applyType != null">
+                #{applyType},
+            </if>
+            <if test="budgetMonth != null">
+                #{budgetMonth},
+            </if>
+            <if test="applyDate != null">
+                #{applyDate},
+            </if>
+            <if test="invoiceTotal != null">
+                #{invoiceTotal},
+            </if>
+            <if test="wfProcessId != null">
+                #{wfProcessId},
+            </if>
+            <if test="formId != null">
+                #{formId},
+            </if>
+            <if test="wfProcessTittle != null">
+                #{wfProcessTittle},
+            </if>
+            <if test="note != null">
+                #{note},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="paymentHandler != null">
+                #{paymentHandler},
+            </if>
+            <if test="paymentHandleDate != null">
+                #{paymentHandleDate},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="FinancailPayment">
+        update oa_financail_payment
+        <set>
+            <if test="note != null">
+                note = #{note},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="paymentHandler != null">
+                payment_handler = #{paymentHandler},
+            </if>
+            <if test="paymentHandleDate != null">
+                payment_handle_date = #{paymentHandleDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+		<include refid="Base_Column_List"/>
+      	<include refid="from"/>
+        <include refid="searchWhere"/>
+        <if test="sort != null">
+            ORDER BY
+            <foreach collection="sort" item="order" separator=",">
+                S.${order.property} ${order.direction}
+            </foreach>
+        </if>
+    </select>
+	<sql id="from">
+	 FROM oa_financail_payment S LEFT JOIN oa_employee EM ON S.apply_user = EM.id
+     LEFT JOIN oa_organization ORG ON S.apply_company = ORG.id
+	</sql>
+    <sql id="searchWhere">
+        <where>
+            <if test="keyword != null">
+                AND (S.wf_process_tittle LIKE CONCAT('%',#{keyword},'%') OR EM.name LIKE CONCAT('%',#{keyword},'%') OR ORG.org_name LIKE CONCAT('%',#{keyword},'%'))
+            </if>
+            <if test="status != null">
+                AND S.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+</mapper>

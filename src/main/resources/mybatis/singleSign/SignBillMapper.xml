@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.damei.repository.signbill.SignBillDao">
+
+    
+    <resultMap id="findCustomerByPhoneMap" type="cn.damei.entity.singleSign.SignBill">
+        <id property="id" column="id"/>
+        <result property="signCode" column="sign_code"/>
+        <result property="subCompany" column="sub_company"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerPhone" column="customer_phone"/>
+        <result property="orderAddress" column="order_address"/>
+        <result property="procedureDescribe" column="procedure_describe"/>
+        <result property="managerView" column="manager_view"/>
+    </resultMap>
+    
+    <select id="search" parameterType="String" resultMap="findCustomerByPhoneMap">
+		SELECT *
+		FROM oa_signbill
+		GROUP BY customer_phone
+		HAVING customer_phone = #{phone}
+    </select>
+   	
+   <insert id="insert" parameterType="cn.damei.entity.singleSign.SignBill">
+   		INSERT INTO oa_signbill(sub_company,order_num,customer_name,customer_phone,order_address,procedure_describe,manager_view,sign_code,create_user,create_time)
+        VALUES (#{subCompany},#{orderNum},#{customerName},#{customerPhone},#{orderAddress},#{procedureDescribe},#{managerView},#{signCode},#{createUser},#{createTime})
+   	</insert>
+   	
+   	<select id="getCurrentOrderNum" parameterType="map" resultType="string">
+    	<![CDATA[
+			select case when max(sign_code) is not null then max(sign_code) + 1 else CONCAT(${currentDate},'001') 
+				end curOrderNum from oa_signbill where sign_code like '%${currentDate}%'
+        ]]>
+    </select>
+    
+    <delete id="deleteBySignCode" parameterType="String">
+    	delete from oa_signbill where sign_code=#{signCode}
+    </delete>
+
+</mapper>

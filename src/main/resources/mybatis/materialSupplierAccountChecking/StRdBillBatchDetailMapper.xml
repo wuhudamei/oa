@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.materialSupplierAccountChecking.StRdBillBatchDetailDao">
+
+    <resultMap id="BaseResultMap" type="StRdBillBatchDetail">
+     	<result property="billBatchDetailId" column="billBatchDetailId"/>
+     	<result property="billBatchId" column="st_rd_bill_batch_id"/>
+     	<result property="billItemId" column="st_rd_bill_item_id"/>
+        <result property="billNumber" column="bill_number"/>
+        <result property="billAmountMoney" column="bill_amount_money"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="pdSkuname" column="pd_skuname"/>
+        <result property="pdPrice" column="pd_price"/>
+        <result property="settlement" column="is_settlement"/>
+        <result property="settlementTime" column="settlement_time"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT bd.id AS billBatchDetailId,bm.customer_name,bm.order_no,bi.pd_skuname,bi.pd_price,bi.pd_model,bd.bill_number,bd.bill_amount_money
+        FROM  ST_RD_Bill_Batch_Detail bd
+        LEFT JOIN ST_RD_Bill_Item bi ON bi.id = bd.st_rd_bill_item_id
+        LEFT JOIN ST_RD_Bill_Material bm ON bm.id = bi.st_rd_bill_material_id
+    </select>
+    <insert id="insertBatch">
+        INSERT INTO ST_RD_Bill_Batch_Detail (id,st_rd_bill_batch_id,st_rd_bill_item_id,bill_number,bill_amount_money,is_settlement,settlement_time)
+        VALUES
+         <foreach collection="list" index="idx" item="bdList" separator=",">
+             (#{bdList.billBatchDetailId},#{bdList.billBatchId},#{bdList.billItemId},#{bdList.billNumber},#{bdList.billAmountMoney},#{bdList.settlement},#{bdList.settlementTime})
+         </foreach>
+     </insert>
+</mapper>

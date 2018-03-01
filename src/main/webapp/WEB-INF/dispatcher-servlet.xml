@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<!-- 启用注解的驱动 -->
+	<mvc:annotation-driven />
+
+	<!-- 启用spring mvc 注解 -->
+	<context:annotation-config />
+
+	<!-- 设置使用注解的类所在的jar包 -->
+	<context:component-scan base-package="cn.damei.rest" />
+
+	<!--aop 使用cglib代理(要切入controller层,必须将此配置放于此处)-->
+	<aop:aspectj-autoproxy />
+
+
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+				<value>application/json</value>
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0"></property>
+	</bean>
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />
+				<!-- json转换器 -->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="20971520" />
+		<!-- 最大上传20MB -->
+	</bean>
+
+
+	<!-- 定义JSP文件的位置 --><!-- 视图解释类 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 定义无需Controller就跳转的页面 -->
+	<mvc:view-controller path="/" view-name="index" />
+	<mvc:view-controller path="/index" view-name="index" />
+	<!-- 登录页 -->
+	<mvc:view-controller path="/login" view-name="admin/login" />
+	<!-- 退出页面 -->
+	<mvc:view-controller path="/logout" view-name="logout" />
+	<!-- 角色管理 -->
+	<mvc:view-controller path="/admin/roles" view-name="admin/role/roles" />
+	<!-- 组织架构 -->
+	<mvc:view-controller path="/admin/orgList"
+		view-name="admin/organization/orglist" />
+	<!-- 设置上下班时间 -->
+	<mvc:view-controller path="/admin/signTimeSet"
+		view-name="admin/sign/signTimeSet" />
+	<!-- 数据字典 -->
+	<mvc:view-controller path="/admin/dicList"
+		view-name="admin/dictionary/dictlist" />
+	<!-- 系统参数设置 -->
+	<mvc:view-controller path="/admin/system/param"
+		view-name="admin/system/param" />
+	<!-- 修改密码 -->
+	<mvc:view-controller path="/admin/modifyPwd"
+		view-name="admin/password/modify" />
+	<!-- 员工列表 -->
+	<mvc:view-controller path="/admin/employee/list"
+		view-name="admin/employee/list" />
+	<!-- 员工管理 -->
+	<mvc:view-controller path="/admin/employee/management"
+		view-name="admin/employee/management" />
+	<!-- 新增员工 -->
+	<mvc:view-controller path="/admin/employee/create"
+		view-name="admin/employee/create" />
+	<!-- 新增外部员工 -->
+	<mvc:view-controller path="/admin/employee/outercreate"
+						 view-name="admin/employee/outercreate" />
+	<!-- 编辑员工 -->
+	<mvc:view-controller path="/admin/employee/edit"
+		view-name="admin/employee/edit" />
+	<!-- 查看员工简单信息 -->
+	<mvc:view-controller path="/admin/employee/view/simple"
+		view-name="admin/employee/simple" />
+	<!-- 查看员工详细信息 -->
+	<mvc:view-controller path="/admin/employee/view/detail"
+		view-name="admin/employee/detail" />
+	<!-- 员工合同管理 -->
+	<mvc:view-controller path="/admin/employee/contract"
+		view-name="admin/employee/contract" />
+	<!--基本薪资维护页面-->
+	<mvc:view-controller path="/admin/employee/salarydetail"
+		view-name="admin/employee/salarydetail" />
+	<!-- 待审批 -->
+	<mvc:view-controller path="/admin/approval"
+		view-name="admin/approval/list" />
+	<!-- 已审批 -->
+	<mvc:view-controller path="/admin/doApproval"
+		view-name="admin/approval/doList" />
+	<!-- 抄送 -->
+	<mvc:view-controller path="/admin/ccUser"
+		view-name="admin/approval/ccUserList" />
+	<!-- 审批详情页面 -->
+	<mvc:view-controller path="/admin/approval/detail"
+		view-name="admin/approval/approvalDetail" />
+
+	<!-- 我的申请 -->
+	<!-- 请假|出差列表 -->
+	<mvc:view-controller path="/admin/businessAway/leaveAndBusiness"
+		view-name="admin/businessAway/leaveAndBusiness" />
+	<!-- 详情页面20170523 andy add -->
+	<mvc:view-controller path="/admin/businessAway/detailContainer"
+		view-name="admin/businessAway/detailContainer" />
+	<!-- 请假申请新增 -->
+	<mvc:view-controller path="/admin/vacationAdd"
+		view-name="admin/vacation/edit" />
+	<!-- 出差申请新增 -->
+	<mvc:view-controller path="/admin/businessAdd"
+		view-name="admin/businessAway/edit" />
+	<!-- 采购 -->
+	<!--采购申请 -->
+	<mvc:view-controller path="/admin/purchase/add"
+		view-name="admin/purchase/add" />
+	<!--我的事物 -->
+	<mvc:view-controller path="/admin/purchase/list"
+		view-name="admin/purchase/list" />
+
+	<!-- 通用申请创建 -->
+	<mvc:view-controller path="/admin/commonApply/create"
+		view-name="admin/applyCommon/create" />
+	<!-- 通用申请详情 -->
+	<mvc:view-controller path="/admin/commonApply/info"
+		view-name="admin/applyCommon/info" />
+	<!-- 报销申请详情 -->
+	<mvc:view-controller path="/api/payments/info"
+		view-name="admin/payment/info" />
+	<!-- 费用申请详情 -->
+	<mvc:view-controller path="/api/signature/info"
+						 view-name="/admin/signature/info" />
+	<!-- 请假申请详情 -->
+	<mvc:view-controller path="/api/vacation/info"
+						 view-name="/admin/vacation/info" />
+	<!-- 董事长流程审批-报销 -->
+	<mvc:view-controller path="/api/financail/payment/info"
+						 view-name="/admin/financail/payment/info" />
+	<!-- 通用申请列表 -->
+	<mvc:view-controller path="/admin/commonApply/list"
+		view-name="admin/applyCommon/list" />
+	<!-- 编辑 -->
+	<mvc:view-controller path="/admin/commonApply/edit"
+		view-name="admin/applyCommon/edit" />
+
+	<!--年度预算管理 -->
+	<mvc:view-controller path="/admin/yearbudget/apply"
+		view-name="/admin/yearbudget/apply" />
+	<mvc:view-controller path="/admin/yearbudget/list"
+		view-name="/admin/yearbudget/list" />
+
+	<!-- 财务报销 -->
+	<mvc:view-controller path="/admin/financail/payment"
+		view-name="/admin/financail/payment/list" />
+	<mvc:view-controller path="/admin/financail/payment/reimbursed"
+		view-name="/admin/financail/payment/reimbursed" />
+
+	<mvc:view-controller path="/ueditor/config"
+		view-name="admin/ueditor/config" />
+
+	<!-- 审批流程管理 -->
+	<mvc:view-controller path="/admin/process"
+		view-name="/admin/process/add" />
+	<mvc:view-controller path="/admin/subprocess"
+		view-name="/admin/subjectprocess/list" />
+
+	<!--树例子 -->
+	<mvc:view-controller path="/admin/tree" view-name="admin/orgTree/tree" />
+
+	<!-- 预算 -->
+	<mvc:view-controller path="/admin/budgets"
+		view-name="admin/budget/budgets" />
+	<mvc:view-controller path="/admin/applyBudget"
+		view-name="admin/budget/budgetApply" />
+
+	<!-- 签报单 -->
+	<mvc:view-controller path="/admin/signatures"
+		view-name="admin/signature/signatures" />
+	<mvc:view-controller path="/admin/applySignature"
+		view-name="admin/signature/signatureApply" />
+
+	<!-- 报销 -->
+	<mvc:view-controller path="/admin/payments"
+		view-name="admin/payment/payments" />
+	<mvc:view-controller path="/admin/applyPayment"
+		view-name="admin/payment/paymentApply" />
+
+	<!-- 流程监控 -->
+	<mvc:view-controller path="/admin/processMonitored"
+		view-name="admin/processMonitored/monitored" />
+	<mvc:view-controller path="/admin/sourceData"
+		view-name="admin/processMonitored/sourceData" />
+
+	<!-- 微信点击菜单时，用户绑定页面 -->
+	<mvc:view-controller path="/wx/click/bind/page"
+		view-name="wx/click/bind" />
+	<!-- 用户点击菜单登录之后，修改密码页面 -->
+	<mvc:view-controller path="/wx/click/modifyPassword"
+		view-name="wx/click/modifyPassword" />
+	<!-- 用户扫码登录时，绑定页面 -->
+	<mvc:view-controller path="/wx/scan/bind/page"
+		view-name="wx/scan/bind" />
+	<!-- 用户扫码登录之后，修改密码页面 -->
+	<mvc:view-controller path="/wx/scan/modifyPassword"
+		view-name="wx/scan/modifyPassword" />
+	<!-- 用户扫码提示关注页面 -->
+	<mvc:view-controller path="/wx/subscribe"
+		view-name="wx/subscribe" />
+		<!-- 通用申请消息 -->
+	<mvc:view-controller path="/admin/wechat/messageLog"
+		view-name="wx/message/messageLog" />
+
+	<!-- ************************** CRM 业务相关 start ************************* -->
+	<mvc:view-controller path="/oldCrm/bind" view-name="crm/bind" />
+	<mvc:view-controller path="/oldCrm/list" view-name="crm/list" />
+	<!-- 3.任务详情页面 -->
+	<mvc:view-controller path="/oldCrm/detail"
+		view-name="crm/detail" />
+	<!-- ************************** CRM 业务相关 end ************************* -->
+
+	<!-- **************************** 公告相关 start **************************** -->
+	<mvc:view-controller path="/admin/noticeboard/noticeboard"
+		view-name="admin/noticeboard/noticeboard" />
+	<mvc:view-controller path="/admin/noticedetils"
+		view-name="admin/noticeboard/noticedetils" />
+	<!-- 发布公告 -->
+	<mvc:view-controller path="/admin/noticeboard"
+		view-name="admin/noticeboard/announcenotice" />
+	<!-- 修改公告 -->
+	<mvc:view-controller path="/admin/noticeboardedit"
+		view-name="admin/noticeboard/noticeboardedit" />
+	<!-- 董事长公告 -->
+	<mvc:view-controller path="/admin/mannouncenotice"
+		view-name="admin/noticeboard/mannouncenotice" />
+	<!-- 我的消息列表 -->
+	<mvc:view-controller path="/admin/message/list"
+		view-name="admin/noticeboard/messageList" />
+	<!-- **************************** 公告相关 end **************************** -->
+
+	<!-- **************************** 规章制度管理 start **************************** -->
+	<mvc:view-controller path="/admin/regulations"
+		view-name="admin/regulation/regulations" />
+	<mvc:view-controller path="/admin/regulation/createOrUpdate"
+		view-name="admin/regulation/create" />
+	<mvc:view-controller path="/admin/regulation/update"
+						 view-name="admin/regulation/edit" />
+	<mvc:view-controller path="/admin/regulation/detail"
+		view-name="admin/regulation/detail" />
+	<mvc:view-controller path="/admin/regulation/attachments"
+		view-name="admin/regulation/attachments" />
+	<!-- **************************** 规章制度附件管理 end **************************** -->
+
+
+	<!-- **************************** 签到签退相关 start **************************** -->
+	<!-- 签到签退 -->
+	<mvc:view-controller path="/admin/sign" view-name="admin/sign/sign" />
+	<!-- 职场设置 -->
+	<mvc:view-controller path="/admin/sign/signsite"
+		view-name="admin/sign/signsite" />
+	<!-- 考勤统计 -->
+	<mvc:view-controller path="/admin/sign/checkonwork"
+		view-name="admin/sign/checkonwork" />
+	<mvc:view-controller path="/admin/remove"
+		view-name="wx/removeBinding" />
+	<!-- 分公司考勤统计 -->
+	<mvc:view-controller path="/admin/sign/comcheckonwork"
+						 view-name="admin/sign/companycheckonwork" />
+	<!-- **************************** 签到签退相关 end **************************** -->
+
+	<!-- **************************** 签报单相关 start **************************** -->
+	<mvc:view-controller path="/admin/singleSign"
+		view-name="admin/singleSign/list" />
+	<mvc:view-controller path="/admin/singleSign/add"
+		view-name="admin/singleSign/add" />
+	<!-- **************************** 签报单管理 end **************************** -->
+
+	<!-- **************************** 微信菜单相关 start **************************** -->
+	<!-- 微信标签管理 -->
+	<mvc:view-controller path="/admin/wechat/tag"
+		view-name="admin/wechat/tag/list" />
+	<!-- 微信自定义菜单管理 -->
+	<mvc:view-controller path="/admin/wechat/menu"
+		view-name="admin/wechat/menu/list" />
+	<!-- 微信个性化菜单管理 -->
+	<mvc:view-controller path="/admin/wechat/menu/condition"
+		view-name="admin/wechat/menu/condition/list" />
+	<!-- 微信个性化菜单管理菜单详情页 -->
+	<mvc:view-controller path="/admin/wechat/menu/condition/detail"
+		view-name="admin/wechat/menu/condition/detail" />
+	<!-- 生成二维码 -->
+	<mvc:view-controller path="/admin/wechat/qrcode/list"
+		view-name="admin/wechat/qrcode/list" />
+	<!-- **************************** 微信菜单相关 end **************************** -->
+
+	<!--******************************* 设计师提成相关页面 start ************************** -->
+	<!-- 设计师管理 -->
+	<mvc:view-controller path="/admin/stylists"
+		view-name="admin/stylist/stylists" />
+	<!-- 考核管理 -->
+	<mvc:view-controller path="/admin/evaluate"
+		view-name="admin/stylist/evaluateList" />
+	<!-- 提成规则管理 -->
+	<mvc:view-controller path="/admin/stylist/rules"
+		view-name="admin/stylist/rules" />
+	<!-- 合同管理 -->
+	<mvc:view-controller path="/admin/stylist/contracts"
+		view-name="admin/stylist/contracts" />
+	<!--月度账单管理 -->
+	<mvc:view-controller path="/admin/stylist/monthBills"
+		view-name="admin/stylist/monthBills" />
+	<!-- 账单管理 -->
+	<mvc:view-controller path="/admin/stylist/bills"
+		view-name="admin/stylist/bills" />
+	<!-- 账单确认 -->
+	<mvc:view-controller path="/admin/stylist/billConfirm"
+		view-name="admin/stylist/billConfirm" />
+	<!--******************************* 设计师提成相关页面 end ************************** -->
+	<!-- 材料商对账 -->
+	<mvc:view-controller path="/admin/materialSupplierAccountChecking"
+		view-name="admin/materialSupplierAccountChecking/materialSupplierAccountChecking" />
+	<mvc:view-controller path="/admin/alreadyMaterialSupplierAccountChecking"
+		view-name="admin/materialSupplierAccountChecking/alreadyMaterialSupplierAccountChecking" />
+	<mvc:view-controller path="/admin/HMCheckAndAccept"
+		view-name="admin/materialSupplierAccountChecking/HMCheckAndAccept" />
+	<mvc:view-controller path="/admin/statement"
+		view-name="admin/materialSupplierAccountChecking/statement" />
+	<mvc:view-controller path="/admin/noAccountCheckingOrder"
+		view-name="admin/materialSupplierAccountChecking/noAccountCheckingOrder" />
+	<mvc:view-controller path="/admin/supplement"
+		view-name="admin/materialSupplierAccountChecking/materialSupplierAccountSupplement" />
+	<mvc:view-controller path="/admin/budget"
+		view-name="admin/materialSupplierAccountChecking/budget" />
+
+	<!--报表相关页面 -->
+	<mvc:view-controller path="/api/reports/list"
+		view-name="admin/report/list" />
+	<mvc:view-controller path="/api/reports/salereport"
+		view-name="admin/report/salereport" />
+	<mvc:view-controller path="/api/reports/saledetail"
+		view-name="admin/report/saledetail" />
+	<mvc:view-controller path="/api/reports/setdetail"
+		view-name="admin/report/setdetail" />
+	<mvc:view-controller path="/api/reports/set"
+		view-name="admin/report/set" />
+	<mvc:view-controller path="/api/reports/finance"
+		view-name="admin/report/finance" />
+	<mvc:view-controller path="/api/reports/design"
+		view-name="admin/report/design" />
+	<mvc:view-controller path="/api/reports/designdetail"
+		view-name="admin/report/designdetail" />
+	<!--集团日清报表-->
+	<mvc:view-controller path="/api/report/groupNissin"
+		view-name="admin/report/groupNissin" />
+	<!--分店日清报表-->
+	<mvc:view-controller path="/api/report/depNissin"
+						 view-name="admin/report/depNissin" />
+
+
+	<!--订单台账 -->
+	<mvc:view-controller path="/admin/orderStandingBook/list"
+		view-name="admin/orderStandingBook/list" />
+	<mvc:view-controller path="/admin/orderStandingBook/detail"
+		view-name="admin/orderStandingBook/detail" />
+
+	<!--董事长信箱 -->
+	<mvc:view-controller path="/admin/chairmanMailbox/add"
+		view-name="admin/chairmanMailbox/add" />
+	<mvc:view-controller path="/admin/chairmanMailbox/list"
+		view-name="admin/chairmanMailbox/list" />
+	<mvc:view-controller path="/admin/chairmanMailbox/detail"
+		view-name="admin/chairmanMailbox/detail" />
+
+	<!--竣工工地数据 -->
+	<mvc:view-controller path="/admin/completionSiteData/list"
+						 view-name="admin/completionSiteData/list" />
+	<mvc:view-controller path="/admin/completionSiteData/listDetails"
+						 view-name="admin/completionSiteData/listDetails" />
+	<!--工资管理 -->
+	<mvc:view-controller path="/admin/salaryManagement/listPayroll"
+						 view-name="admin/salaryManagement/listPayroll" />
+	<mvc:view-controller path="/admin/salaryManagement/edit"
+						 view-name="admin/salaryManagement/edit" />
+	<mvc:view-controller path="/admin/salaryManagement/listDetails"
+						 view-name="admin/salaryManagement/listDetails" />
+	<mvc:view-controller path="/admin/salaryManagement/listMySala"
+						 view-name="admin/salaryManagement/listMySala" />
+</beans>

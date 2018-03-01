@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.standBook.QualityCheckStandBookDao">
+    <resultMap id="BaseResultMap" type="cn.damei.entity.standBook.AreaLevelInfo">
+        <result property="dosage" column="dosage"/>
+        <result property="measurehousearea" column="measurehousearea"/>
+    </resultMap>
+    <select id="findAreaLevelInfoByOrderNo" resultMap="BaseResultMap">
+        SELECT sum(dosage) AS dosage,(SELECT measurehousearea FROM ST_RD_CustomerMaterial WHERE orderno = #{orderno})  AS measurehousearea
+        FROM ST_RD_CustomerMaterial cus LEFT JOIN ST_RD_ItemDetail ite ON ite.material_pkid = cus.pkid
+	    WHERE  cus.orderno = #{orderno} AND ite.item_categoryid='5D53154E-2C9F-4350-8DF0-ABADC33EB10A' AND ite.isdelete=0
+	     AND ite.item_pkid NOT IN (SELECT pkid FROM ST_RD_LessenItem WHERE material_pkid=cus.pkid)
+    </select>
+</mapper>

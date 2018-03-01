@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.damei.repository.wechat.QrcodeDao">
+  <resultMap id="BaseResultMap" type="cn.damei.entity.wechat.Qrcode">
+    <id column="id" property="id"/>
+    <result column="scene_id" property="sceneId"/>
+    <result column="name" property="tagName"/>
+    <result column="scene_str" property="sceneStr"/>
+    <result column="type" property="type"/>
+    <result column="expire_seconds" property="expireSeconds"/>
+    <result column="generated" property="generated"/>
+    <result column="ticket" property="ticket"/>
+    <result column="url" property="url"/>
+  </resultMap>
+  <sql id="SelectInfo">
+    id, scene_id, scene_str, type, expire_seconds, `generated`, ticket, url
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="SelectInfo"/>
+    from wechat_qrcode
+    where id = #{id}
+  </select>
+  <delete id="deleteById" parameterType="long">
+    delete from wechat_qrcode
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="cn.damei.entity.wechat.Qrcode" useGeneratedKeys="true" keyProperty="id">
+    insert into wechat_qrcode
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="sceneStr != null">
+        scene_str,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="expireSeconds != null">
+        expire_seconds,
+      </if>
+      <if test="generated != null">
+        `generated`,
+      </if>
+      <if test="ticket != null">
+        ticket,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sceneId != null">
+        #{sceneId},
+      </if>
+      <if test="sceneStr != null">
+        #{sceneStr},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+      <if test="expireSeconds != null">
+        #{expireSeconds},
+      </if>
+      <if test="generated != null">
+        #{generated},
+      </if>
+      <if test="ticket != null">
+        #{ticket},
+      </if>
+      <if test="url != null">
+        #{url},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.damei.entity.wechat.Qrcode">
+    update wechat_qrcode
+    <set>
+      <if test="sceneId != null">
+        scene_id = #{sceneId},
+      </if>
+      <if test="sceneStr != null">
+        scene_str = #{sceneStr},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="expireSeconds != null">
+        expire_seconds = #{expireSeconds},
+      </if>
+      <if test="generated != null">
+        `generated` = #{generated},
+      </if>
+      <if test="ticket != null">
+        ticket = #{ticket},
+      </if>
+      <if test="url != null">
+        url = #{url},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select wq.id,wq.scene_id,wt.name,wq.type,wq.generated,wq.ticket,wq.url from wechat_qrcode wq left join wechat_tag wt on wq.scene_id=wt.oid
+    <if test="keyword != null and keyword !=''">
+        where wt.name LIKE CONCAT('%',#{keyword},'%')
+    </if>
+  </select>
+
+  <select id="getTemporary" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_qrcode WHERE type = 'QR_SCENE' AND scene_id = #{sceneId}
+  </select>
+
+  <select id="getPermanentByLong" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_qrcode WHERE type = 'QR_LIMIT_SCENE' AND scene_id = #{sceneId}
+  </select>
+
+  <select id="getPermanentByStr" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_qrcode WHERE type = 'QR_LIMIT_STR_SCENE' AND scene_str = #{sceneStr}
+  </select>
+
+  <select id="getByTypeAndSceneIdAndStr" resultMap="BaseResultMap">
+    SELECT
+    <include refid="SelectInfo"/>
+    FROM wechat_qrcode
+    <where>
+      type = #{type}
+      <if test="sceneId != null">
+        AND scene_id = #{sceneId}
+      </if>
+      <if test="sceneStr != null">
+        AND scene_str = #{sceneStr}
+      </if>
+    </where>
+  </select>
+</mapper>
