@@ -3,7 +3,7 @@
 <portable-config>
     <!-- application.properties -->
     <config-file path="WEB-INF/classes/application.properties">
-        <replace key="jdbc.url">jdbc:mysql://47.95.234.249/damei_oa?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true&amp;allowMultiQueries=true</replace>
+        <replace key="jdbc.url">jdbc:mysql://rm-2zea20z998tfwmd68.mysql.rds.aliyuncs.com:3306/damei_oa?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true&amp;allowMultiQueries=true</replace>
         <replace key="jdbc.username">dmoauser</replace>
         <replace key="jdbc.password">dmoauser!@#</replace>
         <replace key="base.url">http://47.95.234.249:8187</replace>
